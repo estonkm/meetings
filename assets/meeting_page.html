@@ -1,0 +1,272 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Meeting Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="../assets/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="../assets/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <style>
+        body {
+      padding-bottom: 40px;
+      padding-top: 70px;
+    }
+
+    div {
+    	display: block;
+    	vertical-align: baseline;
+    }
+
+    .subhead {
+    	padding-bottom:30px;
+    }
+
+    .subhead .container {
+    	background-color: #F0FFFF;
+/*    	border: 2px solid;*/
+    	padding: 5px 5px 5px 5px;
+    }
+
+    .motiontitle {
+    	width:500px;
+    	float:left;
+    }
+
+    .motion {
+    	border-bottom: 1px solid;
+    	overflow: hidden;
+    	padding: 11px 0px;
+    	width: 700px;
+    	float: left;
+    }
+
+    .narrow .votes {
+    	background: transparent;
+    	float: right;
+    	margin: 0 3px 0 0;
+    	padding: 5px;
+    	width: 38px;
+    	height: 38px;
+    }
+
+    .narrow .status {
+    	float: right;
+    	margin: 0 3px 0 0;
+    	padding: 5px;
+    	width: 60px;
+    	height: 38px;
+    }
+
+    .narrow .views {
+    	float: right;
+    	margin: 0 7px 0 0;
+    	/*padding: 5px 0px 5px 4px;*/
+    	padding: 5px;
+    	width: 48px;
+    	height: 38px;
+    }
+
+    .votes {
+    	color: #999;
+    	text-align: center;
+    }
+
+    .status {
+    	color: #999;
+    	text-align: center;
+    }
+
+    .narrow .summary {
+    	width: 500px;
+    }
+
+    .summary {
+    	float: left;
+    }
+
+    .started {
+    	float: right;
+    }
+
+    .views {
+    	color: #999;
+    	text-align: center;
+    }
+
+    .mini-counts {
+    	height: 25px;
+    	font-size: 160%;
+    	font-weight: normal;
+    }
+
+    /*.navbar-inner {
+      background: none !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      -webkit-box-shadow: none !important;
+    }*/
+
+    .navbar-inverse .nav .active > a {
+      background: 0 !important;
+      /*color: #fff !important;*/
+      box-shadow: none !important;
+      -webkit-box-shadow: none !important;
+    }
+
+    .navbar-inverse .nav > li > a {
+      /*color: #fff !important;*/
+      text-shadow: none !important;
+    }
+
+    .navbar-inverse .nav > li > a:hover {
+      color: #0088cc !important;
+    }
+
+    </style>
+
+</head>
+<body>
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<!--<form class="navbar-form pull-right">
+                	<input type="text" name="username" class="login" placeholder="email" autocomplete="off">
+                	<input type="password" name="password" class="login" placeholder="password" autocomplete="off">
+                	<button type="submit" class="btn btn-primary">Log In</button>
+            	</form>-->
+				<a class="brand" href="#">Meeting App</a>
+				<div class="nav-collapse collapse">
+					<u1 class="nav">
+						<li class="">
+							<a href="#">Learn More</a>
+						</li>
+						<li class="">
+							<a href="#">Contact</a>
+						</li>
+					</u1>
+					<u1 class="nav pull-right">
+						<li class="">
+							<a href="#">Home</a>
+						</li>
+						<li class="">
+							<a href="#">Profile</a>
+						</li>
+						<li class="">
+							<a href="#">Logout</a>
+						</li>						
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<header class="subhead" id="overview">
+		<div class="container">
+    		<h2>Meeting Title</h2>
+    		<p>Meeting Description</p>
+  		</div>
+	</header>
+	<!--<div class="container-fluid">
+		<div id="content" class="span9">
+			<p class="lead">Top Motions</p>
+		</div>
+		<div id="sidebar" class="span3">
+			yo
+		</div>
+	</div>-->
+
+	<div class="container">
+		<div class="row">
+			<div class="span9"><p class="lead">Top Motions</p>
+				<div class="tabbable">
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#tab1" data-toggle="tab">Most Recent</a></li>
+						<li><a href="#tab2" data-toggle="tab">Most Seconded</a></li>
+						<li><a href="#tab3" data-toggle="tab">Most Viewed</a></li>
+						<li><a href="#tab5" data-toggle="tab">Most Commented</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="tab1">
+							<div class="motion narrow" id="mot1">
+								<div class="motiontitle">
+									<h4>Motion 1</h4>
+									<small>posted by Sam on 06/05/2013</small>
+								</div>
+    							<div class="views">
+    								<div class="mini-counts">0</div>
+    								<div>views</div>
+    							</div>
+    							<div class="status unanswered">
+    								<div class="mini-counts">0</div>
+    								<div>comments</div>
+    							</div>
+    							<div class="votes">
+    								<div class="mini-counts">0</div>
+    								<div>votes</div>
+    							</div>
+    						</div>
+    						<div class="motion narrow" id="mot2">
+								<div class="motiontitle">
+									<h4>Motion 2</h4>
+									<small>posted by Sam on 06/05/2013</small>
+								</div>
+	    						<div class="views">
+	    							<div class="mini-counts">0</div>
+	    							<div>views</div>
+	    						</div>
+	    						<div class="status unanswered">
+	    							<div class="mini-counts">0</div>
+	    							<div>comments</div>
+	    						</div>
+	    						<div class="votes">
+	    							<div class="mini-counts">0</div>
+	    							<div>votes</div>
+	    						</div>
+    						</div>
+						</div>
+						<div class="tab-pane" id="tab2"><p></p></div>
+						<div class="tab-pane" id="tab3"><p></p></div>
+						<div class="tab-pane" id="tab4"><p></p></div>
+					</div>
+				</div>
+			</div>
+			<div class="span3"><p class="lead">User Info</p>
+				<p>Yay you</p>
+			</div>
+		</div>
+		<footer style="padding-top: 20px;">
+        	<p class="pull-right"><a href="#">Back to top</a></p>
+        	<p>&copy; 2013 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+      	</footer>
+	</div>
+</body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+<script>
+	$(function() {
+		$(document).ready(function(){ 
+			$('#tab1').click(function (e) {
+				e.preventDefault();
+				$(this).tab('show');
+			});
+			$('#tab2').click(function (e) {
+				e.preventDefault();
+				$(this).tab('show');
+			});
+			$('#tab3').click(function (e) {
+				e.preventDefault();
+				$(this).tab('show');
+			});
+			$('#tab4').click(function (e) {
+				e.preventDefault();
+				$(this).tab('show');
+			});
+		});
+	});
+</script>
+</html>
+
+
