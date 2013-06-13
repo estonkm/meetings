@@ -8,9 +8,11 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
+    {% load staticfiles %}
+
     <!-- Le styles -->
-    <link href="../assets/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="../assets/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "bootstrap/css/bootstrap-responsive.css" %}" rel="stylesheet">
     <style>
 
     /* GLOBAL STYLES
@@ -343,7 +345,7 @@
     <div id="myCarousel" class="carousel slide">
       <div class="carousel-inner">
         <div class="item active">
-          <img src="../assets/darker.jpg" alt="">
+          <img src="{% static "darker.jpg" %}" alt="">
           <div class="container">
             <div class="carousel-caption">
               <h1>Meetings App.</h1>
