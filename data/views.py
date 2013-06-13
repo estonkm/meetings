@@ -5,3 +5,6 @@ from django.template import RequestContext
 
 def home(request):
 	return render_to_response('index.html')
+
+def meeting(request):
+	return render_to_response('meeting_page_new.html')
