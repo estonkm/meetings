@@ -7,9 +7,11 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
+    {% load staticfiles %}
+
     <!-- Le styles -->
-    <link href="../assets/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="../assets/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "bootstrap/css/bootstrap-responsive.css" %}" rel="stylesheet">
     <style>
         body {
       padding-bottom: 40px;
@@ -244,7 +246,7 @@
 	</div>
 </body>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
 <script>
 	$(function() {
 		$(document).ready(function(){ 

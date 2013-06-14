@@ -9,41 +9,41 @@ class Account(models.Model):
 		email
 		first/last name
 	"""
-	meetings_in = models.ManyToManyField('Meeting', null=True, blank=True)
-	meetings_created = models.ManyToManyField('Meeting', null=True, blank=True)
+	meetings_in = models.ManyToManyField('Meeting', related_name="meetings_in_set", null=True, blank=True)
+	meetings_created = models.ManyToManyField('Meeting', related_name="meetings_created_set", null=True, blank=True)
 	join_date = models.DateField()
 	prof_pic = models.ImageField(upload_to='photos', blank=True, default=False)
 	phone = models.CharField(max_length=20)
 	contacts = models.ManyToManyField('self', blank=True, null=True)
 
 class Meeting(models.Model):
-	members = models.ManyToManyField('Account', null=True, blank=True)
-	moderators = models.ManyToManyField('Account', null=True, blank=True)
-	hosts = models.ManyToManyField('Account')
+	members = models.ManyToManyField('Account', related_name="members_set", null=True, blank=True)
+	moderators = models.ManyToManyField('Account', related_name="mods_set", null=True, blank=True)
+	hosts = models.ManyToManyField('Account', related_name="host")
 	start = models.DateTimeField()
 	end = models.DateTimeField()
 	title = models.CharField(max_length=50) # these are arbitrary
 	desc = models.CharField(max_length=500)
 	private = models.BooleanField()
-	meeting_id = models.CharField()
-	agenda_items = models.ManyToManyField('AgendaItem', null=True, blank=TRue)
+	meeting_id = models.CharField(max_length=25)
+	agenda_items = models.ManyToManyField('AgendaItem', related_name="agenda_set", null=True, blank=True)
 
 class AgendaItem(models.Model):
 	name = models.CharField(max_length=50)
 	desc = models.CharField(max_length=100) # is this needed?
-	motions = models.ManyToManyField('Motion', null=True, blank=True)
+	motions = models.ManyToManyField('Motion', related_name="motion_set", null=True, blank=True)
 
 class Motion(models.Model):
-	user = models.ForeignKey('Account')
+	user = models.ForeignKey('Account', related_name="motion_user")
 	timestamp = models.DateTimeField()
 	name = models.CharField(max_length=50)
 	desc = models.CharField(max_length=500)
 	likes = models.IntegerField()
 	dislikes = models.IntegerField()
-	comments = models.ManyToManyField('Comment', null=True, blank=True)
+	comments = models.ManyToManyField('Comment', related_name="comment_set", null=True, blank=True)
 
 class Comment(models.Model):
-	user = models.ForeignKey('Account')
+	user = models.ForeignKey('Account', related_name="comment_user")
 	timestamp = models.DateTimeField()
 	text = models.CharField(max_length=500)
 
