@@ -1,33 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Carousel Template &middot; Bootstrap</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+{% extends "base.html" %}
 
-    {% load staticfiles %}
+{% block content %}
 
-    <!-- Le styles -->
-    <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
-    <link href="{% static "bootstrap/css/bootstrap-responsive.css" %}" rel="stylesheet">
-   </head>
-  <body>
+<form class="form-horizontal" method="post">
+	{% csrf_token %}
+	<input type="hidden" name="submit_request" value="submit_request">
+	<div class="control-group">
+		<label class="control-label">Meeting Name</label>
+		<div class="controls">
+			{{ form.title }}
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Description</label>
+		<div class="controls">
+			{{ form.desc }}
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="inputDate">Start Date</label>
+		<div class="controls">
+			{{ form.startdate }}
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="inputTime">Start Time</label>
+		<div class="controls">
+			{{ form.starttime }}
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="inputDate">End Date</label>
+		<div class="controls">
+			{{ form.enddate }}
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="inputTime">End Time</label>
+		<div class="controls">
+			{{ form.endtime }}
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="">Meeting Type</label>
+		<div class="controls">
+			{{ form.status }}
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<button type="submit" class="btn btn-primary">Create Meeting</button>
+		</div>
+	</div>
+</form>
 
-	  <form enctype="multipart/form-data" id="form1" action="" method="post">
-	  	{% csrf_token %}
-	  	<input type="hidden" name="submit_request" value="submit_request">
-	  	<ul style="list-style-type: none;">
-	  	Meeting Name: <li>{{ form.name }}</li>
-	  	Meeting Description: <li>{{ form.desc }}</li>
-	  	Start date: <li>{{ form.startdate }}</li>
-	  	Start time: <li>{{ form.starttime }}</li>
-	  	End date: <li>{{ form.enddate }}</li>
-	  	End time: <li>{{ form.endtime }}</li>
-	  	</ul>
-	  	{{ form.status }}
-	  	 <input class="btn btn-primary" id="ms" type="submit" name="meetingsubmit" value="Submit">
-	  </form>
-  </body>
-</html>
+{% endblock %}

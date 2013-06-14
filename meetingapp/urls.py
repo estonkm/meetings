@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     (r'^meeting/$', views.meeting),
     (r'^create/$', views.create),
     (r'^signup/$', views.signup),
+    (r'^thanks/$', views.thanks),
     (r'^static/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.STATIC_ROOT}),
     # Examples:
     # url(r'^$', 'meetingapp.views.home', name='home'),

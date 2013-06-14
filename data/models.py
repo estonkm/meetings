@@ -20,8 +20,10 @@ class Meeting(models.Model):
 	members = models.ManyToManyField('Account', related_name="members_set", null=True, blank=True)
 	moderators = models.ManyToManyField('Account', related_name="mods_set", null=True, blank=True)
 	hosts = models.ManyToManyField('Account', related_name="host")
-	start = models.DateTimeField()
-	end = models.DateTimeField()
+	startdate = models.DateField()
+	starttime = models.TimeField()
+	enddate = models.DateField()
+	endtime = models.TimeField()
 	title = models.CharField(max_length=50) # these are arbitrary
 	desc = models.CharField(max_length=500)
 	private = models.BooleanField()
