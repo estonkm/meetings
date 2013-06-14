@@ -1,0 +1,194 @@
+    body {
+      padding-bottom: 40px;
+      padding-top: 70px;
+    }
+
+    div {
+    	display: block;
+    	vertical-align: baseline;
+    }
+
+    div .info {
+        width:500px !important;
+        float:left !important;
+        height: 50%;
+    }
+
+    div .time {
+        padding-top: 20px !important;
+        width: 425px !important;
+        float:right !important;
+        height: 50%;
+    }
+
+    .span9 .lead {
+        border-bottom: 1px solid #999;
+        padding-bottom: 15px;
+        margin-bottom: 0px !important;
+    }
+
+    .span3 .userinfo {
+        border: 1px solid #DCDCDC;
+        height: 150px;
+        width: 205px;
+        margin-bottom: 10px;
+        padding: 10px;
+        padding-top: 0px;
+    }
+
+    .subhead {
+    	padding-bottom:30px;
+    }
+
+    .subhead .container {
+/*    	background-color: #F0FFFF;*/
+/*    	border: 2px solid;*/
+    	padding: 5px 5px 5px 5px;
+        border: 1px solid #DCDCDC;
+    }
+
+    .agendatitle {
+    	width: inherit;
+    	float:left;
+    }
+
+    .motion .title {
+        width: 425px; 
+        line-height: 26px;
+        float: left;
+    }
+
+    .collapse .motion {
+/*        border-bottom: 1px solid #DCDCDC;*/
+        width: 650px;
+        height: 36px;
+/*       padding-top: 6px;*/
+    }
+
+    .agendaItem {
+    	border-bottom: 1px solid #999;
+    	overflow: hidden;
+    	padding: 11px 0px;
+    	width: 700px;
+    	float: left;
+    }
+
+    div .span9 .collapse {
+        margin-left: 50px !important;
+        margin-top: 10px !important;
+    }
+
+    .container .starttime {
+    	background: transparent;
+    	float: right;
+    	margin: 0 3px 0 0;
+    	padding: 5px;
+    	width: 100px;
+    	height: 38px;
+        text-align: center;
+
+    }
+
+    .container .timelabel {
+        background: transparent;
+        float: right;
+        /*padding: 5px;*/
+/*        width: 50px;*/
+        height: 48px;
+        margin-left: 30px;
+        line-height: 28px;
+        text-align:center;
+        color: #999;
+    }
+
+    .narrow .status {
+    	float: right;
+    	margin: 0 3px 0 0;
+    	padding: 5px;
+    	width: 60px;
+    	height: 38px;
+    }
+
+    .container .endtime {
+    	float: right;
+    	margin: 0 7px 0 0;
+    	/*padding: 5px 0px 5px 4px;*/
+    	padding: 5px;
+        padding-right: 50px;
+    	width: 100px;
+    	height: 38px;
+        text-align:center;
+    }
+
+    .motion .status {
+        width: 200px; 
+        float: right; 
+        text-align: right; 
+        line-height: 16px; 
+        height: 26px;
+    }
+
+    .agenda {
+        font-size: 17.5px;
+        font-family: inherit;
+        font-weight: bold;
+        line-height: 20px;
+    }
+
+    .narrow .summary {
+    	width: 500px;
+    }
+
+    .summary {
+    	float: left;
+    }
+
+    .btn-mini {
+        color: #999 !important;
+        border-radius: 0px !important;
+        padding: 0 2px !important;
+        line-height: 12px;
+    }
+
+    .started {
+    	float: right;
+    }
+
+    .nummotions {
+        color: #999;
+    }
+
+    .timedisp {
+    	/*height: 25px;*/
+    	font-size: 140%;
+        font-family: inherit;
+    	/*font-weight: normal;*/
+    }
+
+    .datedisp {
+        font-size: 90%;
+        font-family: inherit;
+    }
+
+    /*.navbar-inner {
+      background: none !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      -webkit-box-shadow: none !important;
+    }*/
+
+    .navbar-inverse .nav .active > a {
+      background: 0 !important;
+      /*color: #fff !important;*/
+      box-shadow: none !important;
+      -webkit-box-shadow: none !important;
+    }
+
+    .navbar-inverse .nav > li > a {
+      /*color: #fff !important;*/
+      text-shadow: none !important;
+    }
+
+    .navbar-inverse .nav > li > a:hover {
+      color: #0088cc !important;
+    }

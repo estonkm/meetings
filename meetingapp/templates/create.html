@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Carousel Template &middot; Bootstrap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    {% load staticfiles %}
+
+    <!-- Le styles -->
+    <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "bootstrap/css/bootstrap-responsive.css" %}" rel="stylesheet">
+   </head>
+  <body>
+
+	  <form enctype="multipart/form-data" id="form1" action="" method="post">
+	  	{% csrf_token %}
+	  	<input type="hidden" name="submit_request" value="submit_request">
+	  	<ul style="list-style-type: none;">
+	  	Meeting Name: <li>{{ form.name }}</li>
+	  	Meeting Description: <li>{{ form.desc }}</li>
+	  	Start date: <li>{{ form.startdate }}</li>
+	  	Start time: <li>{{ form.starttime }}</li>
+	  	End date: <li>{{ form.enddate }}</li>
+	  	End time: <li>{{ form.endtime }}</li>
+	  	</ul>
+	  	{{ form.status }}
+	  	 <input class="btn btn-primary" id="ms" type="submit" name="meetingsubmit" value="Submit">
+	  </form>
+  </body>
+</html>

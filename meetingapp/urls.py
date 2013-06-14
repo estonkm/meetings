@@ -9,6 +9,8 @@ from django.conf import settings
 urlpatterns = patterns('',
     (r'^$', views.home),
     (r'^meeting/$', views.meeting),
+    (r'^create/$', views.create),
+    (r'^signup/$', views.signup),
     (r'^static/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.STATIC_ROOT}),
     # Examples:
     # url(r'^$', 'meetingapp.views.home', name='home'),
