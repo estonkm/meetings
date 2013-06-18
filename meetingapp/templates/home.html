@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+<div class="container">
+	<div class="row">
+		<div class="span9">
+			<!-- Create a New Meeting button goes here -->
+			<div class="tabbable">
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#tab1" data-toggle="tab">meetings I'm in</a></li>
+					<li><a href="#tab2" data-toggle="tab">meetings I created</a></li>
+					<li><a href="#tab3" data-toggle="tab">past meetings</a></li>
+					<li style="float:right;">
+						<div style="text-align: center;">
+							<a href="../create/" class="btn" style="float: none !important; margin-right: 5px;">Create a New Meeting</a>
+						</div>
+					</li>	
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="tab1">hi</div>
+					<div class="tab-pane" id="tab2"></div>
+					<div class="tab-pane" id="tab3"></div>
+				</div>
+			</div>
+		</div>
+		<div class="span3">
+            <div class="userinfo">
+                <text class="lead" style="font-size: 15px !important;">Me</text>
+            </div>
+            <div class="userinfo">
+                <i class="icon-user"></i>
+                <text class="lead" style="font-size: 15px !important;">Contacts (2):</text>
+            </div>
+		</div>
+	</div>
+</div>
+
+<script>
+$(document).ready(function() {
+	$('#tab1').click(function (e) {
+		e.preventDefault();
+		$(this).tab('show');
+	});
+	$('#tab2').click(function (e) {
+		e.preventDefault();
+		$(this).tab('show');
+	});
+	$('#tab3').click(function (e) {
+		e.preventDefault();
+		$(this).tab('show');
+	});
+});
+</script>
+
+{% else %}
+<script>
+$(document).ready(function() {
+	// TODO: change this for site
+	window.location="//127.0.0.1:8000/";
+});
+</script>
+{% endif %}
+
+{% endblock %}

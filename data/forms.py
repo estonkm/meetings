@@ -22,3 +22,7 @@ class MeetingForm(forms.Form):
 	enddate = forms.DateField(widget=html5_widgets.DateInput)
 	endtime = forms.TimeField(widget=forms.TimeInput(attrs={'placeholder': '12:00AM'}), input_formats=valid_time_formats)
 	status = forms.ChoiceField(choices=STATUS, widget=forms.RadioSelect())
+
+class LoginForm(forms.Form):
+	username = forms.CharField()
+	password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'password'}))

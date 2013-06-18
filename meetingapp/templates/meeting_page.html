@@ -4,18 +4,18 @@
     <header class="subhead" id="overview">
         <div class="container">
             <div class="info">
-                <h2>Meeting Title</h2>
-                <p>Meeting Description</p>
+                <h2>{{ m.title }}</h2>
+                <p>{{ m.desc }}</p>
             </div>
             <div class="time">
                 <div class="endtime">
-                    <div class="timedisp">12:00 PM</div>
-                    <div class="datedisp">May 5, 2013</div>
+                    <div class="timedisp">{{ m.endtime }}</div>
+                    <div class="datedisp">{{ m.enddate }}</div>
                 </div>
                 <div class="timelabel">Ends:</div>
                 <div class="starttime">
-                    <div class="timedisp">9:00 AM</div>
-                    <div class="datedisp">May 5, 2013</div>
+                    <div class="timedisp">{{ m.starttime }}</div>
+                    <div class="datedisp">{{ m.startdate }}</div>
                 </div>
                 <div class="timelabel">Starts:</div>
             </div>

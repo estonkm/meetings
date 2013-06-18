@@ -7,11 +7,16 @@ from django.conf import settings
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^$', views.home),
-    (r'^meeting/$', views.meeting),
+    (r'^$', views.index),
     (r'^create/$', views.create),
     (r'^signup/$', views.signup),
     (r'^thanks/$', views.thanks),
+    (r'^login/$', views.login),
+    (r'^logout/$', views.logout),
+    (r'^home/$', views.home),
+    (r'^profile/$', views.profile),
+    (r'^contacts/$', views.contacts),
+    (r'^meeting/.+$', views.meeting),
     (r'^static/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.STATIC_ROOT}),
     # Examples:
     # url(r'^$', 'meetingapp.views.home', name='home'),

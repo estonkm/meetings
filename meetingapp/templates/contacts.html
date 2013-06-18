@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+<div class="container">
+	<div class="row">
+		<div class="span9">
+			<!-- Create a New Meeting button goes here -->
+			<div>
+				Contacts are shown here, with option to import contacts or add a contact--the works
+			</div>
+		</div>
+		<div class="span3">
+            <div class="userinfo">
+                <text class="lead" style="font-size: 15px !important;">Me</text>
+            </div>
+            <div class="userinfo">
+                <text class="lead" style="font-size: 15px !important;">Meetings</text>
+            </div>
+		</div>
+	</div>
+</div>
+
+<script>
+$(document).ready(function() {
+});
+</script>
+
+{% else %}
+<script>
+$(document).ready(function() {
+	// TODO: change this for site
+	window.location="//127.0.0.1:8000/";
+});
+</script>
+{% endif %}
+
+{% endblock %}

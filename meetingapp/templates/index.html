@@ -303,15 +303,37 @@
     <div class="navbar-wrapper">
       <!-- Wrap the .navbar in .container to center it within the absolutely positioned parent. -->
       <div class="container">
-
         <div class="navbar navbar-inverse">
           <div class="navbar-inner">
             <!-- Responsive Navbar Part 1: Button for triggering responsive navbar (not covered in tutorial). Include responsive CSS to utilize. -->
-            <form class="navbar-form pull-right">
-                  <input type="text" name="username" class="login" placeholder="email" autocomplete="off">
-                  <input type="password" name="password" class="login" placeholder="password" autocomplete="off">
-                  <button type="submit" class="btn btn-primary">Log In</button>
+            {% if user.is_authenticated %}
+            <c class="nav pull-right">
+              <li class="">
+                <a href="../home/">Home</a>
+              </li>
+              <li class="">
+                <a href="../profile/">Profile</a>
+              </li>
+              <li class="">
+                <a href="../contacts/">Contacts</a>
+              </li>
+              <li class="">
+                <a href="../logout/">Logout</a>
+              </li>
+            </c>
+            {% else %}
+            <div class="nav-collapse collapse">
+              <c class="nav pull-right" style="margin-left: 5px; margin-top: 2px;">
+                <a href="../signup/" class="btn btn-small">Sign Up</a>
+              </c>
+            </div>
+            <form class="navbar-form pull-right" method="post">
+            {% csrf_token %}
+              <input type="text" name="username" class="login" placeholder="email" autocomplete="off">
+              <input type="password" name="password" class="login" placeholder="password" autocomplete="off">
+              <button type="submit" class="btn btn-primary">Log In</button>
             </form>
+            {% endif %}
             <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
@@ -350,7 +372,11 @@
             <div class="carousel-caption">
               <h1>VitalMeeting.</h1>
               <p class="lead">It makes meetings easy. It's free.</p>
+              {% if user.is_authenticated %}
+              <a class="btn btn-large btn-primary" href="../create/">Create a New Meeting</a>
+              {% else %}
               <a class="btn btn-large btn-primary" href="../signup">Create a New Meeting</a>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -418,10 +444,12 @@
 
 
       <!-- FOOTER -->
-      <footer>
-        <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>&copy; 2013 VitalMeeting, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
-      </footer>
+      <div class="container">
+        <footer>
+          <p class="pull-right"><a href="#">Back to top</a></p>
+          <p>&copy; 2013 VitalMeeting, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+        </footer>
+      </div>
 
     </div><!-- /.container -->
 
