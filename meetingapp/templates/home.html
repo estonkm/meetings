@@ -20,9 +20,48 @@
 					</li>	
 				</ul>
 				<div class="tab-content">
-					<div class="tab-pane active" id="tab1">hi</div>
-					<div class="tab-pane" id="tab2"></div>
-					<div class="tab-pane" id="tab3"></div>
+					<div class="tab-pane active" id="tab1">
+						{% for m in meetingsin %}
+						<div class="agendaItem narrow" style="padding: 5px !important; padding-top: 0px !important; padding-bottom: 0px !important; width: 690px !important;">
+							<div style="width:450px; float:left;">
+								<a href="../meeting/{{ m.meeting_id }}"><h4> {{m.title}}</h4></a>
+								<text style="padding-top: 10px;">{{ m.desc }}</text>
+							</div>
+							<div style="width:240px; float:right; text-align: right; font-size: 14px; line-height: 25px; padding-top: 7px;">
+								Starts: {{ m.starttime }}, {{ m.startdate }}
+								<p>Ends: {{ m.endtime }}, {{m.enddate }}</p>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+					<div class="tab-pane" id="tab2">
+						{% for m in meetingscreated %}
+						<div class="agendaItem narrow" style="padding: 5px !important; padding-top: 0px !important; padding-bottom: 0px !important; width: 690px !important;">
+							<div style="width:450px; float:left;">
+								<a href="../meeting/{{ m.meeting_id }}"><h4> {{m.title}}</h4></a>
+								<text style="padding-top: 10px;">{{ m.desc }}</text>
+							</div>
+							<div style="width:240px; float:right; text-align: right; font-size: 14px; line-height: 25px; padding-top: 7px;">
+								Starts: {{ m.starttime }}, {{ m.startdate }}
+								<p>Ends: {{ m.endtime }}, {{m.enddate }}</p>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+					<div class="tab-pane" id="tab3">
+						{% for m in meetingspast %}
+						<div class="agendaItem narrow" style="padding: 5px !important; padding-top: 0px !important; padding-bottom: 0px !important; width: 690px !important;">
+							<div style="width:450px; float:left;">
+								<a href="../meeting/{{ m.meeting_id }}"><h4> {{m.title}}</h4></a>
+								<text style="padding-top: 10px;">{{ m.desc }}</text>
+							</div>
+							<div style="width:240px; float:right; text-align: right; font-size: 14px; line-height: 25px; padding-top: 7px;">
+								Starts: {{ m.starttime }}, {{ m.startdate }}
+								<p>Ends: {{ m.endtime }}, {{m.enddate }}</p>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
 				</div>
 			</div>
 		</div>
@@ -41,15 +80,15 @@
 <script>
 $(document).ready(function() {
 	$('#tab1').click(function (e) {
-		e.preventDefault();
+		//e.preventDefault();
 		$(this).tab('show');
 	});
 	$('#tab2').click(function (e) {
-		e.preventDefault();
+		//e.preventDefault();
 		$(this).tab('show');
 	});
 	$('#tab3').click(function (e) {
-		e.preventDefault();
+		//e.preventDefault();
 		$(this).tab('show');
 	});
 });

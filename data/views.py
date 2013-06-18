@@ -42,13 +42,10 @@ def create(request):
 		if request.POST.get('submit_request'):
 			if form.is_valid():
 				cd = form.cleaned_data
-
-				print 'ok'
-
 				#u = User.objects.get(username__exact='temp')
 				#a = Account(user=u, join_date=datetime.now(), phone='eh')
 				#TODO: clean these hard-coded things
-				a = Account.objects.filter(phone__exact='eh')[0]
+				a = Account.objects.get(user=request.user)
 
 				s = True
 				if cd['status'] is 'Public':
@@ -67,13 +64,19 @@ def create(request):
 				m.hosts.add(a)
 				m.save()
 
+				agendaitem = request.POST.get('agenda_item')
+
+				if agendaitem != '':
+					i = AgendaItem(name=agendaitem)
+					i.save()
+					m.agenda_items.add(i)
+					m.save()
+
 				a.meetings_created.add(m)
 				a.meetings_in.add(m)
 				a.save()
 
-				print 'id: ' + meeting_no
-
-				return HttpResponseRedirect('../thanks')
+				return HttpResponseRedirect('../meeting/'+meeting_no)
 			else:
 				errors = {}
 				context['errors'] = errors
@@ -135,6 +138,11 @@ def home(request):
 	context = {}
 	context.update(csrf(request))
 	context['user'] = request.user
+
+	a = Account.objects.get(user=request.user)
+	context['account'] = a
+	context['meetingsin'] = a.meetings_in.all()
+	context['meetingscreated'] = a.meetings_created.all()
 
 	return render_to_response('home.html', context)
 

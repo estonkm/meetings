@@ -2,14 +2,42 @@ all to-do's in code marked with #TODO
 
 master "to-do" list:
 
+IMPORTANT
+
 1. create the separate meetings, each with a unique ID, and attach to the host under created meetings. be able to render the precise meeting with its page ID.
+
+	--done! just needs to fill out all the information.
+
+1.b. create the agenda items
+
+	--done
+
+1.c. show errors in meeting creation page; allow certain things to be left blank.
+
+1.d. split meeting creation into three steps: 1. set name, description, etc.; 2. add agenda items; 3. add people (search contacts or add by email)
+
+1.e. then send out the email notifications
+
 
 2. allow a host to invite other users to the meeting (OK if doesn't use contacts yet), and both the meeting and account info (of the invitees) will be updated. enable meetings to show up in correct locations in home page of the users.
 
-3. finish the meeting page, and fill in comments, motions, etc. for that meeting. enable settings option for the hosts. 
+3. finish the meeting page, and fill in comments, motions, etc. for that meeting. 
+
+3.b. enable settings option for the hosts. enable hosts to add moderators.
 
 4. enable users to add comments/motions etc. enable moderators to remove content.
 
 5. fix the styling of everything (by that I mean "actually style it"). 
 
-6. enable contacts for a user; to search contacts in database and add by email (for now; API comes later). fix the meeting creation page to allow inviting contacts to the meeting.
+6. enable contacts for a user; to search contacts in database and add by email. fix the meeting creation page to allow inviting contacts to the meeting.
+
+
+LESS IMPORTANT RIGHT NOW BUT WILL BE LATER
+
+1. fix style so it looks less bootstrap-y; improve user experience overall
+
+2. improve security: verify emails, etc.
+
+3. add in API for importing Google Contacts, etc.
+
+4. place restrictions on public vs. private meetings
