@@ -34,54 +34,52 @@
     <div class="container">
         <div class="row">
             <div class="span9"><p class="lead">Agenda Items</p>
+                {% for ai in agenda_items %}
                  <div class="agendaItem narrow" id="mot1">
                     <div class="agendatitle collapse-group">
-                        <text class="agenda"> Improving Workplace Safety</text><text class="" style="margin-left: 5px; font-size: 14px; color: #999;">[5    motions]</text>
-                        <a class="btn btn-mini" id="c1" href="#">+</a>
+                        <text class="agenda"> {{ ai.name }}</text><text class="" style="margin-left: 5px; font-size: 14px; color: #999;">[{{ai.motions.all.count}}    motions]</text>
+                        <a class="btn btn-mini showmotions" href="#">+</a>
                         <div class="collapse">
+                            {% for motion in ai.motions.all %}
                             <div class="motion">
                                 <div class="title">
-                                    <text>Safety Regulations Clearly Communicated</text>
-                                    <text style="color: #999"> by username1</text>
+                                    <text>{{ motion.name }}</text>
+                                    <text style="color: #999"> by {{motion.user.name}}</text>
                                 </div>
                                 <div class="status">
-                                    <i class="icon-thumbs-up"></i><text style="padding-right: 5px;"> 8</text>
-                                    <i class="icon-thumbs-down"></i><text style="padding-right: 10px;"> 4</text>
-                                    <text>2</text><text style="color: #999"> comments</text>
+                                   <i class="icon-thumbs-up" style="cursor:hand; cursor:pointer;" id="like_{{ motion.id }}" value="{{motion.likes}}"></i>
+                                    <text style="padding-right: 5px; color: #000066;"> <span id="span_like_{{ motion.id}}">{{motion.likes}}</span></text>
+
+                                    <i class="icon-thumbs-down" style="cursor:hand; cursor:pointer;" id="dislike_{{ motion.id}}" value="{{motion.dislikes}}"></i>
+                                    <text style="padding-right: 10px; color: #990033;"><span id="span_dislike_{{ motion.id}}">{{motion.dislikes}}</span></text>
+
+                                    <text>{{motion.comments.all.count}}</text><text style="color: #999"> comments</text>
                                     <a class="btn btn-mini" id="c2" href="#">+</a>
                                 </div>
+                                {% for comment in motion.comments.all %}
+                                <div class="comment">
+                                    YOOOOOO <p></p>
+                                    <text style="float: right;"> by {{comment.user.name}}</text>
+                                </div>
+                                {% endfor %}
                             </div>
-                            <div class="motion">
-                                <div class="title">
-                                    <text>Safe Clothing for Lab Users</text>
-                                    <text style="color: #999"> by username2</text>
+                            {% endfor %}
+                        </div>
+                        <div class="motion" style="margin-left: 50px !important; margin-top: 10px !important;">
+                            <div class="title" style="height: 40px !important;">
+
+                                    <form method="post">{% csrf_token %}
+                                <div class="input-append">
+                                        <input class="span2" name="motiontext" type="text" style="width: 250px;" placeholder="Add a motion">
+                                        <button class="btn" name="addmotion" value="{{ ai.id }}" type="submit"><i class="icon-pencil" style="padding-right: 5px;"></i>
+                                        <!-- removing the </button> here made the post work? what? -->
                                 </div>
-                                <div class="status">
-                                    <i class="icon-thumbs-up"></i><text style="padding-right: 5px;"> 2</text>
-                                    <i class="icon-thumbs-down"></i><text style="padding-right: 10px;"> 2</text>
-                                    <text>1</text><text style="color: #999"> comments</text>
-                                    <a class="btn btn-mini" id="c2" href="#">+</a>
-                                </div>
-                            </div>
-                            <div class="motion">
-                                <div class="title" style="height: 40px !important;">
-                                    <form>
-                                        <div class="input-append">
-                                            <input class="span2" id="appendedInputButton" type="text" style="width: 250px;" placeholder="Add a motion">
-                                            <button class="btn" type="button"><i class="icon-pencil" style="padding-right: 5px;"></i></button>
-                                        </div>
-                                    </form>
-                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="agendaItem narrow" id="mot2">
-                    <div class="agendatitle">
-                        <text class="agenda">Something Else</text>
-                        <text class="" style="margin-left: 5px; font-size: 14px; color: #999;">[0 motions]</text>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
             <div class="span3">
                 <div class="userinfo">
@@ -90,11 +88,11 @@
                 </div>
                 <div class="userinfo">
                     <i class="icon-user"></i>
-                    <text class="lead" style="font-size: 15px !important;">Moderators (2):</text>
+                    <text class="lead" style="font-size: 15px !important;">Moderators ({{m.moderators.all.count}}):</text>
                 </div>
                 <div class="userinfo">
                     <i class="icon-user"></i>
-                    <text class="lead" style="font-size: 15px !important;">Members (10):</text>
+                    <text class="lead" style="font-size: 15px !important;">Members ({{m.members.all.count}}):</text>
                 </div>
             </div>
         </div>
@@ -107,10 +105,28 @@
 <script>
     $(function() {
         $(document).ready(function(){ 
-            $('#c1').click(function(e) {
+            $('.showmotions').click(function(e) {
                 e.preventDefault();
                 var $collapse = $(this).closest('.collapse-group').find('.collapse');
                 $collapse.collapse('toggle');
+            });
+
+            var data;
+            $('.icon-thumbs-up').click(function(e) {
+                id = $(this).attr('id').split('_')[1];
+                data = $(this).attr('id') + ' up';
+                // TODO: send data via ajax to server
+
+                var newlikes = parseInt($(this).attr('value')+1);
+                $('#span_like_'+id+'').text(newlikes);
+            });
+
+            $('.icon-thumbs-down').click(function(e) {
+                id = $(this).attr('id').split('_')[1];
+                data = $(this).attr('id') + ' down';
+
+                var newlikes = parseInt($(this).attr('value')+1);
+                $('#span_dislike_'+id+'').text(newlikes);
             });
         });
     });

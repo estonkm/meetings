@@ -8,13 +8,16 @@
 	<div class="control-group">
 		<label class="control-label">Meeting Name</label>
 		<div class="controls">
-			{{ form.title }}
+			{{ form.title }} 
+			{% if form.title.errors %}
+			<text style="color: red; padding-left: 5px;">Required</text>
+			{% endif %}
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label">Description</label>
 		<div class="controls">
-			{{ form.desc }}
+			{{ form.desc }} {% if form.desc.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
 		</div>
 	</div>
 	<div class="control-group">
@@ -32,31 +35,31 @@
 	<div class="control-group">
 		<label class="control-label" for="inputDate">Start Date</label>
 		<div class="controls">
-			{{ form.startdate }}
+			{{ form.startdate }} {% if form.startdate.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label" for="inputTime">Start Time</label>
 		<div class="controls">
-			{{ form.starttime }}
+			{{ form.starttime }} {% if form.starttime.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label" for="inputDate">End Date</label>
 		<div class="controls">
-			{{ form.enddate }}
+			{{ form.enddate }} {% if form.enddate.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label" for="inputTime">End Time</label>
 		<div class="controls">
-			{{ form.endtime }}
+			{{ form.endtime }} {% if form.endtime.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label" for="">Meeting Type</label>
 		<div class="controls">
-			{{ form.status }}
+			{{ form.status }} {% if form.status.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
 		</div>
 	</div>
 	<div class="control-group">

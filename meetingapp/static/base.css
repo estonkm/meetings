@@ -65,6 +65,11 @@ div .time {
 /*       padding-top: 6px;*/
 }
 
+.motion .comment {
+    width: 600px;
+    padding-left: 25px;
+}
+
 .agendaItem {
 	border-bottom: 1px solid #999;
 	overflow: hidden;

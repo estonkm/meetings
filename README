@@ -4,7 +4,7 @@ master "to-do" list:
 
 IMPORTANT
 
-1. create the separate meetings, each with a unique ID, and attach to the host under created meetings. be able to render the precise meeting with its page ID.
+1. create the separate meetings, each with a unique ID, and attach to the host under created meetings. be able to render the precise meeting with its page ID
 
 	--done! just needs to fill out all the information.
 
@@ -14,12 +14,25 @@ IMPORTANT
 
 1.c. show errors in meeting creation page; allow certain things to be left blank.
 
+	--done
+
+
 1.d. split meeting creation into three steps: 1. set name, description, etc.; 2. add agenda items; 3. add people (search contacts or add by email)
 
 1.e. then send out the email notifications
 
 
-2. allow a host to invite other users to the meeting (OK if doesn't use contacts yet), and both the meeting and account info (of the invitees) will be updated. enable meetings to show up in correct locations in home page of the users.
+
+(basically, add inviting user and user->meeting functionality)
+
+
+
+
+2. allow a host to invite other users to the meeting (OK if doesn't use contacts yet), and both the meeting and account info (of the invitees) will be updated. 
+
+2.b. enable meetings to show up in correct locations in home page of the users.
+
+	--done
 
 3. finish the meeting page, and fill in comments, motions, etc. for that meeting. 
 

@@ -9,6 +9,8 @@ valid_time_formats=['%I:%M%p']
 
 class UserForm(forms.Form):
 	username = forms.CharField(required=False)
+	first_name = forms.CharField()
+	last_name = forms.CharField()
 	email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'email'}))
 	password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'password'}))
 	retype = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'password'}))
@@ -16,7 +18,7 @@ class UserForm(forms.Form):
 
 class MeetingForm(forms.Form):
 	title = forms.CharField()
-	desc = forms.CharField(widget=forms.Textarea(attrs={'rows':'4', 'cols':'40','maxlength':250}), max_length=500, required=False)
+	desc = forms.CharField(widget=forms.Textarea(attrs={'rows':'3', 'cols':'40','maxlength':250}), max_length=500)
 	startdate = forms.DateField(widget=html5_widgets.DateInput)
 	starttime = forms.TimeField(widget=forms.TimeInput(attrs={'placeholder': '12:00AM'}), input_formats=valid_time_formats)
 	enddate = forms.DateField(widget=html5_widgets.DateInput)

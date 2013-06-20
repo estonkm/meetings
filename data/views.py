@@ -34,11 +34,12 @@ def index(request):
 def create(request):
 	context = {}
 	context.update(csrf(request))
-	form = MeetingForm(request.POST, request.FILES)
+	form = MeetingForm()
 	context['form'] = form
 	context['user'] = request.user
 
 	if request.method == 'POST':
+		form = MeetingForm(request.POST)
 		if request.POST.get('submit_request'):
 			if form.is_valid():
 				cd = form.cleaned_data
@@ -64,13 +65,17 @@ def create(request):
 				m.hosts.add(a)
 				m.save()
 
-				agendaitem = request.POST.get('agenda_item')
-
-				if agendaitem != '':
-					i = AgendaItem(name=agendaitem)
-					i.save()
-					m.agenda_items.add(i)
-					m.save()
+				counter = 1
+				item_name = 'agenda_item_'+str(counter)
+				while request.POST.get(item_name):
+					agendaitem = request.POST.get(item_name)
+					if agendaitem:
+						i = AgendaItem(name=agendaitem, desc='')
+						i.save()
+						m.agenda_items.add(i)
+						m.save()
+					counter += 1
+					item_name = 'agenda_item_'+str(counter)
 
 				a.meetings_created.add(m)
 				a.meetings_in.add(m)
@@ -81,7 +86,6 @@ def create(request):
 				errors = {}
 				context['errors'] = errors
 				cd = form.cleaned_data
-				print 'hi'
 
 	return render_to_response('create.html', context)
 
@@ -99,8 +103,10 @@ def signup(request):
 				if User.objects.filter(username=cd['email']) or User.objects.filter(email=cd['email']):
 					context['email_taken'] = True
 				else:
-					u = User.objects.create_user(cd['email'], email=cd['email'], password=cd['password'], )
-					a = Account(user=u, join_date=datetime.now(), phone="eh") #phone needs to be made non-mandatory
+					u = User.objects.create_user(cd['email'], first_name=cd['first_name'],
+						last_name=cd['last_name'], email=cd['email'], password=cd['password'])
+					a = Account(user=u, join_date=datetime.now(), phone='') 
+					#TODO: phone needs to be made non-mandatory
 					a.save()
 					print 'success'
 
@@ -141,8 +147,8 @@ def home(request):
 
 	a = Account.objects.get(user=request.user)
 	context['account'] = a
-	context['meetingsin'] = a.meetings_in.all()
-	context['meetingscreated'] = a.meetings_created.all()
+	context['meetingsin'] = a.meetings_in.order_by("id").reverse()
+	context['meetingscreated'] = a.meetings_created.order_by("id").reverse()
 
 	return render_to_response('home.html', context)
 
@@ -158,6 +164,25 @@ def contacts(request):
 	context.update(csrf(request))
 	context['user'] = request.user
 
+	a = Account.objects.get(user=request.user)
+	contacts = a.contacts.all()
+
+	context['contacts'] = contacts
+
+	if request.method == 'POST':
+		query = request.POST.get('search')
+		if query:
+			u = User.objects.filter(email=query)
+			if u:
+				b = Account.objects.get(user=u[0])
+				a.contacts.add(b)
+				a.save()
+				context['result'] = b.user.username + ' was successfully added to your contacts.'
+				print 'hi'
+			else:
+				print 'hey'
+				context['nosuch'] = 'No such user exists.'
+			
 	return render_to_response('contacts.html', context)
 
 def thanks(request):
@@ -178,7 +203,24 @@ def meeting(request):
 	else:
 		return render_to_response('error.html')
 
+	print 'hi'
+	if request.method=='POST':
+		print 'ok'
+		motiontext = request.POST.get('motiontext')
+		if motiontext:
+			print "success"
+			motion = Motion(user=Account.objects.get(user=request.user), timestamp=datetime.now(), name=motiontext, desc='',
+				likes=0, dislikes=0)
+			motion.save()
+
+			ai_id = request.POST.get('addmotion')
+			print ai_id
+			modified_ai = AgendaItem.objects.get(id__exact=ai_id)
+			modified_ai.motions.add(motion)
+			modified_ai.save()
+
 	context['m'] = meeting
+	context['agenda_items'] = meeting.agenda_items.all()
 
 	return render_to_response('meeting_page.html', context)
 

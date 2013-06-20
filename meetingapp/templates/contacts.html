@@ -8,8 +8,29 @@
 	<div class="row">
 		<div class="span9">
 			<!-- Create a New Meeting button goes here -->
-			<div>
-				Contacts are shown here, with option to import contacts or add a contact--the works
+
+			<div style="width: 200px; height: 50px; margin-bottom: 20px; float: left;">
+				<h4 style="margin: 5px !important;">Contacts</h4>
+			</div>
+			<form class="form-search" style="margin: 0px !important; float:right;" method="post">
+				{% csrf_token %}
+				<!-- TODO: open a new page or something; or modal pop-up -->
+				<input type="text" name='search' placeholder="Add a new contact" class="input-medium search-query">
+				<button type="submit" class="btn">Search</button>
+			</form>
+			<!-- <text style="float: right; margin-right: 10px; margin-top: 4px;"><em>Add a New Contact</em></text> -->
+			<div style="float:left;">
+				{% for c in contacts %}
+				<div class="agendaItem narrow" style="padding: 5px !important; padding-top: 0px !important; padding-bottom: 0px !important; width: 690px !important;">
+					<div style="width:450px; float:left;">
+						<h4>{{ c.user.first_name}} {{ c.user.last_name}}</h4>
+					</div>
+					<div style="width:240px; float:right; text-align: right; font-size: 14px; line-height: 25px; padding-top: 7px;">
+						<text><em>Email: {{ c.user.email }}</em></text><p></p>
+						<text><em>Phone: {{ c.phone }}</em><text><p></p>
+					</div>
+				</div>
+				{% endfor %}
 			</div>
 		</div>
 		<div class="span3">
