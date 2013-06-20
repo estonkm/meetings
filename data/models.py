@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-import PIL
+from PIL import Image
 
 class Account(models.Model):
 	user = models.OneToOneField(User)
