@@ -1,0 +1,17 @@
+Metadata-Version: 1.0
+Name: html5
+Version: 0.4
+Summary: Django HTML5 support
+Home-page: UNKNOWN
+Author: Robert Eanes
+Author-email: django@robsinbox.com
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Framework :: Django
