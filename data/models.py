@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import PIL
 
 class Account(models.Model):
 	user = models.OneToOneField(User)
