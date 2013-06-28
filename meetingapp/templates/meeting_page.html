@@ -35,101 +35,171 @@
         <div class="row">
             <div class="span9"><p class="lead">Agenda Items</p>
                 {% for ai in agenda_items %}
-                 <div class="agendaItem narrow" id="mot1">
-                    <div class="agendatitle collapse-group">
-                        <text class="agenda"> {{ ai.name }}</text><text class="" style="margin-left: 5px; font-size: 14px; color: #999;">[{{ai.motions.all.count}}    motions]</text>
-                        <a class="btn btn-mini showmotions" href="#">+</a>
-                        <div class="collapse">
-                            {% for motion in ai.motions.all %}
-                            <div class="motion">
-                                <div class="title">
-                                    <text>{{ motion.name }}</text>
-                                    <text style="color: #999"> by {{motion.user.name}}</text>
-                                </div>
-                                <div class="status">
-                                   <i class="icon-thumbs-up" style="cursor:hand; cursor:pointer;" id="like_{{ motion.id }}" value="{{motion.likes}}"></i>
-                                    <text style="padding-right: 5px; color: #000066;"> <span id="span_like_{{ motion.id}}">{{motion.likes}}</span></text>
+                <div class="row ai_row">
+                    <div class="row ai_title">
+                        <text class="agenda" style="padding-right: 5px;">{{ai.name}}</text>
+                        <button class="btn hoverblack alter" data-toggle="collapse" id="showmotions_{{ai.id}}" data-target="#ai_{{ai.id}}">show motions ({{ai.motions.all.count}})</button>
+                        {% if user.is_authenticated %}<button class="btn hoverblack alter" data-toggle="collapse" name="addmotion" data-target="#addmotion_{{ai.id}}">add a motion</a>{% endif %}
+                    </div>
+                    <div class="row collapse out" style="margin-bottom: 20px !important" id="ai_{{ai.id}}">
+                        {% for motion in ai.motions.all %}
+                        <div class="row motion">
+                            <div class="row motiontitle">
+                                {% if motion.modded %}
+                                    <em>{{motion.name}}</em>
+                                {% else %}
+                                    {% if user.username == host.user.username or motion.user.user == user %}
+                                        <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
+                                        <text>{{motion.name}}</text>
+                                            <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_motion" value="{{motion.id}}">Remove</button>
+                                        </form>
+                                    {% else %}
+                                        <text>{{motion.name}}</text>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                            <div class="row motionbody">
+                                <text style="">{{motion.desc}}</text>
+                            </div>
+                            <div class="row motioninfo">
+                                <text style="color: #999; font-size: 12px; float:left;">posted by {{motion.user.user.first_name}} {{motion.user.user.last_name}} on {{motion.timestamp}}</text>
+                                <div style="float:right">
+                                    <i class="icon-thumbs-up" style="cursor:hand; cursor:pointer;" id="like_{{ motion.id }}" value="{{motion.likes}}"></i>
+                                        <text style="padding-right: 5px; color: #000066;"> <span id="span_like_{{ motion.id}}">{{motion.likes}}</span></text>
 
-                                    <i class="icon-thumbs-down" style="cursor:hand; cursor:pointer;" id="dislike_{{ motion.id}}" value="{{motion.dislikes}}"></i>
-                                    <text style="padding-right: 10px; color: #990033;"><span id="span_dislike_{{ motion.id}}">{{motion.dislikes}}</span></text>
+                                        <i class="icon-thumbs-down" style="cursor:hand; cursor:pointer;" id="dislike_{{ motion.id}}" value="{{motion.dislikes}}"></i>
+                                        <text style="padding-right: 5px; color: #990033;"><span id="span_dislike_{{ motion.id}}">{{motion.dislikes}}</span></text>
 
-                                    <text>{{motion.comments.all.count}}</text><text style="color: #999"> comments</text>
-                                    <a class="btn btn-mini" id="c2" href="#">+</a>
+                                        <button class="btn hoverblack alter" data-toggle="collapse" data-target="#motion_{{motion.id}}">show comments ({{motion.comments.all.count}})</a>
+
+                                        {% if user.is_authenticated %}<button class="btn hoverblack alter" data-toggle="collapse" data-target="#addcomment_{{motion.id}}">add comment</a>{% endif %}
                                 </div>
+                            </div>
+                            <div class="row collapse out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
                                 {% for comment in motion.comments.all %}
-                                <div class="comment">
-                                    YOOOOOO <p></p>
-                                    <text style="float: right;"> by {{comment.user.name}}</text>
-                                </div>
+                                    <div class="row comment">
+                                        {% if comment.modded %}
+                                            <em>{{comment.text}}</em>
+                                        {% else %}
+                                            {% if user.username == host.user.username or comment.user.user == user %}
+                                                <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
+                                                    {{comment.text}}
+                                                    <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_comment" value="{{comment.id}} {{motion.id}}">Remove</button>
+                                                </form>
+                                            {% else %}
+                                                {{comment.text}}
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                    <div class="row comment">
+                                        <text style="color: #999; font-size: 12px; float:left;">posted by {{comment.user.user.first_name}} {{comment.user.user.last_name}} on {{comment.timestamp}}</text>
+                                    </div>
                                 {% endfor %}
                             </div>
-                            {% endfor %}
-                        </div>
-                        <div class="motion" style="margin-left: 50px !important; margin-top: 10px !important;">
-                            <div class="title" style="height: 40px !important;">
-
-                                    <form method="post">{% csrf_token %}
-                                <div class="input-append">
-                                        <input class="span2" name="motiontext" type="text" style="width: 250px;" placeholder="Add a motion">
-                                        <button class="btn" name="addmotion" value="{{ ai.id }}" type="submit"><i class="icon-pencil" style="padding-right: 5px;"></i>
-                                        <!-- removing the </button> here made the post work? what? -->
-                                </div>
+                            {% if user.is_authenticated %}<div class="row comment collapse out" id="addcomment_{{motion.id}}">
+                                <form class="mod" method="post">{% csrf_token %}
+                                    <textarea rows="4" name="comment" style="width: 90%; margin-bottom: 5px !important;" placeholder="Write comment here"></textarea>
+                                    <button class="" style="float:right; margin-right: 8%; margin-bottom:5px; margin-top: 0px !important;" name="" value="{{motion.id}}" type="submit">Submit</button>
                                 </form>
-                            </div>
+                            </div>{% endif %}
+                        </div>
+                        {% endfor %}
+                        <div class="row motion collapse out" style="border-bottom: none !important;" id="addmotion_{{ai.id}}">
+                            {% if user.is_authenticated %}<form class="mod" method="post">{% csrf_token %}
+                                <input type="text" name="motionname" placeholder="Write the motion name here." style="width: 90%; margin-bottom: 5px !important;"></input>
+                                <textarea rows="4" name="motiontext" style="width: 90%; margin-bottom: 5px !important;" placeholder="Write the motion description here."></textarea>
+                                <button class="" style="float:right; margin-right: 8%; margin-bottom:5px; margin-top: 0px !important;" name="" value="{{ai.id}}" type="submit">Submit</button>
+                            </form>{% endif %}
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
             <div class="span3">
-                <div class="userinfo">
+                {% if user.username == host.user.username %}
+                <form method="post" style="margin: 5px !important; margin-top: 0px !important; margin-left: 8px !important;">{% csrf_token %}
+                    <button class="btn btn-primary alter" type="submit" name="settings" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Settings</button>
+                    <button class="btn alter" type="submit" name="members" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Manage Members</button>
+<!--                     <button class="btn btn-primary" name="settings" style="padding-left: 17px !important; padding-right: 17px !important;">Meeting Settings</button>
+                    <button class="btn" style="margin-top: 5px !important; margin-bottom: 5px !important;"name="members">Manage Members</button> -->
+                </form>
+                {% endif %}
+                <div class="userinfo sidebox">
                     <i class="icon-user"></i>
-                    <text class="lead" style="font-size: 15px !important;">Host (1):</text>
+                    <text class="lead" style="font-size: 15px !important;">Host (1):</text><br>
+                    {% for member in m.hosts.all %}
+                    <text>{{member.user.last_name}}, {{member.user.first_name}} <<em>{{member.user.email}}</em>></text><br>
+                    {% endfor %}
                 </div>
-                <div class="userinfo">
+                <div class="userinfo sidebox">
                     <i class="icon-user"></i>
-                    <text class="lead" style="font-size: 15px !important;">Moderators ({{m.moderators.all.count}}):</text>
+                    <text class="lead" style="font-size: 15px !important;">Moderators ({{m.moderators.all.count}}):</text><br>
+                    {% for member in m.moderators.all %}
+                    <text>{{member.user.last_name}}, {{member.user.first_name}} <<em>{{member.user.email}}</em>></text><br>
+                    {% endfor %}
                 </div>
-                <div class="userinfo">
+                <div class="userinfo sidebox">
                     <i class="icon-user"></i>
-                    <text class="lead" style="font-size: 15px !important;">Members ({{m.members.all.count}}):</text>
+                    <text class="lead" style="font-size: 15px !important;">Members ({{m.members.all.count}}):</text><br>
+                    {% for member in m.members.all %}
+                    <text>{{member.user.last_name}}, {{member.user.first_name}} <<em>{{member.user.email}}</em>></text><br>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-        <footer style="padding-top: 20px;">
-            <p class="pull-right"><a href="#">Back to top</a></p>
-            <p>&copy; 2013 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
-        </footer>
     </div>
 
 <script>
-    $(function() {
-        $(document).ready(function(){ 
-            $('.showmotions').click(function(e) {
-                e.preventDefault();
-                var $collapse = $(this).closest('.collapse-group').find('.collapse');
-                $collapse.collapse('toggle');
-            });
+$(function() {
+    $(document).ready(function(){ 
+        $('button[name=addmotion]').click(function(e) {
+            target = $(this).attr('data-target').split('_')[1];
 
-            var data;
-            $('.icon-thumbs-up').click(function(e) {
-                id = $(this).attr('id').split('_')[1];
-                data = $(this).attr('id') + ' up';
-                // TODO: send data via ajax to server
+            // TODO: when "add a motion" is clicked, open show motions
 
-                var newlikes = parseInt($(this).attr('value')+1);
-                $('#span_like_'+id+'').text(newlikes);
-            });
+            if ($('#ai_'+target+'').height() == 0) {
+                $('#showmotions_'+target+'').click();
+            }
+        });
 
-            $('.icon-thumbs-down').click(function(e) {
-                id = $(this).attr('id').split('_')[1];
-                data = $(this).attr('id') + ' down';
-
-                var newlikes = parseInt($(this).attr('value')+1);
-                $('#span_dislike_'+id+'').text(newlikes);
+        var data;
+        $('.icon-thumbs-up').click(function(e) {
+            id = $(this).attr('id').split('_')[1];
+            data = $(this).attr('id') + '_up';
+            var icon = $(this);
+            // TODO: send data via ajax to server
+            $.getJSON("/vote/", {'val': data}).done(function(data){
+                if (data!="failure") {
+                    var newlikes = parseInt(icon.attr('value'))+1;
+                    $('#span_like_'+id+'').text(newlikes);
+                }
             });
         });
+
+        $('.icon-thumbs-down').click(function(e) {
+            id = $(this).attr('id').split('_')[1];
+            data = $(this).attr('id') + '_down';
+            var icon = $(this);
+
+            $.getJSON("/vote/", {"val": data}).done(function(data){
+                if (data!="failure") {
+                    var newlikes = parseInt(icon.attr('value'))+1;
+                    $('#span_dislike_'+id+'').text(newlikes);
+                }
+            });
+        });
+
+        $(".motion form.mod").submit(function() {
+            $(this).find('button').attr("name", "agendaid");
+        });
+
+        $(".comment form.mod").submit(function() {
+            $(this).find('button').attr("name", "motionid");
+        });
+
     });
+});
+
 </script>
 
 {% endblock %}

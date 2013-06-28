@@ -28,3 +28,13 @@ class MeetingForm(forms.Form):
 class LoginForm(forms.Form):
 	username = forms.CharField()
 	password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'password'}))
+
+class SettingsForm(forms.Form):
+	title = forms.CharField(required=False)
+	desc = forms.CharField(widget=forms.Textarea(attrs={'rows':'3', 'cols':'40','maxlength':250}), max_length=500, required=False)
+	startdate = forms.DateField(widget=html5_widgets.DateInput, required=False)
+	starttime = forms.TimeField(widget=forms.TimeInput(attrs={'placeholder': '12:00AM'}), input_formats=valid_time_formats, required=False)
+	enddate = forms.DateField(widget=html5_widgets.DateInput, required=False)
+	endtime = forms.TimeField(widget=forms.TimeInput(attrs={'placeholder': '12:00AM'}), input_formats=valid_time_formats, required=False)
+	status = forms.ChoiceField(choices=STATUS, widget=forms.RadioSelect(), required=False)
+

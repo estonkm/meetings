@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+	<form class="form-horizontal" style="display:inline-block;" method="post">
+		{% csrf_token %}
+		<input type="hidden" name="submit_request" value="submit_request">
+		<div class="control-group">
+			<div class="controls">
+				<h3>Invite Members</h3>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Invite from contacts: </label>
+			<div class="controls">
+				<section class="container" style="margin-left: 0px !important; padding-left: 0px !important;">
+				    <div>
+				        <select id="leftValues" name="added" size="5" style="" multiple>
+				        </select>
+				    </div>
+				    <div>
+				        <input type="button" id="btnLeft" value="&lt;&lt;" style="margin-bottom: 5px !important; margin-top: 10px;"/>
+				        <input type="button" id="btnRight" value="&gt;&gt;" />
+				    </div>
+				    <div>
+				        <select id="rightValues" size="4" multiple>
+				        	{% for contact in account.contacts.all %}
+				            <option>{{contact.user.last_name}}, {{contact.user.first_name}} <<em>{{contact.user.email}}</em>></option>
+				            {% endfor %}
+				        </select>
+				        <div>
+				            <input type="text" id="txtRight" style="width:220px; box-sizing: border-box;" />
+				        </div>
+				    </div>
+				</section>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Or send email invites:</label>
+			<div class="controls">
+				<textarea name="entered" rows="5" cols="100" style="margin-left: 3px;" placeholder="One email per line"></textarea>
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn btn-primary">Invite to Meeting</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+<script>
+$(function() {
+	$("#btnLeft").click(function () {
+	    var selectedItem = $("#rightValues option:selected");
+	    $("#leftValues").append(selectedItem);
+	});
+
+	$("#btnRight").click(function () {
+	    var selectedItem = $("#leftValues option:selected");
+	    $("#rightValues").append(selectedItem);
+	});
+
+	$("#rightValues").change(function () {
+	    var selectedItem = $("#rightValues option:selected");
+	    $("#txtRight").val(selectedItem.text());
+	});
+
+	$("form").submit(function() {
+		var len = $("#leftValues option").length;
+		var fields = "";
+		for (var i = 0; i < len; i++) {
+			fields += $("#leftValues option:eq("+i+")").val() + ",";
+		}
+		$("#leftValues option").val(fields);
+	});
+});
+
+</script>
+
+{% endblock %}

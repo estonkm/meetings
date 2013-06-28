@@ -1,6 +1,10 @@
 Django==1.5.1
+PIL==1.1.7
+South==0.8.1
 distribute==0.6.34
 dj-database-url==0.2.1
+django-common-helpers==0.6.0
+django-cron==0.3.0
 gunicorn==0.17.4
 -e git+https://github.com/rhec/django-html5.git@c4a76e02744422c3305f01ca361ab4b0cdcd1198#egg=html5-dev
 psycopg2==2.5

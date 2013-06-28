@@ -1,6 +1,7 @@
 body {
   padding-bottom: 40px;
   padding-top: 70px;
+  overflow: auto;
 }
 
 div {
@@ -12,6 +13,16 @@ div .info {
     width:500px !important;
     float:left !important;
     height: 50%;
+}
+
+section > div {
+    float: left;
+    padding: 4px;
+}
+
+section > div + div {
+    width: 40px;
+    text-align: center;
 }
 
 div .time {
@@ -52,23 +63,65 @@ div .time {
 	float:left;
 }
 
-.motion .title {
-    width: 425px; 
-    line-height: 26px;
-    float: left;
+.motion {
+    border-bottom: 1px solid #DCDCDC;
+    margin-left: 0px !important;
 }
 
-.collapse .motion {
-/*        border-bottom: 1px solid #DCDCDC;*/
-    width: 650px;
-    height: 36px;
-/*       padding-top: 6px;*/
+.motion .row {
+    margin-left: 0px !important;
 }
 
-.motion .comment {
-    width: 600px;
-    padding-left: 25px;
+.comment {
+    margin-left: 0px !important;
 }
+
+/* WHEN USING ROWS YOU SOMETIMES HAVE TO SET MARGIN EQUAL TO 0 AND IMPORTANT IT */
+
+.motion .motiontitle {
+    margin-top: 5px;
+}
+
+a {
+    text-decoration:none !important;
+}
+
+.ai_row .btn.alter {
+    background:none;
+    border:none;
+    box-shadow:none;
+    line-height:4px;
+
+}
+
+button.hoverblack {
+    color: #999; 
+    font-size: 12px; 
+    cursor:mouse; 
+    cursor:pointer;
+}
+
+.sidebox {
+    overflow: scroll !important; 
+    white-space: nowrap !important;
+}
+
+button.hoverblack:hover {
+    color: black !important;
+}
+
+button.btn.alter:hover {
+    color: black !important;
+}
+
+.motion .motionbody {
+    margin-left: inherit;
+}
+
+.motion .motioninfo {
+    margin-left:inherit;
+}
+
 
 .agendaItem {
 	border-bottom: 1px solid #999;
@@ -76,6 +129,24 @@ div .time {
 	padding: 11px 0px;
 	width: 700px;
 	float: left;
+}
+
+.ai_row {
+    margin-left: 0px !important;
+    margin-top: 5px !important;
+    border-bottom: 1px solid #999 !important;
+}
+
+.ai_title {
+    margin-left: 0px !important;
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;   
+}
+
+.motion_row {
+    margin-left: 50px !important;
+    margin-top: 5px !important;
+    border-bottom: 1px solid #DCDCDC !important;
 }
 
 .meetingInfo {
@@ -157,7 +228,7 @@ div .span9 .collapse {
 	float: left;
 }
 
-.btn-mini {
+.btn-mini .alter {
     color: #999 !important;
     border-radius: 0px !important;
     padding: 0 2px !important;

@@ -12,12 +12,18 @@
 			</div>
 		</div>
 		<div class="span3">
-            <div class="userinfo">
-                <text class="lead" style="font-size: 15px !important;">Meetings</text>
+            <div class="userinfo sidebox">
+                <text class="lead" style="font-size: 15px !important;">Meetings ({{account.meetings_in.all.count}}):</text><br><ul>
+                {% for meeting in account.meetings_in.all %}
+                <li>{{meeting.title}}</li>
+                {% endfor %}</ul>
             </div>
-            <div class="userinfo">
+            <div class="userinfo sidebox">
                 <i class="icon-user"></i>
-                <text class="lead" style="font-size: 15px !important;">Contacts (2):</text>
+                <text class="lead" style="font-size: 15px !important;">Contacts ({{account.contacts.all.count}}):</text><br><ul>
+                {% for contact in account.contacts.all %}
+                <li>{{contact.user.last_name}}, {{contact.user.first_name}} <<em>{{contact.user.email}}</em>></li>
+                {% endfor %}</ul>
             </div>
 		</div>
 	</div>

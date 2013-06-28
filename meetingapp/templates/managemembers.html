@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+	<form class="form-horizontal" style="display:inline-block;" method="post">
+		{% csrf_token %}
+		<div class="control-group">
+			<label class="control-label">Add to meeting: </label>
+			<div class="controls">
+				<section class="container" style="margin-left: 0px !important; padding-left: 0px !important;">
+				    <div>
+				        <select id="leftValues1" name="added1" size="5" style="" multiple="yes">
+				        </select>
+				        <input type="hidden" name="added" id="added" value=""></input>
+				    </div>
+				    <div>
+				        <input type="button" id="btnLeft1" value="&lt;&lt;" style="margin-bottom: 5px !important; margin-top: 10px;"/>
+				        <input type="button" id="btnRight1" value="&gt;&gt;" />
+				    </div>
+				    <div>
+				        <select id="rightValues1" size="4" multiple>
+				        	{% for contact in contacts %}
+				            <option>{{contact.user.last_name}}, {{contact.user.first_name}} <<em>{{contact.user.email}}</em>></option>
+				            {% endfor %}
+				        </select>
+				        <div>
+				            <input type="text" id="txtRight1" style="width:220px; box-sizing: border-box;" />
+				        </div>
+				    </div>
+				</section>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Remove members: </label>
+			<div class="controls">
+				<section class="container" style="margin-left: 0px !important; padding-left: 0px !important;">
+				    <div>
+				        <select id="leftValues2" name="added2" size="5" style="" multiple="yes">
+				        </select>
+				        <input type="hidden" name="removed" id="removed" value=""></input>
+				    </div>
+				    <div>
+				        <input type="button" id="btnLeft2" value="&lt;&lt;" style="margin-bottom: 5px !important; margin-top: 10px;"/>
+				        <input type="button" id="btnRight2" value="&gt;&gt;" />
+				    </div>
+				    <div>
+				        <select id="rightValues2" size="4" multiple>
+				        	{% for member in members_to_remove %}
+				            <option>{{member.user.last_name}}, {{member.user.first_name}} <<em>{{member.user.email}}</em>></option>
+				            {% endfor %}
+				        </select>
+				        <div>
+				            <input type="text" id="txtRight2" style="width:220px; box-sizing: border-box;" />
+				        </div>
+				    </div>
+				</section>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Promote members to moderators: </label>
+			<div class="controls">
+				<section class="container" style="margin-left: 0px !important; padding-left: 0px !important;">
+				    <div>
+				        <select id="leftValues3" name="added3" size="5" style="" multiple>
+				        </select>
+				        <input type="hidden" name="modded" id="modded" value=""></input>
+				    </div>
+				    <div>
+				        <input type="button" id="btnLeft3" value="&lt;&lt;" style="margin-bottom: 5px !important; margin-top: 10px;"/>
+				        <input type="button" id="btnRight3" value="&gt;&gt;" />
+				    </div>
+				    <div>
+				        <select id="rightValues3" size="4" multiple>
+				        	{% for member in members_to_mod %}
+				            <option>{{member.user.last_name}}, {{member.user.first_name}} <<em>{{member.user.email}}</em>></option>
+				            {% endfor %}
+				        </select>
+				        <div>
+				            <input type="text" id="txtRight3" style="width:220px; box-sizing: border-box;" />
+				        </div>
+				    </div>
+				</section>
+			</div>
+		</div>
+	<!-- 	<div class="control-group">
+			<label class="control-label">Or send email invites:</label>
+			<div class="controls">
+				<textarea name="entered" rows="5" cols="100" style="margin-left: 3px;" placeholder="One email per line"></textarea>
+			</div>
+		</div> -->
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn btn-primary">Save Changes</button>
+				<a href="../meeting/{{meeting.meeting_id}}" class="btn btn-danger">Return to Meeting</a>
+			</div>
+		</div>
+	</form>
+</div>
+
+
+<script>
+$(function() {
+	$("#btnLeft1").click(function () {
+	    var selectedItem = $("#rightValues1 option:selected");
+	    $("#leftValues1").append(selectedItem);
+	});
+	$("#btnRight1").click(function () {
+	    var selectedItem = $("#leftValues1 option:selected");
+	    $("#rightValues1").append(selectedItem);
+	});
+	$("#rightValues1").change(function () {
+	    var selectedItem = $("#rightValues1 option:selected");
+	    $("#txtRight1").val(selectedItem.text());
+	});
+
+
+	$("#btnLeft2").click(function () {
+	    var selectedItem = $("#rightValues2 option:selected");
+	    $("#leftValues2").append(selectedItem);
+	});
+	$("#btnRight2").click(function () {
+	    var selectedItem = $("#leftValues2 option:selected");
+	    $("#rightValues2").append(selectedItem);
+	});
+	$("#rightValues2").change(function () {
+	    var selectedItem = $("#rightValues2 option:selected");
+	    $("#txtRight2").val(selectedItem.text());
+	});
+
+
+	$("#btnLeft3").click(function () {
+	    var selectedItem = $("#rightValues3 option:selected");
+	    $("#leftValues3").append(selectedItem);
+	});
+	$("#btnRight3").click(function () {
+	    var selectedItem = $("#leftValues3 option:selected");
+	    $("#rightValues3").append(selectedItem);
+	});
+	$("#rightValues3").change(function () {
+	    var selectedItem = $("#rightValues3 option:selected");
+	    $("#txtRight3").val(selectedItem.text());
+	});
+
+	$("form").submit(function() {
+		// how to set selected
+		$("#leftValues1 option").attr("selected", "selected");
+		$("#leftValues2 option").attr("selected", "selected");
+		$("#leftValues3 option").attr("selected", "selected");
+
+		var len = $("#leftValues1 option").length;
+		var fields = "";
+		for (var i = 0; i < len; i++) {
+			fields += $("#leftValues1 option:eq("+i+")").val() + ",";
+		}
+		$("#leftValues1 option").val(fields);
+
+		var len = $("#leftValues2 option").length;
+		var fields = "";
+		for (var i = 0; i < len; i++) {
+			fields += $("#leftValues2 option:eq("+i+")").val() + ",";
+		}
+		$("#leftValues2 option").val(fields);
+
+		var len = $("#leftValues3 option").length;
+		var fields = "";
+		for (var i = 0; i < len; i++) {
+			fields += $("#leftValues3 option:eq("+i+")").val() + ",";
+		}
+		$("#leftValues3 option").val(fields);
+	});
+});
+
+</script>
+
+{% endblock %}

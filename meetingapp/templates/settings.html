@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+	<form method="post">{% csrf_token %}
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Field Name</th>
+					<th>Current</th>
+					<th>Desired Changes (leave blank to leave unchanged)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Meeting Name</td>
+					<td>{{meeting.title}}</td>
+					<td>{{form.title}}</td>
+				</tr>
+				<tr>
+					<td>Meeting Description</td>
+					<td>{{meeting.desc}}</td>
+					<td>{{ form.desc }}</td>
+				</tr>
+				<tr>
+					<td>Agenda Items</td>
+					<td>{% for ai in agenda_items %}{{ai.name}}<br>{% endfor %}</td>
+					<td>{% for ai in agenda_items %}<span>
+						<button class="btn btn-mini btn-danger" name="remove_ai" id="{{ai.id}}" style="padding: 2px !important; line-height: 7px !important; border-radius: 0px !important;">x</button> {{ai.name}}<br></span>
+						{% endfor %}<br>
+						<h5>Add items: </h5>
+						<span id="agenda_controls">
+							<input type="text" name="agenda_item_1"><br>
+						</span>
+						<a class="btn" id="additem" href="#">Add item</a>
+						<a class="btn" id="removeitem" style="margin-left: 5px;" href="#">Remove item</a>
+					</td><input type="hidden" name="removed" id="removed" value="">
+				</tr>
+				<tr>
+					<td>Start Date</td>
+					<td>{{meeting.startdate}}</td>
+					<td>{{form.startdate}} {% if form.startdate.errors %}<text style="color: red; padding-left: 5px;">Accepted Format: <em>mm/dd/yyyy</em></text> {% endif %}</td>
+				</tr>
+				<tr>
+					<td>Start Time</td>
+					<td>{{meeting.starttime}}</td>
+					<td>{{form.starttime}} {% if form.starttime.errors %}<text style="color: red; padding-left: 5px;">Accepted Format: <em>3:00PM</em></text> {% endif %}</td>
+				</tr>
+				<tr>
+					<td>End Date</td>
+					<td>{{meeting.enddate}}</td>
+					<td>{{form.enddate}} {% if form.enddate.errors %}<text style="color: red; padding-left: 5px;">Accepted Format: <em>mm/dd/yyyy</em></text> {% endif %}</td>
+				</tr>
+				<tr>
+					<td>End Time</td>
+					<td>{{meeting.endtime}}</td>
+					<td>{{form.endtime}} {% if form.endtime.errors %}<text style="color: red; padding-left: 5px;">Accepted Format: <em>3:00PM</em></text> {% endif %}</td>
+				</tr>
+				<tr>
+					<td>Meeting Type</td>
+					<td>{% if meeting.private == False %}Public{% else %}Private{% endif %}</td>
+					<td>
+						{{form.status}}
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><a href="../meeting/{{meeting.meeting_id}}" class="btn btn-danger">Return to Meeting</a></td>
+					<td><button class="btn btn-primary" type="submit" name="changes">Submit Changes</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+
+<script>
+$(document).ready(function() {
+	$('.btn.btn-mini.btn-danger').click(function(e) {
+		e.preventDefault();
+		$(this).parent().hide();
+		$('#removed').val($('#removed').val() + String($(this).attr("id")) + ",");
+	});
+
+	var counter = 2;
+
+	$('#removeitem').hide();
+
+	$('#additem').click(function() {
+		if (counter == 2) {
+			$('#removeitem').show();
+		}
+		if (counter == 10) {
+			$('#additem').hide();
+		}
+		$("#agenda_controls").append('<div id="div'+counter+'"><input type="text" name="agenda_item_' + counter +'"><br></div>');
+		counter++;
+	});
+
+	$('#removeitem').click(function() {
+		counter--;
+		if (counter == 10) {
+			$('#additem').show();
+		}
+		if (counter == 2) {
+			$('#removeitem').hide();
+		}
+		$("#div"+counter+"").remove();
+	});
+});
+
+</script>
+
+{% endblock %}

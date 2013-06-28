@@ -1,8 +1,11 @@
 Django==1.5.1
 PIL==1.1.7
+South==0.8.1
 distribute==0.6.34
 dj-database-url==0.2.1
+django-common-helpers==0.6.0
+django-cron==0.3.0
 gunicorn==0.17.4
+django-html5
 psycopg2==2.5
 wsgiref==0.1.2
-django-html5

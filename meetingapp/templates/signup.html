@@ -3,55 +3,68 @@
 {% block content %}
 
 <!-- TODO: forgot your password? -->
-
-<form class="form-horizontal" method="post">
-	{% csrf_token %}
-	<input type="hidden" name="submit_request" value="submit_request">
-	<div class="control-group">
-		<label class="control-label" for="inputEmail">First name</label>
-		<div class="controls">
-			{{ form.first_name }}
+<div class="container">
+	<form class="form-horizontal" style="display:inline-block;" method="post">
+		{% csrf_token %}
+		<input type="hidden" name="submit_request" value="submit_request">
+		<div class="control-group">
+			<div class="controls">
+				<h3>Sign Up</h3>
+			</div>
 		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="inputEmail">Last name</label>
-		<div class="controls">
-			{{ form.last_name }}
+		<div class="control-group">
+			<label class="control-label" for="inputEmail">First name</label>
+			<div class="controls">
+				{{ form.first_name }}
+			</div>
 		</div>
-	</div>
-	{% if email_taken %}
-	<div class="control-group">
-		<div class="controls">
-			<h5 style="color: red;">This email is already in use.</h5>
+		<div class="control-group">
+			<label class="control-label" for="inputEmail">Last name</label>
+			<div class="controls">
+				{{ form.last_name }}
+			</div>
 		</div>
-	</div>
-	{% endif %}
-	<div class="control-group">
-		<label class="control-label" for="inputEmail">Email</label>
-		<div class="controls">
-			{{ form.email }}
+		{% if email_taken %}
+		<div class="control-group">
+			<div class="controls">
+				<h5 style="color: red;">This email is already in use.</h5>
+			</div>
 		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="inputPassword">Password</label>
-		<div class="controls">
-			{{ form.password }}
+		{% endif %}
+		<div class="control-group">
+			<label class="control-label" for="inputEmail">Email</label>
+			<div class="controls">
+				{{ form.email }}
+			</div>
 		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="inputPassword">Retype Password:</label>
-		<div class="controls">
-			{{ form.retype }}
+		{% if retype_failed %}
+		<div class="control-group">
+			<div class="controls">
+				<h5 style="color: red;">Passwords do not match.</h5>
+			</div>
 		</div>
-	</div>
-	<div class="control-group">
-		<div class="controls">
-			<label class="checkbox">
-				<input type="checkbox"> Remember me
-			</label>
-			<button type="submit" class="btn btn-primary">Sign Up</button>
+		{% endif %}
+		<div class="control-group">
+			<label class="control-label" for="inputPassword">Password</label>
+			<div class="controls">
+				{{ form.password }}
+			</div>
 		</div>
-	</div>
-</form>
+		<div class="control-group">
+			<label class="control-label" for="inputPassword">Retype Password:</label>
+			<div class="controls">
+				{{ form.retype }}
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<label class="checkbox">
+					<input type="checkbox"> Remember me
+				</label>
+				<button type="submit" class="btn btn-primary">Sign Up</button>
+			</div>
+		</div>
+	</form>
+</div>
 
 {% endblock %}

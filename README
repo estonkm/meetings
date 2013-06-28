@@ -2,55 +2,52 @@ all to-do's in code marked with #TODO
 
 master "to-do" list:
 
-IMPORTANT
+IMPORTANT FOR CORE FUNCTIONALITY:
 
-1. create the separate meetings, each with a unique ID, and attach to the host under created meetings. be able to render the precise meeting with its page ID
+3. (this is a big one) use a task manager (like celery) to monitor meeting status, update meetings+users; send out "conclusion" thing to all members (Eston's idea); close off meetings that ended (remove buttons to submit/etc., perhaps w/ new html page) - TASK MANAGER
 
-	--done! just needs to fill out all the information.
-
-1.b. create the agenda items
-
-	--done
-
-1.c. show errors in meeting creation page; allow certain things to be left blank.
-
-	--done
+15. (this is a big one-talk w/ Eston) fix contacts+meetings to incorporate non-members (MODDING MODELS - give user a list of non-member emails; give same to meetings, motions, comments, etc. -- if not logged in, let them see the option!) "this meeting is private" page, using emails to verify, etc. all possibilites - ask Eston for clarification.
 
 
-1.d. split meeting creation into three steps: 1. set name, description, etc.; 2. add agenda items; 3. add people (search contacts or add by email)
-
-1.e. then send out the email notifications
+* = try to do today, hopefully
 
 
+DONE 
 
-(basically, add inviting user and user->meeting functionality)
+6/25
+2. button to return to meeting page from settings/managemembers
+4. add "modded" boolean to motion/comment, so it can be made italics; save old version (MODDING MODELS)
+
+6/26
+7. restrict private meetings to members only.
+8. add host to member list
+10. add lists of users in side boxes (overflow: auto;) - this can be styled better/be more useful
+25. settings messes up meeting type (always makes it public)
+9. fix ability to edit agenda items
+
+6/27
+25. delete contacts
+22. add people to meetings not really working properly--only adding one at a time. also, remove self from available options. - had to fix other stuff too. a little annoying!
+14. fix contacts thing so it doesn't silently fail
+20. enable user to remove his/her own comment or motion. also emails if a mod/host did it!
+1. show errors on settings page
+27. check that password in second part matches first part, for signup; if not report error!
+16. for now, just hide the add motion/comment buttons if the person seeing the meeting page isn't a user.
 
 
 
 
-2. allow a host to invite other users to the meeting (OK if doesn't use contacts yet), and both the meeting and account info (of the invitees) will be updated. 
-
-2.b. enable meetings to show up in correct locations in home page of the users.
-
-	--done
-
-3. finish the meeting page, and fill in comments, motions, etc. for that meeting. 
-
-3.b. enable settings option for the hosts. enable hosts to add moderators.
-
-4. enable users to add comments/motions etc. enable moderators to remove content.
-
-5. fix the styling of everything (by that I mean "actually style it"). 
-
-6. enable contacts for a user; to search contacts in database and add by email. fix the meeting creation page to allow inviting contacts to the meeting.
+DO LATERS:
+6. support for multiple hosts, instead of just one.
+11. hash the usernames instead of just using email
+16. fix contacts to use gmail API
+17. validate emails and passwords
+18. actually make "remember me" do something (or get rid of it)
+19. give mod options for what the reason they want to remove info is (spam, unrelated to agenda item, inappropriate)
+23. fill out profile stuff and let people like, add a picture or something
+24. support agenda items with descriptions
+26. show modal windows - "are you sure you want to continue?"
+28. "forgot your password"? feature
+12. email notifications to members whenever meetings change
 
 
-LESS IMPORTANT RIGHT NOW BUT WILL BE LATER
-
-1. fix style so it looks less bootstrap-y; improve user experience overall
-
-2. improve security: verify emails, etc.
-
-3. add in API for importing Google Contacts, etc.
-
-4. place restrictions on public vs. private meetings

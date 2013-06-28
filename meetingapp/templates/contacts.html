@@ -8,37 +8,39 @@
 	<div class="row">
 		<div class="span9">
 			<!-- Create a New Meeting button goes here -->
-
-			<div style="width: 200px; height: 50px; margin-bottom: 20px; float: left;">
-				<h4 style="margin: 5px !important;">Contacts</h4>
-			</div>
-			<form class="form-search" style="margin: 0px !important; float:right;" method="post">
-				{% csrf_token %}
-				<!-- TODO: open a new page or something; or modal pop-up -->
-				<input type="text" name='search' placeholder="Add a new contact" class="input-medium search-query">
-				<button type="submit" class="btn">Search</button>
-			</form>
-			<!-- <text style="float: right; margin-right: 10px; margin-top: 4px;"><em>Add a New Contact</em></text> -->
-			<div style="float:left;">
-				{% for c in contacts %}
-				<div class="agendaItem narrow" style="padding: 5px !important; padding-top: 0px !important; padding-bottom: 0px !important; width: 690px !important;">
-					<div style="width:450px; float:left;">
-						<h4>{{ c.user.first_name}} {{ c.user.last_name}}</h4>
-					</div>
-					<div style="width:240px; float:right; text-align: right; font-size: 14px; line-height: 25px; padding-top: 7px;">
-						<text><em>Email: {{ c.user.email }}</em></text><p></p>
-						<text><em>Phone: {{ c.phone }}</em><text><p></p>
-					</div>
+			<div class="row" style="margin-left: 0px !important;">
+				<div style="width: 200px; height: 50px; margin-bottom: 20px; float: left;">
+					<h4 style="margin: 5px !important;">Contacts</h4>
 				</div>
-				{% endfor %}
+				<form class="form-search" style="margin: 0px !important; float:right;" method="post">
+					{% csrf_token %}
+					<!-- TODO: open a new page or something; or modal pop-up -->
+					{% if errors %}<text style="color: red; padding-right: 2px;">Email not in database </text>{% endif %}
+					<input type="text" name='search' placeholder="Contact's email" class="input-medium search-query">
+					<button type="submit" class="btn">Add Contact</button>
+				</form>
+				<!-- <text style="float: right; margin-right: 10px; margin-top: 4px;"><em>Add a New Contact</em></text> -->
 			</div>
+			{% for c in contacts %}
+			<div class="row homemeetings" style="margin-left: 0px !important; border-bottom: 1px solid #DCDCDC;">
+					<h4>{{c.user.last_name}}, {{c.user.first_name}} </h4>
+                    <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
+	                    <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_contact" value="{{c.id}}">Remove</button>
+	                </form>
+					<text><em>Email: {{c.user.email}}</em></text><br>
+					{% if c.phone %}<text><em>Phone: {{c.phone}}</em></text>{% endif %}
+			</div>
+			{% endfor %}
 		</div>
 		<div class="span3">
             <div class="userinfo">
                 <text class="lead" style="font-size: 15px !important;">Me</text>
             </div>
-            <div class="userinfo">
-                <text class="lead" style="font-size: 15px !important;">Meetings</text>
+            <div class="userinfo sidebox">
+                <text class="lead" style="font-size: 15px !important;">Meetings</text><br>
+                <ul>{% for meeting in meetings %}
+                <li>{{meeting.title}}</li>
+                {% endfor %}</ul>
             </div>
 		</div>
 	</div>

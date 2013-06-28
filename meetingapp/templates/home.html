@@ -2,8 +2,6 @@
 
 {% block content %}
 
-{% if user.is_authenticated %}
-
 <div class="container">
 	<div class="row">
 		<div class="span9">
@@ -22,43 +20,49 @@
 				<div class="tab-content">
 					<div class="tab-pane active" id="tab1">
 						{% for m in meetingsin %}
-						<div class="agendaItem narrow" style="padding: 5px !important; padding-top: 0px !important; padding-bottom: 0px !important; width: 690px !important;">
-							<div style="width:450px; float:left;">
-								<a href="../meeting/{{ m.meeting_id }}"><h4> {{m.title}}</h4></a>
-								<text style="padding-top: 10px;">{{ m.desc }}</text>
-							</div>
-							<div style="width:240px; float:right; text-align: right; font-size: 14px; line-height: 25px; padding-top: 7px;">
-								Starts: {{ m.starttime }}, {{ m.startdate }}
-								<p>Ends: {{ m.endtime }}, {{m.enddate }}</p>
-							</div>
+						<div class="row homemeetings" style="margin-left: 0px !important; border-bottom: 1px solid #DCDCDC;">
+								<a href="../meeting/{{ m.meeting_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{m.title}}</a>
+								{% if m.desc %}<text> - {{ m.desc}}</text>{% endif %}<br>
+								<text style="color: #999; font-size: 12px;">created by 
+								{% for host in m.hosts.all %}
+								{% if host.user.first_name == user.first_name and host.user.last_name == user.last_name %}
+								  you
+								{% else %}
+								  {{host.user.first_name}}
+								 {{host.user.last_name}} 
+								{% endif %}
+								{% endfor %}
+								</text>
+								<text style="float:right; color: #999; font-size: 12px;"><text style="color:black;">{{m.starttime}}</text>, {{m.startdate}} <span style="padding-left: 10px; padding-right: 13px;">--</span><text style="color:black;">{{m.endtime}}</text>, {{m.enddate}}</text>
 						</div>
 						{% endfor %}
 					</div>
 					<div class="tab-pane" id="tab2">
 						{% for m in meetingscreated %}
-						<div class="agendaItem narrow" style="padding: 5px !important; padding-top: 0px !important; padding-bottom: 0px !important; width: 690px !important;">
-							<div style="width:450px; float:left;">
-								<a href="../meeting/{{ m.meeting_id }}"><h4> {{m.title}}</h4></a>
-								<text style="padding-top: 10px;">{{ m.desc }}</text>
-							</div>
-							<div style="width:240px; float:right; text-align: right; font-size: 14px; line-height: 25px; padding-top: 7px;">
-								Starts: {{ m.starttime }}, {{ m.startdate }}
-								<p>Ends: {{ m.endtime }}, {{m.enddate }}</p>
-							</div>
+						<div class="row homemeetings" style="margin-left: 0px !important; border-bottom: 1px solid #DCDCDC;">
+								<a href="../meeting/{{ m.meeting_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{m.title}}</a>
+								{% if m.desc %}<text> - {{ m.desc}}</text>{% endif %}<br>
+								<text style="color: #999; font-size: 12px;">created by you</text>
+								<text style="float:right; color: #999; font-size: 12px;"><text style="color:black;">{{m.starttime}}</text>, {{m.startdate}} <span style="padding-left: 10px; padding-right: 13px;">--</span><text style="color:black;">{{m.endtime}}</text>, {{m.enddate}}</text>
 						</div>
 						{% endfor %}
 					</div>
 					<div class="tab-pane" id="tab3">
 						{% for m in meetingspast %}
-						<div class="agendaItem narrow" style="padding: 5px !important; padding-top: 0px !important; padding-bottom: 0px !important; width: 690px !important;">
-							<div style="width:450px; float:left;">
-								<a href="../meeting/{{ m.meeting_id }}"><h4> {{m.title}}</h4></a>
-								<text style="padding-top: 10px;">{{ m.desc }}</text>
-							</div>
-							<div style="width:240px; float:right; text-align: right; font-size: 14px; line-height: 25px; padding-top: 7px;">
-								Starts: {{ m.starttime }}, {{ m.startdate }}
-								<p>Ends: {{ m.endtime }}, {{m.enddate }}</p>
-							</div>
+						<div class="row homemeetings" style="margin-left: 0px !important; border-bottom: 1px solid #DCDCDC;">
+								<a href="../meeting/{{ m.meeting_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{m.title}}</a>
+								{% if m.desc %}<text> - {{ m.desc}}</text>{% endif %}<br>
+								<text style="color: #999; font-size: 12px;">created by 
+								{% for host in m.hosts.all %}
+								{% if host.user.first_name == user.first_name and host.user.last_name == user.last_name %}
+								  you
+								{% else %}
+								  {{host.user.first_name}}
+								 {{host.user.last_name}} 
+								{% endif %}
+								{% endfor %}
+								</text>
+								<text style="float:right; color: #999; font-size: 12px;"><text style="color:black;">{{m.starttime}}</text>, {{m.startdate}} <span style="padding-left: 10px; padding-right: 13px;">--</span><text style="color:black;">{{m.endtime}}</text>, {{m.enddate}}</text>
 						</div>
 						{% endfor %}
 					</div>
@@ -69,9 +73,12 @@
             <div class="userinfo">
                 <text class="lead" style="font-size: 15px !important;">Me</text>
             </div>
-            <div class="userinfo">
+            <div class="userinfo sidebox">
                 <i class="icon-user"></i>
-                <text class="lead" style="font-size: 15px !important;">Contacts (2):</text>
+                <text class="lead" style="font-size: 15px !important;">Contacts ({{account.contacts.all.count}}):</text><br><ul>
+                {% for contact in account.contacts.all %}
+                <li>{{contact.user.last_name}}, {{contact.user.first_name}} <<em>{{contact.user.email}}</em>></li>
+                {% endfor %}</ul>
             </div>
 		</div>
 	</div>
@@ -93,14 +100,5 @@ $(document).ready(function() {
 	});
 });
 </script>
-
-{% else %}
-<script>
-$(document).ready(function() {
-	// TODO: change this for site
-	window.location="//127.0.0.1:8000/";
-});
-</script>
-{% endif %}
 
 {% endblock %}

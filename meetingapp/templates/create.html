@@ -2,72 +2,79 @@
 
 {% block content %}
 
-<form class="form-horizontal" method="post">
-	{% csrf_token %}
-	<input type="hidden" name="submit_request" value="submit_request">
-	<div class="control-group">
-		<label class="control-label">Meeting Name</label>
-		<div class="controls">
-			{{ form.title }} 
-			{% if form.title.errors %}
-			<text style="color: red; padding-left: 5px;">Required</text>
-			{% endif %}
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label">Description</label>
-		<div class="controls">
-			{{ form.desc }} {% if form.desc.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label">Agenda Items</label>
-		<div class="controls">
-			<div id="agenda_controls">
-				<div id="div1">
-					<input type="text" name="agenda_item_1"><p></p>
-				</div>
+<div class="container">
+	<form class="form-horizontal" style="display:inline-block;" method="post">
+		{% csrf_token %}
+		<input type="hidden" name="submit_request" value="submit_request">
+		<div class="control-group">
+			<div class="controls">
+				<h3>Create Meeting</h3>
 			</div>
-			<a class="btn" id="additem" href="#">Add item</a>
-			<a class="btn" id="removeitem" style="margin-left: 5px;" href="#">Remove item</a>
 		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="inputDate">Start Date</label>
-		<div class="controls">
-			{{ form.startdate }} {% if form.startdate.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+		<div class="control-group">
+			<label class="control-label">Meeting Name</label>
+			<div class="controls">
+				{{ form.title }} 
+				{% if form.title.errors %}
+				<text style="color: red; padding-left: 5px;">Required</text>
+				{% endif %}
+			</div>
 		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="inputTime">Start Time</label>
-		<div class="controls">
-			{{ form.starttime }} {% if form.starttime.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+		<div class="control-group">
+			<label class="control-label">Description</label>
+			<div class="controls">
+				{{ form.desc }} {% if form.desc.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
 		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="inputDate">End Date</label>
-		<div class="controls">
-			{{ form.enddate }} {% if form.enddate.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+		<div class="control-group">
+			<label class="control-label">Agenda Items</label>
+			<div class="controls">
+				<div id="agenda_controls">
+					<div id="div1">
+						<input type="text" name="agenda_item_1"><p></p>
+					</div>
+				</div>
+				<a class="btn" id="additem" href="#">Add item</a>
+				<a class="btn" id="removeitem" style="margin-left: 5px;" href="#">Remove item</a>
+			</div>
 		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="inputTime">End Time</label>
-		<div class="controls">
-			{{ form.endtime }} {% if form.endtime.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+		<div class="control-group">
+			<label class="control-label" for="inputDate">Start Date</label>
+			<div class="controls">
+				{{ form.startdate }} {% if form.startdate.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
 		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="">Meeting Type</label>
-		<div class="controls">
-			{{ form.status }} {% if form.status.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+		<div class="control-group">
+			<label class="control-label" for="inputTime">Start Time</label>
+			<div class="controls">
+				{{ form.starttime }} {% if form.starttime.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
 		</div>
-	</div>
-	<div class="control-group">
-		<div class="controls">
-			<button type="submit" class="btn btn-primary">Create Meeting</button>
+		<div class="control-group">
+			<label class="control-label" for="inputDate">End Date</label>
+			<div class="controls">
+				{{ form.enddate }} {% if form.enddate.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
 		</div>
-	</div>
-</form>
+		<div class="control-group">
+			<label class="control-label" for="inputTime">End Time</label>
+			<div class="controls">
+				{{ form.endtime }} {% if form.endtime.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="">Meeting Type</label>
+			<div class="controls">
+				{{ form.status }} {% if form.status.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn btn-primary">Create Meeting</button>
+			</div>
+		</div>
+	</form>
+</div>
 
 <script>
 
