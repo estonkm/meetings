@@ -33,9 +33,15 @@ DONE
 1. show errors on settings page
 27. check that password in second part matches first part, for signup; if not report error!
 16. for now, just hide the add motion/comment buttons if the person seeing the meeting page isn't a user.
+17. enable background cron to shift meeting status to open/closed.
 
 
+NEXT UP:
+31. prevent people from participating in meetings that are not open (not too hard, the functionality's already sorta there). email users when the meeting ends, with the most upvoted motions first.
+32. possibly enable system to allow anonymous users to contribute - i.e. people who are not members. this could be a little involved depending on how it works.
 
+BUGLIST:
+1. meeting seems to always default to private. whoops.
 
 DO LATERS:
 6. support for multiple hosts, instead of just one.
@@ -49,5 +55,7 @@ DO LATERS:
 26. show modal windows - "are you sure you want to continue?"
 28. "forgot your password"? feature
 12. email notifications to members whenever meetings change
+29. better string parsing for dates - allow more formats
+30. facebook ajax thing for motion/comment updates on-page
 
 

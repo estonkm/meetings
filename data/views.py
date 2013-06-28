@@ -58,7 +58,7 @@ def create(request):
 				a = Account.objects.get(user=request.user)
 
 				s = True
-				if cd['status'] is 'Public':
+				if cd['status'] == 'Public':
 					s=False
 
 				random.seed()
