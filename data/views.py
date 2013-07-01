@@ -78,7 +78,7 @@ def create(request):
 
 				m = Meeting(startdate=cd['startdate'], starttime=cd['starttime'], enddate=cd['enddate'],
 					endtime=cd['endtime'], title=cd['title'], desc=cd['desc'], private=s, meeting_id=meeting_no, 
-					started=already_started, ended=False)
+					started=already_started, ended=False, timezone=cd['timezone'])
 				m.save()
 				m.hosts.add(a)
 				m.members.add(a)
@@ -89,7 +89,7 @@ def create(request):
 				while request.POST.get(item_name):
 					agendaitem = request.POST.get(item_name)
 					if agendaitem:
-						i = AgendaItem(name=agendaitem, desc='')
+						i = AgendaItem(name=agendaitem, desc='', number=counter)
 						i.save()
 						m.agenda_items.add(i)
 						m.save()
@@ -183,14 +183,16 @@ def signup(request):
 
 				if User.objects.filter(username=cd['email']) or User.objects.filter(email=cd['email']):
 					context['email_taken'] = True
+				elif len(cd['password']) < 8:
+					context['too_short'] = True
 				elif cd['password'] != cd['retype']:
 					context['retype_failed'] = True
 				else:
 					u = User.objects.create_user(cd['email'], first_name=cd['first_name'],
 						last_name=cd['last_name'], email=cd['email'], password=cd['password'])
-					a = Account(user=u, join_date=datetime.now(), phone='') 
-					#TODO: phone needs to be made non-mandatory
+					a = Account(user=u, join_date=datetime.now(), phone='', is_verified=True, verification_key='') 
 					a.save()
+					# TODO - use verification and don't log on just yet
 					user = authenticate(username=cd['email'], password=cd['password'])
 					auth_login(request, user)
 
@@ -403,7 +405,7 @@ def meeting(request):
 
 	context['m'] = meeting
 	context['host'] = meeting.hosts.all()[0]
-	context['agenda_items'] = meeting.agenda_items.order_by('id')
+	context['agenda_items'] = meeting.agenda_items.order_by('number')
 
 	return render_to_response('meeting_page.html', context)
 

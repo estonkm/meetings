@@ -8,28 +8,21 @@
                 <p>{{ m.desc }}</p>
             </div>
             <div class="time">
-                <div class="endtime">
-                    <div class="timedisp">{{ m.endtime }}</div>
-                    <div class="datedisp">{{ m.enddate }}</div>
+                <div class="row">
+                    <div class="endtime">
+                        <div class="timedisp">{{ m.endtime }}</div>
+                        <div class="datedisp" style="padding-top: 3px;">{{ m.timezone }}<br> {{ m.enddate }}</div>
+                    </div>
+                    <div class="timelabel">Ends:</div>
+                    <div class="starttime">
+                        <div class="timedisp">{{ m.starttime }}</div>
+                        <div class="datedisp" style="padding-top: 3px;">{{ m.timezone }}<br> {{ m.startdate }}</div>
+                    </div>
+                    <div class="timelabel">Starts:</div>
                 </div>
-                <div class="timelabel">Ends:</div>
-                <div class="starttime">
-                    <div class="timedisp">{{ m.starttime }}</div>
-                    <div class="datedisp">{{ m.startdate }}</div>
-                </div>
-                <div class="timelabel">Starts:</div>
             </div>
-
         </div>
     </header>
-    <!--<div class="container-fluid">
-        <div id="content" class="span9">
-            <p class="lead">Top Motions</p>
-        </div>
-        <div id="sidebar" class="span3">
-            yo
-        </div>
-    </div>-->
 
     <div class="container">
         <div class="row">
@@ -37,7 +30,7 @@
                 {% for ai in agenda_items %}
                 <div class="row ai_row">
                     <div class="row ai_title">
-                        <text class="agenda" style="padding-right: 5px;">{{ai.name}}</text>
+                        <text class="agenda" style="padding-right: 5px;">{{ai.number}}. {{ai.name}}</text>
                         <button class="btn hoverblack alter" data-toggle="collapse" id="showmotions_{{ai.id}}" data-target="#ai_{{ai.id}}">show motions ({{ai.motions.all.count}})</button>
                         {% if user.is_authenticated %}<button class="btn hoverblack alter" data-toggle="collapse" name="addmotion" data-target="#addmotion_{{ai.id}}">add a motion</a>{% endif %}
                     </div>

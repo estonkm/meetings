@@ -18,6 +18,8 @@ class Account(models.Model):
 	phone = models.CharField(max_length=20)
 	contacts = models.ManyToManyField('self', blank=True, null=True)
 	voted_motions = models.ManyToManyField('Motion', blank=True, null=True)
+	is_verified = models.BooleanField()
+	verification_key = models.CharField(max_length=25)
 
 class Meeting(models.Model):
 	class Meta:
@@ -29,6 +31,7 @@ class Meeting(models.Model):
 	starttime = models.TimeField()
 	enddate = models.DateField()
 	endtime = models.TimeField()
+	timezone = models.CharField(max_length=20)
 	title = models.CharField(max_length=1000) # these are arbitrary
 	desc = models.CharField(max_length=10000)
 	private = models.BooleanField()
@@ -43,6 +46,7 @@ class AgendaItem(models.Model):
 		ordering=['-id']
 	name = models.CharField(max_length=1000)
 	desc = models.CharField(max_length=10000) # is this needed?
+	number = models.IntegerField()
 	motions = models.ManyToManyField('Motion', related_name="motion_set", null=True, blank=True)
 
 class Motion(models.Model):

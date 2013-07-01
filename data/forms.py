@@ -5,6 +5,16 @@ import datetime
 import html5.forms.widgets as html5_widgets
 
 STATUS=[('Public', 'Public'), ('Private', 'Private')]
+TIMEZONES=[('UTC-12:00', 'UTC-12:00'), ('UTC-11:00', 'UTC-11:00'),
+			('UTC-10:00', 'UTC-10:00'), ('UTC-9:00', 'UTC-9:00'), ('PDT (UTC-8:00)', 'PDT (UTC-8:00)'),
+			('MDT (UTC-7:00)', 'MDT (UTC-7:00)'), ('CDT (UTC-6:00)', 'CDT (UTC-6:00)'), 
+			('EDT (UTC-5:00)', 'EDT (UTC-5:00)'), ('UTC-4:00', 'UTC-4:00'), ('UTC-3:00', 'UTC-3:00'), 
+			('UTC-2:00', 'UTC-2:00'), ('GMT (UTC-1:00)', 'GMT (UTC-1:00)'), 
+			('UTC','UTC'), 
+			('UTC+1:00','UTC+1:00'), ('UTC+2:00','UTC+2:00'), ('EAT (UTC+3:00)', 'EAT (UTC+3:00)'),
+			('UTC+4:00', 'UTC+4:00'), ('UTC+5:00', 'UTC+5:00'), ('UTC+6:00', 'UTC+6:00'),
+			('UTC+7:00', 'UTC+7:00'), ('UTC+8:00', 'UTC+8:00'), ('UTC+9:00', 'UTC+9:00'),
+			('UTC+10:00', 'UTC+10:00'), ('UTC+11:00', 'UTC+11:00'), ('UTC+12:00', 'UTC+12:00')]
 valid_time_formats=['%I:%M%p']
 
 class UserForm(forms.Form):
@@ -19,10 +29,11 @@ class UserForm(forms.Form):
 class MeetingForm(forms.Form):
 	title = forms.CharField()
 	desc = forms.CharField(widget=forms.Textarea(attrs={'rows':'3', 'cols':'40','maxlength':250}), max_length=500)
-	startdate = forms.DateField(widget=html5_widgets.DateInput)
+	startdate = forms.DateField()
 	starttime = forms.TimeField(widget=forms.TimeInput(attrs={'placeholder': '12:00AM'}), input_formats=valid_time_formats)
-	enddate = forms.DateField(widget=html5_widgets.DateInput)
+	enddate = forms.DateField()
 	endtime = forms.TimeField(widget=forms.TimeInput(attrs={'placeholder': '12:00AM'}), input_formats=valid_time_formats)
+	timezone = forms.ChoiceField(choices=TIMEZONES)
 	status = forms.ChoiceField(choices=STATUS, widget=forms.RadioSelect())
 
 class LoginForm(forms.Form):
