@@ -38,13 +38,15 @@ DONE
 06/30
 - added a Django custom-admin command instead of a django_cron function (so Heroku can use that)
 - set a minimum length for passwords
-- 
 
 big thing: set up a viable mail server and set up scheduled jobs - these bother require the actual web server, so maybe switching over now is a good idea.
 
 
 NEXT UP:
+33. fill out timezone possibilities; add a placeholder to the date thing
+
 31. prevent people from participating in meetings that are not open (not too hard, the functionality's already sorta there). email users when the meeting ends, with the most upvoted motions first.
+
 32. possibly enable system to allow anonymous users to contribute - i.e. people who are not members. this could be a little involved depending on how it works.
 
 BUGLIST:

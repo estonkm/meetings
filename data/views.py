@@ -16,6 +16,18 @@ from django.utils import simplejson
 import re
 from django.core.mail import send_mail
 
+import smtplib
+from email.mime.text import MIMEText
+
+def mailgun_send(recipients, subject, message):
+	return requests.post(
+		"https://api.mailgun.net/v2/vitalmeeting.com",
+		auth=("api", "key-6jh7x-u493r23q8bi-cgkntmlcbc7pd1"),
+		data={"from": "VitalMeeting <updates@vitalmeeting.com>",
+				"to": recipients,
+				"subject": subject,
+				"text": message})
+
 def index(request):
 	context = {}
 	context.update(csrf(request))
@@ -378,7 +390,7 @@ def meeting(request):
 				motion.name = 'This motion has been removed by a moderator.'
 				recipient = [motion.user.user.email]
 				message = 'Your motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.'
-				#send_mail("Motion removed", message, "vitalmeeting@gmail.com", recipient)
+				mailgun_send(recipient, "Motion removed", message)
 			motion.desc = ''
 			motion.modded = True
 			motion.save()
@@ -395,7 +407,7 @@ def meeting(request):
 				recipient = [comment.user.user.email]
 				motion = Motion.objects.get(id__exact=motion_id)
 				message = 'Your comment on motion"'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.'
-				#send_mail("Comment removed", message, "vitalmeeting@gmail.com", recipient)
+				mailgun_send(recipient, "Comment removed", message)
 
 			comment.modded = True
 			comment.save()
