@@ -346,7 +346,7 @@ def meeting(request):
 			return HttpResponseRedirect('/')
 
 	if request.method=='POST':
-		if request.POST.get('motiontext'):
+		if request.POST.get('motionname'):
 			motiontext = request.POST.get('motiontext')
 			motionname = request.POST.get('motionname')
 			if motionname:
@@ -404,7 +404,7 @@ def meeting(request):
 				comment.text = 'This comment has been removed by a moderator.'
 				recipient = [comment.user.user.email]
 				motion = Motion.objects.get(id__exact=motion_id)
-				message = 'Your comment on motion"'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.'
+				message = 'Your comment on motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.'
 				mailgun_send(recipient, "Comment removed", message)
 
 			comment.modded = True
