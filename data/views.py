@@ -15,15 +15,13 @@ from django.core.urlresolvers import resolve
 from django.utils import simplejson
 import re
 from django.core.mail import send_mail
-
-import smtplib
-from email.mime.text import MIMEText
+import requests
 
 def mailgun_send(recipients, subject, message):
 	return requests.post(
-		"https://api.mailgun.net/v2/vitalmeeting.com",
+		"https://api.mailgun.net/v2/rs3945.mailgun.org/messages",
 		auth=("api", "key-6jh7x-u493r23q8bi-cgkntmlcbc7pd1"),
-		data={"from": "VitalMeeting <updates@vitalmeeting.com>",
+		data={"from": "VitalMeeting <updates@rs3945.mailgun.org>",
 				"to": recipients,
 				"subject": subject,
 				"text": message})
