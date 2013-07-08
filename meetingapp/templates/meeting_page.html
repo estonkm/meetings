@@ -101,7 +101,7 @@
                                     {% endfor %}
                                 </div>
                                 {% if user.is_authenticated %}
-                                <div class="row comment indented collapse out" id="addcomment_{{motion.id}}">
+                                <div class="row comment collapse indented out" id="addcomment_{{motion.id}}">
                                     <form class="mod" method="post">{% csrf_token %}
                                         <textarea rows="4" name="comment" style="width: 90%; margin-bottom: 5px !important;" placeholder="Write comment here"></textarea>
                                         <input type="hidden" name="motionid" value="{{motion.id}}">
@@ -112,7 +112,7 @@
                             </div>
                         </div>
                         {% else %}
-                        <div class="indented collapse out">
+                        <div class="collapse indented out">
                             <div class="row motion">
                             <div class="row motiontitle">
                                 {% if motion.modded %}
@@ -148,7 +148,7 @@
                                         {% if user.is_authenticated %}<button class="btn hoverblack alter" data-toggle="collapse" data-target="#addcomment_{{motion.id}}">add comment</a>{% endif %}
                                 </div>
                             </div>
-                            <div class="row indented collapse out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
+                            <div class="row collapse indented out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
                                 {% for comment in motion.comments.all %}
                                     <div class="row comment">
                                         {% if comment.modded %}
@@ -173,7 +173,7 @@
                                 {% endfor %}
                             </div>
                             {% if user.is_authenticated %}
-                            <div class="row comment collapse out" id="addcomment_{{motion.id}}">
+                            <div class="row comment collapse indented out" id="addcomment_{{motion.id}}">
                                 <form class="mod" method="post">{% csrf_token %}
                                     <textarea rows="4" name="comment" style="width: 90%; margin-bottom: 5px !important;" placeholder="Write comment here"></textarea>
                                     <input type="hidden" name="motionid" value="{{motion.id}}">
@@ -185,7 +185,7 @@
                         </div>
                         {% endif %}
                         {% endfor %}
-                        <div class="row motion indented collapse out" style="border-bottom: none !important;" id="addmotion_{{ai.id}}">
+                        <div class="row motion collapse indented out" style="border-bottom: none !important;" id="addmotion_{{ai.id}}">
                             {% if user.is_authenticated %}<form class="mod" method="post">{% csrf_token %}
                                 <input type="text" name="motionname" placeholder="Write the motion name here." style="width: 90%; margin-bottom: 5px !important;"></input>
                                 <textarea rows="4" name="motiontext" style="width: 90%; margin-bottom: 5px !important;" placeholder="Write the motion description here."></textarea>
