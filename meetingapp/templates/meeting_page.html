@@ -40,77 +40,79 @@
                     <div class="row" style="margin-bottom: 20px !important" id="ai_{{ai.id}}">
                         {% for motion in ai.motions.all %}
                         {% if forloop.counter0 < 5 %}
-                        <div class="row motion">
-                            <div class="row motiontitle">
-                                {% if motion.modded %}
-                                    <em>{{motion.name}}</em>
-                                {% else %}
-                                    {% if user == host.user or motion.user.user == user %}
-                                        <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
-                                        <text>{{motion.name}}</text>
-                                            <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_motion" value="{{motion.id}}">Remove</button>
-                                            {% if motion.user.user == user %}
-                                            <button class="btn btn-mini" name="editmotion" id="editmotion_{{motion.id}}" style="float:right;">edit</button>
-                                            {% endif %}
-                                        </form>
+                        <div class="indented">
+                            <div class="row motion">
+                                <div class="row motiontitle">
+                                    {% if motion.modded %}
+                                        <em>{{motion.name}}</em>
                                     {% else %}
-                                        <text>{{motion.name}}</text>
+                                        {% if user == host.user or motion.user.user == user %}
+                                            <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
+                                            <text>{{motion.name}}</text>
+                                                <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_motion" value="{{motion.id}}">Remove</button>
+                                                {% if motion.user.user == user %}
+                                                <button class="btn btn-mini" name="editmotion" id="editmotion_{{motion.id}}" style="float:right;">edit</button>
+                                                {% endif %}
+                                            </form>
+                                        {% else %}
+                                            <text>{{motion.name}}</text>
+                                        {% endif %}
                                     {% endif %}
+                                </div>
+                                <div class="row motionbody">
+                                    <text>{{motion.desc}}</text>
+                                </div>
+                                <div class="row motioninfo">
+                                    <text style="color: #999; font-size: 12px; float:left;">posted by {{motion.user.user.first_name}} {{motion.user.user.last_name}} on {{motion.timestamp}}</text>
+                                    <div style="float:right">
+                                        <i class="icon-thumbs-up" style="cursor:hand; cursor:pointer;" id="like_{{ motion.id }}" value="{{motion.likes}}"></i>
+                                            <text style="padding-right: 5px; color: #000066;"> <span id="span_like_{{ motion.id}}">{{motion.likes}}</span></text>
+
+                                            <i class="icon-thumbs-down" style="cursor:hand; cursor:pointer;" id="dislike_{{ motion.id}}" value="{{motion.dislikes}}"></i>
+                                            <text style="padding-right: 5px; color: #990033;"><span id="span_dislike_{{ motion.id}}">{{motion.dislikes}}</span></text>
+
+                                            <button class="btn hoverblack alter" data-toggle="collapse" data-target="#motion_{{motion.id}}">show comments ({{motion.comments.all.count}})</a>
+
+                                            {% if user.is_authenticated %}<button class="btn hoverblack alter" data-toggle="collapse" data-target="#addcomment_{{motion.id}}">add comment</a>{% endif %}
+                                    </div>
+                                </div>
+                                <div class="row indented collapse out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
+                                    {% for comment in motion.comments.all %}
+                                        <div class="row comment">
+                                            {% if comment.modded %}
+                                                <em>{{comment.text}}</em>
+                                            {% else %}
+                                                {% if user.username == host.user.username or comment.user.user == user %}
+                                                    <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
+                                                        {{comment.text}}
+                                                        <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_comment" value="{{comment.id}} {{motion.id}}">Remove</button>
+                                                        {% if comment.user.user == user %}
+                                                        <button class="btn btn-mini" name="editcomment" id="editcomment_{{comment.id}}" style="float:right;">edit</button>
+                                                        {% endif %}
+                                                    </form>
+                                                {% else %}
+                                                    {{comment.text}}
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                        <div class="row comment">
+                                            <text style="color: #999; font-size: 12px; float:left;">posted by {{comment.user.user.first_name}} {{comment.user.user.last_name}} on {{comment.timestamp}}</text>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                {% if user.is_authenticated %}
+                                <div class="row comment indented collapse out" id="addcomment_{{motion.id}}">
+                                    <form class="mod" method="post">{% csrf_token %}
+                                        <textarea rows="4" name="comment" style="width: 90%; margin-bottom: 5px !important;" placeholder="Write comment here"></textarea>
+                                        <input type="hidden" name="motionid" value="{{motion.id}}">
+                                        <button class="" style="float:right; margin-right: 8%; margin-bottom:5px; margin-top: 0px !important;" name="" value="{{motion.id}}" type="submit">Submit</button>
+                                    </form>
+                                </div>
                                 {% endif %}
                             </div>
-                            <div class="row motionbody">
-                                <text>{{motion.desc}}</text>
-                            </div>
-                            <div class="row motioninfo">
-                                <text style="color: #999; font-size: 12px; float:left;">posted by {{motion.user.user.first_name}} {{motion.user.user.last_name}} on {{motion.timestamp}}</text>
-                                <div style="float:right">
-                                    <i class="icon-thumbs-up" style="cursor:hand; cursor:pointer;" id="like_{{ motion.id }}" value="{{motion.likes}}"></i>
-                                        <text style="padding-right: 5px; color: #000066;"> <span id="span_like_{{ motion.id}}">{{motion.likes}}</span></text>
-
-                                        <i class="icon-thumbs-down" style="cursor:hand; cursor:pointer;" id="dislike_{{ motion.id}}" value="{{motion.dislikes}}"></i>
-                                        <text style="padding-right: 5px; color: #990033;"><span id="span_dislike_{{ motion.id}}">{{motion.dislikes}}</span></text>
-
-                                        <button class="btn hoverblack alter" data-toggle="collapse" data-target="#motion_{{motion.id}}">show comments ({{motion.comments.all.count}})</a>
-
-                                        {% if user.is_authenticated %}<button class="btn hoverblack alter" data-toggle="collapse" data-target="#addcomment_{{motion.id}}">add comment</a>{% endif %}
-                                </div>
-                            </div>
-                            <div class="row collapse out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
-                                {% for comment in motion.comments.all %}
-                                    <div class="row comment">
-                                        {% if comment.modded %}
-                                            <em>{{comment.text}}</em>
-                                        {% else %}
-                                            {% if user.username == host.user.username or comment.user.user == user %}
-                                                <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
-                                                    {{comment.text}}
-                                                    <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_comment" value="{{comment.id}} {{motion.id}}">Remove</button>
-                                                    {% if comment.user.user == user %}
-                                                    <button class="btn btn-mini" name="editcomment" id="editcomment_{{comment.id}}" style="float:right;">edit</button>
-                                                    {% endif %}
-                                                </form>
-                                            {% else %}
-                                                {{comment.text}}
-                                            {% endif %}
-                                        {% endif %}
-                                    </div>
-                                    <div class="row comment">
-                                        <text style="color: #999; font-size: 12px; float:left;">posted by {{comment.user.user.first_name}} {{comment.user.user.last_name}} on {{comment.timestamp}}</text>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                            {% if user.is_authenticated %}
-                            <div class="row comment collapse out" id="addcomment_{{motion.id}}">
-                                <form class="mod" method="post">{% csrf_token %}
-                                    <textarea rows="4" name="comment" style="width: 90%; margin-bottom: 5px !important;" placeholder="Write comment here"></textarea>
-                                    <input type="hidden" name="motionid" value="{{motion.id}}">
-                                    <button class="" style="float:right; margin-right: 8%; margin-bottom:5px; margin-top: 0px !important;" name="" value="{{motion.id}}" type="submit">Submit</button>
-                                </form>
-                            </div>
-                            {% endif %}
                         </div>
                         {% else %}
-                        <div class="collapse out">
+                        <div class="indented collapse out">
                             <div class="row motion">
                             <div class="row motiontitle">
                                 {% if motion.modded %}
@@ -146,7 +148,7 @@
                                         {% if user.is_authenticated %}<button class="btn hoverblack alter" data-toggle="collapse" data-target="#addcomment_{{motion.id}}">add comment</a>{% endif %}
                                 </div>
                             </div>
-                            <div class="row collapse out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
+                            <div class="row indented collapse out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
                                 {% for comment in motion.comments.all %}
                                     <div class="row comment">
                                         {% if comment.modded %}
@@ -183,7 +185,7 @@
                         </div>
                         {% endif %}
                         {% endfor %}
-                        <div class="row motion collapse out" style="border-bottom: none !important;" id="addmotion_{{ai.id}}">
+                        <div class="row motion indented collapse out" style="border-bottom: none !important;" id="addmotion_{{ai.id}}">
                             {% if user.is_authenticated %}<form class="mod" method="post">{% csrf_token %}
                                 <input type="text" name="motionname" placeholder="Write the motion name here." style="width: 90%; margin-bottom: 5px !important;"></input>
                                 <textarea rows="4" name="motiontext" style="width: 90%; margin-bottom: 5px !important;" placeholder="Write the motion description here."></textarea>

@@ -157,8 +157,13 @@ button.btn.alter:hover {
     float: left;
 }
 
-div .span9 .collapse {
+div .span9 .indented {
     margin-left: 50px !important;
+    margin-top: 10px !important;  
+}
+
+div .span9 .collapse {
+    margin-left: 0px !important;
     margin-top: 10px !important;
 }
 
