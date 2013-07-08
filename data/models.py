@@ -51,7 +51,7 @@ class AgendaItem(models.Model):
 
 class Motion(models.Model):
 	class Meta:
-		ordering=['-id']
+		ordering=['-likes']
 	user = models.ForeignKey('Account', related_name="motion_user")
 	timestamp = models.DateTimeField()
 	name = models.CharField(max_length=1000)

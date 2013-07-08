@@ -137,6 +137,9 @@ def invite(request):
 	meeting = Meeting.objects.get(meeting_id__exact=meeting_no)
 
 	if request.method=='POST':
+		if "later" in request.POST:
+			return HttpResponseRedirect('../meeting/'+meeting_no)
+
 		added = request.POST.get('added')
 		entered = request.POST.get('entered')
 
@@ -415,7 +418,7 @@ def meeting(request):
 
 	context['m'] = meeting
 	context['host'] = meeting.hosts.all()[0]
-	context['agenda_items'] = meeting.agenda_items.order_by('number')
+	agenda_items = meeting.agenda_items.order_by('number')
 
 	return render_to_response('meeting_page.html', context)
 
