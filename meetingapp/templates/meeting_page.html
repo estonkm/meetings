@@ -76,7 +76,7 @@
                                             {% if user.is_authenticated %}<button class="btn hoverblack alter" data-toggle="collapse" data-target="#addcomment_{{motion.id}}">add comment</a>{% endif %}
                                     </div>
                                 </div>
-                                <div class="row indented collapse out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
+                                <div class="row collapse indented out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
                                     {% for comment in motion.comments.all %}
                                         <div class="row comment">
                                             {% if comment.modded %}
