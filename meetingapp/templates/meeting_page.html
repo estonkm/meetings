@@ -39,7 +39,7 @@
                     </div>
                     <div class="row" style="margin-bottom: 20px !important" id="ai_{{ai.id}}">
                         {% for motion in ai.motions.all %}
-                        {% if forloop.counter0 < 5}
+                        {% if forloop.counter0 < 5 %}
                         <div class="row motion">
                             <div class="row motiontitle">
                                 {% if motion.modded %}
@@ -284,7 +284,7 @@ $(function() {
         });
 
         $('button[name="editmotion"]').click(function() {
-            
+
         });
 
         $('button[name="editcomment"]').click(function() {
