@@ -51,7 +51,7 @@
                                             <text>{{motion.name}}</text>
                                                 <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_motion" value="{{motion.id}}">Remove</button>
                                                 {% if motion.user.user == user %}
-                                                <button class="btn btn-mini" name="editmotion" id="editmotion_{{motion.id}}" style="float:right;">edit</button>
+                                                <button class="btn btn-mini" name="editmotion" id="editmotion_{{motion.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
                                                 {% endif %}
                                             </form>
                                         {% else %}
