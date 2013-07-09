@@ -213,7 +213,7 @@ def signup(request):
 					a = Account(user=u, join_date=datetime.now(), phone='', is_verified=False, verification_key=vkey) 
 					a.save()
 					# TODO - use verification and don't log on just yet
-					recipient = [u.email]
+					recipient = ['splichte@princeton.edu']
 					message = 'Please go to http://www.vitalmeeting.com/verify/'+vkey+' to verify your account. Thanks!'
 					send_mail('Account Verification', message, 'info@vitalmeeting.com', recipient)
 
