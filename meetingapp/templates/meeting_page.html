@@ -280,7 +280,7 @@ $(function() {
         $("[name='editai']").click(function() {
             parent = $(this).parent();
             alert(parent.html());
-            currentVal = $(parent).find('span').html().text();
+            currentVal = parent.find('span').html();
             alert(currentVal);
             html = '<form method="post" style="margin: 0px; padding: 0px;"><input type="text">'+currentVal+'</input><input type="hidden" name="ai_id" value="'+$(this).attr("id")+'"></input><button name="submit" class="btn btn-mini btn-primary">Submit</button><button name="cancel" class="btn btn-mini btn-danger">Cancel</button></form>';
             // apparently using tabs/newline causes it to screw up?
