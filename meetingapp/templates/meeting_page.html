@@ -277,11 +277,11 @@ $(function() {
             $(this).find('button').attr("name", "motionid");
         });
 
-        $(":button[name='editai']").click(function() {
+        $("[name='editai']").click(function() {
             alert('hi');
             parent = $(this).parentNode;
             alert(parent);
-            currentVal = parent.find('span').html();
+            currentVal = $(parent).find('span').html();
             html = '<form method="post" style="margin: 0px; padding: 0px;">
             <input type="text">'+currentVal+'</input>
             <input type="hidden" name="ai_id" value="'+$(this).attr('id')+'"></input>
