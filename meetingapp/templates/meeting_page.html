@@ -279,8 +279,8 @@ $(function() {
 
         $("[name='editai']").click(function() {
             parent = $(this).parent();
-            currentVal = parent.find('span #ai_name').html();
-            num = parent.find('span #ai_num').html();
+            currentVal = parent.find('span[id="ai_name"]').html();
+            num = parent.find('span[id="ai_num"]').html();
             html = '<form method="post" style="margin: 0px; padding: 0px;"><text class="agenda" style="padding-right: 5px;">'+num+'</text><input type="text" style="margin-bottom: 0px !important; value="'+currentVal+'"></input><input type="hidden" name="ai_id" value="'+$(this).attr("id")+'"></input><button name="submit" class="btn btn-primary" style="margin-left: 5px !important; margin-right: 5px !important;">Submit</button><button name="cancel" class="btn btn-danger">Cancel</button></form>';
             // apparently using tabs/newline causes it to screw up?
             parent.replaceWith(html);
