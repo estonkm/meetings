@@ -284,7 +284,7 @@ $(function() {
             currentVal = parent.find('span').html().text();
             html = '<form method="post" style="margin: 0px; padding: 0px;">
             <input type="text">'+currentVal+'</input>
-            <input type="hidden" name="ai_id" value="'+$(this).attr('id')+'"></input>
+            <input type="hidden" name="ai_id" value="'+$(this).attr("id")+'"></input>
             <button name="submit" class="btn btn-mini btn-primary">Submit</button>
             <button name="cancel" class="btn btn-mini btn-danger">Cancel</button></form>';
             parent.replaceWith(html);
