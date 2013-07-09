@@ -201,13 +201,24 @@ def signup(request):
 				elif cd['password'] != cd['retype']:
 					context['retype_failed'] = True
 				else:
+					vkey = ''
+
+					random.seed()
+
+					for i in range(25):
+						vkey += chr(int(random.random()*25)+97)
+
 					u = User.objects.create_user(cd['email'], first_name=cd['first_name'],
 						last_name=cd['last_name'], email=cd['email'], password=cd['password'])
-					a = Account(user=u, join_date=datetime.now(), phone='', is_verified=True, verification_key='') 
+					a = Account(user=u, join_date=datetime.now(), phone='', is_verified=False, verification_key=vkey) 
 					a.save()
 					# TODO - use verification and don't log on just yet
-					user = authenticate(username=cd['email'], password=cd['password'])
-					auth_login(request, user)
+					recipient = [u.email]
+					message = 'Please go to http://www.vitalmeeting.com/verify/'+vkey+' to verify your account. Thanks!'
+					send_mail('Account Verification', message, 'info@vitalmeeting.com', recipient)
+
+					#user = authenticate(username=cd['email'], password=cd['password'])
+					#auth_login(request, user)
 
 					if 'fromcreate' in request.session:
 						return HttpResponseRedirect('../create/')
@@ -219,6 +230,32 @@ def signup(request):
 				cd = form.cleaned_data
 
 	return render_to_response('signup.html', context)
+
+def verify(request):
+	context = {}
+	context.update(csrf(request))
+	context['user'] = request.user
+
+	if not user.is_authenticated():
+		path = ''
+		if 'verify' in request.path:
+			path = request.path.split('/')[2]
+		else:
+			return HttpResponseRedirect('..')
+
+		a = Account.objects.filter(id__exact=path)
+		if not a:
+			return HttpResponseRedirect('..')
+		else:
+			u = a[0].user
+			user = authenticate(username=u.username, password=u.password)
+			auth_login(request, user)
+
+			if 'meeting_no' in request.session:
+				context['meeting'] = request.session['meeting_no']
+			return render_to_response('verify.html', context)
+	else:
+		return HttpResponseRedirect('../home/')
 
 def login(request):
 	context = {}

@@ -175,5 +175,5 @@ LOGGING = {
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'vitalmeeting'
-EMAIL_HOST_PASSWORD = 'y00liekaGizvit@l'
+EMAIL_HOST_USER = 'info@vitalmeeting.com'
+EMAIL_HOST_PASSWORD = 'Vital4People1'

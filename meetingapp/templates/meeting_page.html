@@ -48,7 +48,7 @@
                                     {% else %}
                                         {% if user == host.user or motion.user.user == user %}
                                             <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
-                                            <text>{{motion.name}}</text>
+                                            <text><span id="mo_name">{{motion.name}}</span></text>
                                                 <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_motion" value="{{motion.id}}">Remove</button>
                                                 {% if motion.user.user == user %}
                                                 <button class="btn btn-mini" name="editmotion" id="editmotion_{{motion.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
@@ -60,20 +60,20 @@
                                     {% endif %}
                                 </div>
                                 <div class="row motionbody">
-                                    <text>{{motion.desc}}</text>
+                                    <text><span id="mo_desc">{{motion.desc}}</span></text>
                                 </div>
                                 <div class="row motioninfo">
                                     <text style="color: #999; font-size: 12px; float:left;">posted by {{motion.user.user.first_name}} {{motion.user.user.last_name}} on {{motion.timestamp}}</text>
                                     <div style="float:right">
                                         <i class="icon-thumbs-up" style="cursor:hand; cursor:pointer;" id="like_{{ motion.id }}" value="{{motion.likes}}"></i>
-                                            <text style="padding-right: 5px; color: #000066;"> <span id="span_like_{{ motion.id}}">{{motion.likes}}</span></text>
+                                        <text style="padding-right: 5px; color: #000066;"> <span id="span_like_{{ motion.id}}">{{motion.likes}}</span></text>
 
-                                            <i class="icon-thumbs-down" style="cursor:hand; cursor:pointer;" id="dislike_{{ motion.id}}" value="{{motion.dislikes}}"></i>
-                                            <text style="padding-right: 5px; color: #990033;"><span id="span_dislike_{{ motion.id}}">{{motion.dislikes}}</span></text>
+                                        <i class="icon-thumbs-down" style="cursor:hand; cursor:pointer;" id="dislike_{{ motion.id}}" value="{{motion.dislikes}}"></i>
+                                        <text style="padding-right: 5px; color: #990033;"><span id="span_dislike_{{ motion.id}}">{{motion.dislikes}}</span></text>
 
-                                            <button class="btn hoverblack alter" data-toggle="collapse" data-target="#motion_{{motion.id}}">show comments ({{motion.comments.all.count}})</a>
+                                        <button class="btn hoverblack alter" data-toggle="collapse" data-target="#motion_{{motion.id}}">show comments ({{motion.comments.all.count}})</a>
 
-                                            {% if user.is_authenticated %}<button class="btn hoverblack alter" data-toggle="collapse" data-target="#addcomment_{{motion.id}}">add comment</a>{% endif %}
+                                        {% if user.is_authenticated %}<button class="btn hoverblack alter" data-toggle="collapse" data-target="#addcomment_{{motion.id}}">add comment</a>{% endif %}
                                     </div>
                                 </div>
                                 <div class="row collapse indented out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
@@ -113,27 +113,29 @@
                         </div>
                         {% else %}
                         <div class="collapse indented out">
-                            <div class="row motion">
-                            <div class="row motiontitle">
-                                {% if motion.modded %}
-                                    <em>{{motion.name}}</em>
-                                {% else %}
-                                    {% if user.username == host.user.username or motion.user.user == user %}
-                                        <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
-                                        <text>{{motion.name}}</text>
-                                            <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_motion" value="{{motion.id}}">Remove</button>
-                                            {% if motion.user.user == user %}
-                                            <button class="btn btn-mini" name="editmotion" id="editmotion_{{motion.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
-                                            {% endif %}
-                                        </form>
+                            <form method="post">{% csrf_token %}
+                                <div class="row motion">
+                                <div class="row motiontitle">
+                                    {% if motion.modded %}
+                                        <em>{{motion.name}}</em>
                                     {% else %}
-                                        <text>{{motion.name}}</text>
+                                        {% if user.username == host.user.username or motion.user.user == user %}
+                                            <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
+                                            <text>{{motion.name}}</text>
+                                                <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_motion" value="{{motion.id}}">Remove</button>
+                                                {% if motion.user.user == user %}
+                                                <button class="btn btn-mini" name="editmotion" id="editmotion_{{motion.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
+                                                {% endif %}
+                                            </form>
+                                        {% else %}
+                                            <text>{{motion.name}}</text>
+                                        {% endif %}
                                     {% endif %}
-                                {% endif %}
-                            </div>
-                            <div class="row motionbody">
-                                <text>{{motion.desc}}</text>
-                            </div>
+                                </div>
+                                <div class="row motionbody">
+                                    <text>{{motion.desc}}</text>
+                                </div>
+                            </form>
                             <div class="row motioninfo">
                                 <text style="color: #999; font-size: 12px; float:left;">posted by {{motion.user.user.first_name}} {{motion.user.user.last_name}} on {{motion.timestamp}}</text>
                                 <div style="float:right">
@@ -281,16 +283,21 @@ $(function() {
             parent = $(this).parent();
             currentVal = parent.find('span[id="ai_name"]').html();
             num = parent.find('span[id="ai_num"]').html();
-            html = '<form method="post" style="margin: 0px; padding: 0px;"><text class="agenda" style="padding-right: 5px;">'+num+'.</text><input type="text" style="margin-bottom: 0px !important;" value="'+currentVal+'"><input type="hidden" name="ai_id" value="'+$(this).attr("id")+'"><button name="submit" class="btn btn-primary" style="margin-left: 5px !important; margin-right: 5px !important;">Submit</button><button name="cancel" class="btn btn-danger">Cancel</button></form>';
+            html = '<form method="post" style="margin: 0px; padding: 0px;">{% csrf_token %}<text class="agenda" style="padding-right: 5px;">'+num+'.</text><input type="text" style="margin-bottom: 0px !important;" value="'+currentVal+'"><input type="hidden" name="ai_id" value="'+$(this).attr("id")+'"><button name="submit" class="btn btn-primary" style="margin-left: 5px !important; margin-right: 5px !important;">Submit</button><button name="cancel" class="btn btn-danger">Cancel</button></form>';
             // apparently using tabs/newline causes it to screw up?
             parent.replaceWith(html);
         });
 
-        $('button[name="editmotion"]').click(function() {
-
+        $('[name="editmotion"]').click(function() {
+            parent = $(this).parent();
+            currentVal = parent.find('span[id="mo_name"]').html();
+            num = parent.parent().find('span[id="ai_num"]').html();
+            html = '<form method="post" style="margin: 0px; padding: 0px;">{% csrf_token %}<text class="agenda" style="padding-right: 5px;">'+num+'.</text><input type="text" style="margin-bottom: 0px !important;" value="'+currentVal+'"><input type="hidden" name="ai_id" value="'+$(this).attr("id")+'"><button name="submit" class="btn btn-primary" style="margin-left: 5px !important; margin-right: 5px !important;">Submit</button><button name="cancel" class="btn btn-danger">Cancel</button></form>';
+            // apparently using tabs/newline causes it to screw up?
+            parent.parent().replaceWith(html);
         });
 
-        $('button[name="editcomment"]').click(function() {
+        $('[name="editcomment"]').click(function() {
 
         });
 
