@@ -244,7 +244,7 @@ def verify(request):
 		else:
 			return HttpResponseRedirect('..')
 
-		a = Account.objects.filter(id__exact=path)
+		a = Account.objects.filter(verification_key__exact=path)
 		if not a:
 			return HttpResponseRedirect('..')
 		else:
