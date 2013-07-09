@@ -234,9 +234,7 @@ def signup(request):
 def verify(request):
 	context = {}
 	context.update(csrf(request))
-	context['user'] = request.user
-
-	if not request.user.is_authenticated():
+	if not request.user:
 		path = ''
 		if 'verify' in request.path:
 			path = request.path.split('/')[2]
