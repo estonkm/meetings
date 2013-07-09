@@ -12,9 +12,11 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'mydb',                      # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
+        'NAME': 'mydb',                   # Or path to database file if using sqlite3.
+        #'NAME': 'meetingdb',
+        #'USER': '',
         'USER': 'postgres',
+        #'PASSWORD': '',
         'PASSWORD': 'p0sthardcore',
         'HOST': '127.0.0.1',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '5432',                      # Set to empty string for default.
@@ -175,5 +177,5 @@ LOGGING = {
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'modestmusketeer@gmail.com' #'info@vitalmeeting.com'
-EMAIL_HOST_PASSWORD = 'spamf*ckmylife' #Vital4People1'
+EMAIL_HOST_USER = 'info@vitalmeeting.com'
+EMAIL_HOST_PASSWORD = 'Vital4People1'
