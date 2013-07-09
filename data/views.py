@@ -236,7 +236,7 @@ def verify(request):
 	context.update(csrf(request))
 	context['user'] = request.user
 
-	if not user.is_authenticated():
+	if not request.user.is_authenticated():
 		path = ''
 		if 'verify' in request.path:
 			path = request.path.split('/')[2]
