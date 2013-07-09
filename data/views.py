@@ -234,7 +234,10 @@ def signup(request):
 def verify(request):
 	context = {}
 	context.update(csrf(request))
-	if not request.user:
+
+	if request.user.is_authenticated():
+		return HttpResponseRedirect('../home/')
+	else:
 		path = ''
 		if 'verify' in request.path:
 			path = request.path.split('/')[2]
@@ -254,8 +257,6 @@ def verify(request):
 			if 'meeting_no' in request.session:
 				context['meeting'] = request.session['meeting_no']
 			return render_to_response('verify.html', context)
-	else:
-		return HttpResponseRedirect('../home/')
 
 def login(request):
 	context = {}
