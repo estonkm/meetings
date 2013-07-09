@@ -215,7 +215,7 @@ def signup(request):
 					# TODO - use verification and don't log on just yet
 					recipient = ['splichte@princeton.edu']
 					message = 'Please go to http://www.vitalmeeting.com/verify/'+vkey+' to verify your account. Thanks!'
-					send_mail('Account Verification', message, 'Vital Meeting <info@vitalmeeting.com>', recipient)
+					send_mail('Account Verification', message, 'Sam Lichtenberg <modestmusketeer@gmail.com>', recipient)
 
 					#user = authenticate(username=cd['email'], password=cd['password'])
 					#auth_login(request, user)
