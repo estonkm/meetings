@@ -281,7 +281,8 @@ $(function() {
             alert('hi');
             parent = $(this).parentNode;
             alert(parent);
-            currentVal = parent.find('span').html().text();
+            // currentVal = parent.find('span').html().text();
+            currentVal = "string";
             html = '<form method="post" style="margin: 0px; padding: 0px;">
             <input type="text">'+currentVal+'</input>
             <input type="hidden" name="ai_id" value="'+$(this).attr("id")+'"></input>
