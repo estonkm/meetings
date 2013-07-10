@@ -4,10 +4,11 @@
 
 <div class="container">
 	<div class="row">
-		<h2>Your account has been validated!</h2>
+		<h3>Your account has been validated!</h3>
 		{% if meeting %}
 		<a href="../meeting/{{meeting}}">Click here to go to the meeting you just created.</a><br>
-		<a href="../home/">Click here to go home.</a>
+		{% endif %}
+		<a href="../home/">Click here to go home.</a><br><br>
 	</div>
 </div>
 

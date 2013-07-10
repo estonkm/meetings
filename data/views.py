@@ -17,6 +17,8 @@ import re
 from django.core.mail import send_mail
 #import requests
 
+SENDER = 'Vital Meeting <info@vitalmeeting.com>'
+
 def mailgun_send(recipients, subject, message):
 	return requests.post(
 		"https://api.mailgun.net/v2/rs3945.mailgun.org/messages",
@@ -168,17 +170,16 @@ def invite(request):
 				recipients.append(e)
 
 		if recipients:
-			message = (request.user.first_name + " " + request.user.last_name + " has invited you to the meeting " +
-					meeting.title + ", which begins at " + str(meeting.starttime) + ", " + str(meeting.startdate) + ". You can find the meeting at: " +
-					"http://www.vitalmeeting.herokuapps.com/meeting/"+meeting_no)
+			title = "VitalMeeting: " + meeting.title
+			message = ("You've been invited to attend " + request.user.first_name + " " + request.user.last_name + "'s online meeting discussion, " +
+						"on VitalMeeting.com.\n\nPlease click on " +
+						"http://www.vitalmeeting.com/meeting/"+meeting_no+" to join in.\n\nBest Regards,\n\nVitalMeeting.com")
 
-		#	send_mail(meeting.title, message, "vitalmeeting@gmail.com", recipients)
+		send_mail(title, message, SENDER, recipients)
 
 		return HttpResponseRedirect('../meeting/'+meeting_no)
 
 	return render_to_response('invite.html', context)
-
-#TODO: hash email to form username (otherwise too easy to get permissions on meeting page)
 
 def signup(request):
 	context = {}
@@ -213,17 +214,21 @@ def signup(request):
 					a = Account(user=u, join_date=datetime.now(), phone='', is_verified=False, verification_key=vkey) 
 					a.save()
 					# TODO - use verification and don't log on just yet
-					recipient = ['splichte@princeton.edu']
+					recipient = [u.email]
 					message = 'Please go to http://www.vitalmeeting.com/verify/'+vkey+' to verify your account. Thanks!'
-					send_mail('Account Verification', message, 'Vital Meeting <info@vitalmeeting.com>', recipient)
+					send_mail('Account Verification', message, SENDER, recipient)
 
 					#user = authenticate(username=cd['email'], password=cd['password'])
 					#auth_login(request, user)
+					context['success'] = True
 
 					if 'fromcreate' in request.session:
-						return HttpResponseRedirect('../create/')
+						#return HttpResponseRedirect('../create/')
+						context['destination'] = '../create'
 					else:
-						return HttpResponseRedirect('../home/')
+						#return HttpResponseRedirect('../home/')
+						context['destination'] = '../home/'
+
 			else:
 				errors = {}
 				context['errors'] = errors
@@ -247,11 +252,14 @@ def verify(request):
 		a = Account.objects.filter(verification_key__exact=path)
 		if not a:
 			return HttpResponseRedirect('..')
+		elif a[0].is_verified:
+			return HttpResponseRedirect('../home/')
 		else:
-			u = a[0].user
+			user = a[0].user
 			a[0].is_verified = True
 			a[0].save()
-			user = authenticate(username=u.username, password=u.password)
+			# the password is hashed before it is stored, so you can't retrieve it and use it
+			user.backend = 'django.contrib.auth.backends.ModelBackend'
 			auth_login(request, user)
 
 			if 'meeting_no' in request.session:
@@ -429,7 +437,7 @@ def meeting(request):
 				motion.name = 'This motion has been removed by a moderator.'
 				recipient = [motion.user.user.email]
 				message = 'Your motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.'
-				mailgun_send(recipient, "Motion removed", message)
+				send_mail("Motion removed", message, SENDER, recipient)
 			motion.desc = ''
 			motion.modded = True
 			motion.save()
@@ -446,9 +454,32 @@ def meeting(request):
 				recipient = [comment.user.user.email]
 				motion = Motion.objects.get(id__exact=motion_id)
 				message = 'Your comment on motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.'
-				mailgun_send(recipient, "Comment removed", message)
+				send_mail("Comment removed", message, SENDER, recipient)
 
 			comment.modded = True
+			comment.save()
+
+		if 'change_motion' in request.POST:
+			m_id = request.POST.get('m_id')
+			text = request.POST.get('motiontext')
+			title = request.POST.get('m_title')
+			motion = Motion.objects.get(id__exact=m_id)
+			motion.name = title
+			motion.desc = text
+			motion.save()
+
+		if 'change_ai' in request.POST:
+			ai_id = request.POST.get('ai_id')
+			name = request.POST.get('name')
+			ai = AgendaItem.objects.get(id__exact=ai_id)
+			ai.name = name
+			ai.save()
+
+		if 'change_comment' in request.POST:
+			c_id = request.POST.get('c_id')
+			text = request.POST.get('commenttext')
+			comment = Comment.objects.get(id__exact=c_id)
+			comment.text = text
 			comment.save()
 
 	request.session['meeting_no'] = path
@@ -457,6 +488,7 @@ def meeting(request):
 	context['m'] = meeting
 	context['host'] = meeting.hosts.all()[0]
 	agenda_items = meeting.agenda_items.order_by('number')
+	context['agenda_items'] = agenda_items
 
 	return render_to_response('meeting_page.html', context)
 
