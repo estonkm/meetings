@@ -31,10 +31,11 @@
                 <div class="row ai_row">
                     <div class="row ai_title">
                         <text class="agenda" style="padding-right: 5px;"><span id="ai_num">{{ai.number}}</span>. <span id="ai_name">{{ai.name}}</span></text>
-                        <button class="btn hoverblack alter" data-toggle="collapse" id="showmotions_{{ai.id}}" data-target="#ai_{{ai.id}}">show motions ({{ai.motions.all.count}})</button>
-                        {% if user.is_authenticated %}<button class="btn hoverblack alter" data-toggle="collapse" name="addmotion" data-target="#addmotion_{{ai.id}}">add a motion</a>{% endif %}
+                        <button class="btn btn-mini" name="editai" style="margin-top: -5px !important;" id="{{ai.id}}"><i class="icon-pencil"></i> edit</button>
+                        <button class="btn hoverblack alter" data-toggle="collapse" style="margin-top: -5px !important;" id="showmotions_{{ai.id}}" data-target="#ai_{{ai.id}}">show all motions ({{ai.motions.all.count}})</button>
+                        {% if user.is_authenticated %}<button class="btn hoverblack alter" style="margin-top: -5px !important;" data-toggle="collapse" name="addmotion" data-target="#addmotion_{{ai.id}}">add a motion</a>{% endif %}
                         {% if user == host.user %}
-                        <button class="btn btn-mini" name="editai" id="{{ai.id}}"><i class="icon-pencil"></i> edit</button>
+
                         {% endif %}
                     </div>
                     <div class="row" style="margin-bottom: 20px !important" id="ai_{{ai.id}}">
@@ -51,7 +52,7 @@
                                             <text><span id="mo_name">{{motion.name}}</span></text>
                                                 <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_motion" value="{{motion.id}}">Remove</button>
                                                 {% if motion.user.user == user %}
-                                                <button class="btn btn-mini" name="editmotion" id="editmotion_{{motion.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
+                                                <button class="btn btn-mini" name="editmotion" id="{{motion.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
                                                 {% endif %}
                                             </form>
                                         {% else %}
@@ -84,10 +85,10 @@
                                             {% else %}
                                                 {% if user.username == host.user.username or comment.user.user == user %}
                                                     <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
-                                                        {{comment.text}}
+                                                        <span id="mo_comment">{{comment.text}}</span>
                                                         <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_comment" value="{{comment.id}} {{motion.id}}">Remove</button>
                                                         {% if comment.user.user == user %}
-                                                        <button class="btn btn-mini" name="editcomment" id="editcomment_{{comment.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
+                                                        <button class="btn btn-mini" name="editcomment" id="{{comment.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
                                                         {% endif %}
                                                     </form>
                                                 {% else %}
@@ -124,7 +125,7 @@
                                             <text>{{motion.name}}</text>
                                                 <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_motion" value="{{motion.id}}">Remove</button>
                                                 {% if motion.user.user == user %}
-                                                <button class="btn btn-mini" name="editmotion" id="editmotion_{{motion.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
+                                                <button class="btn btn-mini" name="editmotion" id="{{motion.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
                                                 {% endif %}
                                             </form>
                                         {% else %}
@@ -133,7 +134,7 @@
                                     {% endif %}
                                 </div>
                                 <div class="row motionbody">
-                                    <text>{{motion.desc}}</text>
+                                    <text><span id="mo_desc">{{motion.desc}}</span></text>
                                 </div>
                             </form>
                             <div class="row motioninfo">
@@ -158,7 +159,7 @@
                                         {% else %}
                                             {% if user == host.user or comment.user.user == user %}
                                                 <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
-                                                    {{comment.text}}
+                                                    <span id="mo_comment">{{comment.text}}</span>
                                                     <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_comment" value="{{comment.id}} {{motion.id}}">Remove</button>
                                                     {% if comment.user.user == user %}
                                                     <button class="btn btn-mini" name="editcomment" id="editcomment_{{comment.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
@@ -200,7 +201,7 @@
                 {% endfor %}
             </div>
             <div class="span3">
-                {% if user.username == host.user.username %}
+                {% if user == host.user %}
                 <form method="post" style="margin: 5px !important; margin-top: 0px !important; margin-left: 8px !important;">{% csrf_token %}
                     <button class="btn btn-primary alter" type="submit" name="settings" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Settings</button>
                     <button class="btn alter" type="submit" name="members" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Manage Members</button>
@@ -279,26 +280,67 @@ $(function() {
             $(this).find('button').attr("name", "motionid");
         });
 
+        oldAIHTML = '';
+
         $("[name='editai']").click(function() {
             parent = $(this).parent();
             currentVal = parent.find('span[id="ai_name"]').html();
             num = parent.find('span[id="ai_num"]').html();
-            html = '<form method="post" style="margin: 0px; padding: 0px;">{% csrf_token %}<text class="agenda" style="padding-right: 5px;">'+num+'.</text><input type="text" style="margin-bottom: 0px !important;" value="'+currentVal+'"><input type="hidden" name="ai_id" value="'+$(this).attr("id")+'"><button name="submit" class="btn btn-primary" style="margin-left: 5px !important; margin-right: 5px !important;">Submit</button><button name="cancel" class="btn btn-danger">Cancel</button></form>';
+            html = "<form method='post' style='margin: 0px; padding: 0px;'>{% csrf_token %}<text class='agenda' style='padding-right: 5px;'>"+num+".</text><input type='text' name='name' style='margin-bottom: 0px !important;' value='"+currentVal+"'><input type='hidden' name='ai_id' value='"+$(this).attr('id')+"'><button type='submit' name='change_ai' class='btn btn-mini btn-primary' style='margin-left: 5px !important; margin-right: 5px !important;'>Submit</button><button id='ai_cancel' name='cancel' class='btn btn-mini btn-danger'>Cancel</button></form>";
             // apparently using tabs/newline causes it to screw up?
+            oldAIHTML = parent.html();
             parent.replaceWith(html);
         });
-
-        $('[name="editmotion"]').click(function() {
-            parent = $(this).parent();
-            currentVal = parent.find('span[id="mo_name"]').html();
-            num = parent.parent().find('span[id="ai_num"]').html();
-            html = '<form method="post" style="margin: 0px; padding: 0px;">{% csrf_token %}<text class="agenda" style="padding-right: 5px;">'+num+'.</text><input type="text" style="margin-bottom: 0px !important;" value="'+currentVal+'"><input type="hidden" name="ai_id" value="'+$(this).attr("id")+'"><button name="submit" class="btn btn-primary" style="margin-left: 5px !important; margin-right: 5px !important;">Submit</button><button name="cancel" class="btn btn-danger">Cancel</button></form>';
-            // apparently using tabs/newline causes it to screw up?
-            parent.parent().replaceWith(html);
+        $('#ai_cancel').click(function() {
+            $(this).parent().replaceWith(oldAIHTML);
         });
 
-        $('[name="editcomment"]').click(function() {
 
+
+        oldMotionTitleHTML = '';
+        oldMotionDescHTML = '';
+        $('[name="editmotion"]').click(function(e) {
+            e.preventDefault();
+            parent = $(this).parent().parent();
+            title = parent.find('span[id="mo_name"]').html();
+            text = parent.parent().find('span[id="mo_desc"]').html();
+            motiontitleHTML = "<input type='text' id='edit_m_title' style='with: 90% !important; margin-bottom: 0px !important;' value='"+title+"'>";
+            motionbodyHTML = "<form method='post' id='edit_m' style='margin: 0px; padding: 0px;'>{% csrf_token %}<textarea rows='4' name='motiontext' style='width: 90%; margin-top: 5px !important; margin-bottom: 5px !important;'>"+text+"</textarea><input type='hidden' name='m_id' value='"+$(this).attr('id')+"'><input type='hidden' name='m_title' id='title_in_desc'><button type='submit' name='change_motion' class='btn btn-mini btn-primary' style='margin-left: 5px !important; margin-right: 5px !important;'>Change</button><button name='cancel' id='m_cancel' class='btn btn-mini btn-danger'>Cancel</button></form>";
+
+            mobdiv = parent.parent().find('.motionbody');
+
+            oldMotionTitleHTML = parent.html();
+            oldMotionDescHTML = mobdiv.html();
+
+            parent.replaceWith(motiontitleHTML); 
+            mobdiv.replaceWith(motionbodyHTML);
+
+            $('#edit_m').submit(function() {
+                alert('hi');
+                $('#title_in_desc').val($('#edit_m_title').val());
+                return true;
+            });
+
+            // use javascript to submit the two forms simultaneously! no: just copy the info from the title into a hidden input field in the second form
+            // waaiiiiiit a second...it CAN find form elements (it found m_cancel)...what?
+        });
+
+        $('#m_cancel').click(function() {
+            $(this).parent().parent().replaceWith(oldMotionTitleHTML);
+            $(this).parent().parent().parent().find('.motionbody').replaceWith(oldMotionDescHTML);
+        });
+
+        oldCommentHTML = '';
+        $('[name="editcomment"]').click(function(e) {
+            e.preventDefault();
+            parent = $(this).parent();
+            text = parent.find('span[id="mo_comment"]').html();
+            newHTML = "<form method='post' id='edit_c' style='margin: 0px; padding: 0px;'>{% csrf_token %}<textarea rows='4' name='commenttext' style='width: 90%; margin-top: 5px !important; margin-bottom: 5px !important;'>"+text+"</textarea><input type='hidden' name='c_id' value='"+$(this).attr('id')+"'><button type='submit' name='change_comment' class='btn btn-mini btn-primary' style='margin-left: 5px !important; margin-right: 5px !important;'>Change</button><button name='cancel' id='c_cancel' class='btn btn-mini btn-danger'>Cancel</button></form>"
+            oldCommentHTML = parent.parent().html();
+            parent.parent().replaceWith(newHTML);
+        });
+        $('#c_cancel').click(function() {
+            $(this).parent().parent().replaceWith(oldCommentHTML);
         });
 
     });
