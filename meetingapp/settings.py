@@ -110,11 +110,6 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-
-CRON_CLASSES = [
-    "data.cron.MyCronJob",
-]
-
 ROOT_URLCONF = 'meetingapp.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
@@ -136,7 +131,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'data',
     'meetingapp',
-    'django_cron',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
