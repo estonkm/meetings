@@ -16,7 +16,9 @@ from django.utils import simplejson
 import re, os
 from django.core.mail import send_mail
 from django.conf import settings as dsettings
-from PIL import Image, ImageOps
+#from PIL import Image, ImageOps
+#above works on Mac, below on Ubuntu
+import Image, ImageOps
 #import requests
 
 SENDER = 'Vital Meeting <info@vitalmeeting.com>'
