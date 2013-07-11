@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <header class="subhead" id="overview">
+<!--     <header class="subhead" id="overview">
         <div class="container">
             <div class="info">
                 <h2>{{ m.title }}</h2>
@@ -22,11 +22,44 @@
                 </div>
             </div>
         </div>
-    </header>
+    </header> -->
 
     <div class="container">
         <div class="row">
-            <div class="span9"><p class="lead">Agenda Items</p>
+            <div class="span8">
+                <div class="meetingHead">
+                    <h2 style="margin-bottom:20px !important;">{{m.title}}</h2>
+                    <div class="desc">
+                        {{m.desc}}
+                    </div>
+                    <div class="info">
+                        <text style="font-weight: bold !important;">Start: </text>
+                        <text style="margin-left: 5px;">{{m.starttime}} {{m.startdate}}</text><br>
+                        <text style="font-weight: bold !important;">End: </text>
+                        <text style="margin-left: 5px;">{{m.endtime}} {{m.enddate}}</text><br>
+                        <text style="font-weight: bold !important;">Timezone: </text>
+                        <text style="margin-left: 5px;">{{m.timezone}}</text><br> 
+                        {% if user == host.user %}
+                        <form method="post" style="margin-top: 20px !important;">{% csrf_token %}
+                            <button class="btn btn-primary alter" type="submit" name="settings" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Settings</button>
+                            <button class="btn alter" type="submit" name="members" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Manage Members</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="span4">
+                <div class="organizerHead">
+                    <h3 style="text-align: center; margin-bottom:5px !important;">{{org.name}}</h3>
+                    <div style="text-align: center; vertical-align: middle;">
+                        {% if org.image %}<img src='{{org.image.url}}' />{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span8">
+                <p class="lead">Agenda Items</p>
                 {% for ai in agenda_items %}
                 <div class="row ai_row">
                     <div class="row ai_title">
@@ -200,15 +233,13 @@
                 </div>
                 {% endfor %}
             </div>
-            <div class="span3">
-                {% if user == host.user %}
-                <form method="post" style="margin: 5px !important; margin-top: 0px !important; margin-left: 8px !important;">{% csrf_token %}
-                    <button class="btn btn-primary alter" type="submit" name="settings" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Settings</button>
-                    <button class="btn alter" type="submit" name="members" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Manage Members</button>
-<!--                     <button class="btn btn-primary" name="settings" style="padding-left: 17px !important; padding-right: 17px !important;">Meeting Settings</button>
-                    <button class="btn" style="margin-top: 5px !important; margin-bottom: 5px !important;"name="members">Manage Members</button> -->
-                </form>
-                {% endif %}
+            <div class="span4">
+                <div class="userinfo" style="border: none !important; text-align: center;">
+                    <h5>About This Organization:</h5>
+                    <p>{{org.desc}}</p>
+                    <h5>Contact:</h5>
+                    <p>{{org.contact}}</p>
+                </div>
                 <div class="userinfo sidebox">
                     <i class="icon-user"></i>
                     <text class="lead" style="font-size: 15px !important;">Host (1):</text><br>

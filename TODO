@@ -1,0 +1,13 @@
+or, BUGLIST
+
+PENDING:
+
+all images resize to 175x175, this is bad and it should be proportionally resizing
+ensure user can't interfere with create->attach org->invite contacts
+*add "invite by email" to "manage members" in a meeting
+*disallow random users from editing agenda items (lol whoops)
+let people/companies rewrite the urls to better suit them, as long as it isn't in the system, so it isn't just random chars
+*fix title of website to be "structured meetings, etc."
+
+
+FIXED:

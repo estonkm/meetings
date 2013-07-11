@@ -7,15 +7,17 @@
 		<div class="span9">
 			<!-- Create a New Meeting button goes here -->
 			<div class="tabbable">
+				<div class="row" style="margin-bottom: 20px !important; margin-left: 0px !important;">
+					<div style="">
+						<a href="../create/" class="btn" style="float: none !important; margin-right: 5px;">Create a New Meeting</a>
+						<a href="../addorganizer/" class="btn" style="float: none !important; margin-right: 5px;">Create a New Organization</a>
+					</div>
+				</div>
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="#tab1" data-toggle="tab">meetings I'm in</a></li>
 					<li><a href="#tab2" data-toggle="tab">meetings I created</a></li>
 					<li><a href="#tab3" data-toggle="tab">past meetings</a></li>
-					<li style="float:right;">
-						<div style="text-align: center;">
-							<a href="../create/" class="btn" style="float: none !important; margin-right: 5px;">Create a New Meeting</a>
-						</div>
-					</li>	
+					<li><a href="#tab4" data-toggle="tab">organizations</a></li>
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="tab1">
@@ -66,6 +68,14 @@
 						</div>
 						{% endfor %}
 					</div>
+					<div class="tab-pane" id="tab4">
+						{% for org in organizations %}
+						<div class="row homemeetings" style="margin-left: 0px !important; border-bottom: 1px solid #DCDCDC;">
+								<a href="../org/{{ org.page_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{org.name}}</a><text> - {{ org.desc}}</text><br>
+								<text style="color: #999; font-size: 12px;">contact: {{org.contact}}</text>
+						</div>
+						{% endfor %}
+					</div>
 				</div>
 			</div>
 		</div>
@@ -75,9 +85,9 @@
             </div>
             <div class="userinfo sidebox">
                 <i class="icon-user"></i>
-                <text class="lead" style="font-size: 15px !important;">Contacts ({{account.contacts.all.count}}):</text><br><ul>
+                <text class="lead" style="font-size: 15px !important;">Contacts ({{account.contacts.all.count}}):</text><br><ul class="sidebox" style="margin-left: 5px;">
                 {% for contact in account.contacts.all %}
-                <li>{{contact.user.last_name}}, {{contact.user.first_name}} <<em>{{contact.user.email}}</em>></li>
+                <li>{{contact.title }} {{contact.last_name}}, {{contact.first_name}} <<em>{{contact.email}}</em>></li>
                 {% endfor %}</ul>
             </div>
 		</div>

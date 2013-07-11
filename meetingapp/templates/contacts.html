@@ -2,8 +2,6 @@
 
 {% block content %}
 
-{% if user.is_authenticated %}
-
 <div class="container">
 	<div class="row">
 		<div class="span9">
@@ -12,23 +10,19 @@
 				<div style="width: 200px; height: 50px; margin-bottom: 20px; float: left;">
 					<h4 style="margin: 5px !important;">Contacts</h4>
 				</div>
-				<form class="form-search" style="margin: 0px !important; float:right;" method="post">
-					{% csrf_token %}
-					<!-- TODO: open a new page or something; or modal pop-up -->
-					{% if errors %}<text style="color: red; padding-right: 2px;">Email not in database </text>{% endif %}
-					<input type="text" name='search' placeholder="Contact's email" class="input-medium search-query">
-					<button type="submit" class="btn">Add Contact</button>
-				</form>
-				<!-- <text style="float: right; margin-right: 10px; margin-top: 4px;"><em>Add a New Contact</em></text> -->
+				<span style="float:right;">
+					<input type="text" name='search' style="width: 200px !important; margin-right: 20px !important;" placeholder="Search existing contacts (OFF)" class="input-medium search-query">
+					<a href="#cModal" role="button" class="btn" data-toggle="modal">Add a New Contact</a>
+				</span>
 			</div>
 			{% for c in contacts %}
 			<div class="row homemeetings" style="margin-left: 0px !important; border-bottom: 1px solid #DCDCDC;">
-					<h4>{{c.user.last_name}}, {{c.user.first_name}} </h4>
+					{% if c.last_name %}<h4>{{c.title}} {{c.last_name}}{% if c.first_name %}, {{c.first_name}} {% endif %}</h4>{% endif %}
                     <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
 	                    <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_contact" value="{{c.id}}">Remove</button>
 	                </form>
-					<text><em>Email: {{c.user.email}}</em></text><br>
-					{% if c.phone %}<text><em>Phone: {{c.phone}}</em></text>{% endif %}
+					<text><em>Email: {{c.email}}</em></text><br>
+					{% if c.wphone %}<text><em>Phone: {{c.wphone}}</em></text>{% endif %}
 			</div>
 			{% endfor %}
 		</div>
@@ -38,7 +32,7 @@
             </div>
             <div class="userinfo sidebox">
                 <text class="lead" style="font-size: 15px !important;">Meetings</text><br>
-                <ul>{% for meeting in meetings %}
+                <ul class="sidebox" style="margin-left: 5px;">{% for meeting in meetings %}
                 <li>{{meeting.title}}</li>
                 {% endfor %}</ul>
             </div>
@@ -46,18 +40,71 @@
 	</div>
 </div>
 
-<script>
-$(document).ready(function() {
-});
-</script>
+<div id="cModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Add a New Contact</h3>
+  </div>
+  <div class="modal-body">
+	<form class="form-horizontal" id='c_form' style="display:inline-block;" method="post">
+		{% csrf_token %}
+		<input type="hidden" name="new_contact">
+		<div class="control-group">
+			<label class="control-label" for="inputEmail">Title</label>
+			<div class="controls">
+				{{ form.title }}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="inputEmail">First name</label>
+			<div class="controls">
+				{{ form.first_name }}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="inputEmail">Last name</label>
+			<div class="controls">
+				{{ form.last_name }}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="inputEmail">*Email</label>
+			<div class="controls">
+				{{ form.email }}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="inputEmail">Address</label>
+			<div class="controls">
+				{{ form.address }}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="inputEmail">Work Phone</label>
+			<div class="controls">
+				{{ form.wphone }}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="inputEmail">Home Phone</label>
+			<div class="controls">
+				{{ form.hphone }}
+			</div>
+		</div>
+    </form>
+  </div>
+  <div class="modal-footer">
+  	<button class="btn btn-primary" id="add_c">Add</button>
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+  </div>
+</div>
 
-{% else %}
 <script>
 $(document).ready(function() {
-	// TODO: change this for site
-	window.location="//127.0.0.1:8000/";
+	$('#add_c').click(function() {
+		$('#c_form').submit();
+	});
 });
 </script>
-{% endif %}
 
 {% endblock %}

@@ -2,45 +2,55 @@
 
 {% block content %}
 
-{% if user.is_authenticated %}
-
 <div class="container">
 	<div class="row">
 		<div class="span9">
-			<div>
-				Profile information--can edit the form here
-			</div>
+			<table class="table">
+                <tbody>
+                    <tr>
+                        <td>{% if account.prof_pic %}<img src="{{account.prof_pic.url}}" />{% endif %}</td>
+                        <td><h4>{{account.user.last_name}}, {{account.user.first_name}}</h4><br>
+                            <a href="../account/{{account.page_id}}">See My Public Profile</a></td>
+                    </tr>
+                    <tr>
+                        <th>Brief Bio:</th>
+                        <td>{{account.bio}}</td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td>{{account.user.email}}</td>
+                    </tr>
+                    <tr>
+                        <th>Work Phone:</th>
+                        <td>{{account.user.wphone}}</td>
+                    </tr>
+                    <tr>
+                        <th>Home Phone:</th>
+                        <td>{{account.user.hphone}}</td>
+                    </tr>
+                    <tr>
+                        <th>Join Date:</th>
+                        <td>{{account.user.join_date}}</td>
+                    </tr>
+                </tbody>
+            </table>
 		</div>
 		<div class="span3">
             <div class="userinfo sidebox">
-                <text class="lead" style="font-size: 15px !important;">Meetings ({{account.meetings_in.all.count}}):</text><br><ul>
+                <text class="lead" style="font-size: 15px !important;">Meetings ({{account.meetings_in.all.count}}):</text><br><ul class="sidebox" style="margin-left: 5px;">
                 {% for meeting in account.meetings_in.all %}
                 <li>{{meeting.title}}</li>
                 {% endfor %}</ul>
             </div>
             <div class="userinfo sidebox">
                 <i class="icon-user"></i>
-                <text class="lead" style="font-size: 15px !important;">Contacts ({{account.contacts.all.count}}):</text><br><ul>
+                <text class="lead" style="font-size: 15px !important;">Contacts ({{account.contacts.all.count}}):</text><br><ul class="sidebox" style="margin-left: 5px;">
                 {% for contact in account.contacts.all %}
-                <li>{{contact.user.last_name}}, {{contact.user.first_name}} <<em>{{contact.user.email}}</em>></li>
+                <li>{{contact.title}} {{contact.last_name}}, {{contact.first_name}} <<em>{{contact.email}}</em>></li>
                 {% endfor %}</ul>
             </div>
 		</div>
 	</div>
 </div>
-
-<script>
-$(document).ready(function() {
-});
-</script>
-
-{% else %}
-<script>
-$(document).ready(function() {
-	// TODO: change this for site
-	window.location="//127.0.0.1:8000/";
-});
-</script>
-{% endif %}
 
 {% endblock %}

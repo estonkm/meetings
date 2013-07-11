@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+	<form enctype="multipart/form-data" class="form-horizontal centered" style="display:inline-block;" method="post">
+		{% csrf_token %}
+		<div class="control-group">
+			<div class="controls">
+				<h3>Create New Organization</h3>
+			</div>
+		</div>
+		<input type="hidden" name="submit_request" value="submit_request">
+		<div class="control-group">
+			<label class="control-label" for="inputEmail">Name</label>
+			<div class="controls">
+	            {{form.name}} {% if form.name.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="inputPassword">Description</label>
+			<div class="controls">
+				{{form.desc}} {% if form.desc.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="inputPassword">Contact Email</label>
+			<div class="controls">
+				{{form.contact}} {% if form.contact.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="inputPassword">Image</label>
+			<div class="controls">
+				{{form.image}}
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn btn-primary">Create Organization</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+{% endblock %}

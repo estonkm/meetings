@@ -8,16 +8,69 @@ div {
 	display: block;
 	vertical-align: baseline;
 }
-
+/*
 div .info {
     width:500px !important;
     float:left !important;
     height: 50%;
+}*/
+
+.controls input[type="file"] {
+    line-height: 15px !important;
+    height: 20px;
+    margin-top:5px;
+}
+/* misalignment on file uploads is the result of some messy line-height stuff*/
+
+.meetingHead {
+    padding: 5px 5px 5px 0px;
+/*    border: 1px solid #DCDCDC;
+*/    padding-bottom: 30px;
+    margin-bottom: 20px;
+    height: 220px;
+    width: inherit;
+}
+
+.meetingHead h5 {
+    margin-bottom: 5px !important;
+}
+
+.organizerHead {
+    padding: 5px 5px 5px 5px;
+    margin-right: -5px !important;
+    /*border: 1px solid #DCDCDC;*/
+    padding-bottom: 30px;
+    margin-bottom: 20px;
+    height: 220px;
+    width: inherit;
+}
+
+.meetingHead .info {
+    width: 75%;
+    float:left;
+/*    border-left: 1px solid #DCDCDC;
+*/    /*padding-left: 10px;*/
+}
+
+.meetingHead .desc {
+    width: 75%;
+    float:left;
+/*    padding-left: 10px;*/
+    margin-bottom: 20px;
+}
+
+.timeselect {
+    width: 70px !important;
 }
 
 section > div {
     float: left;
     padding: 4px;
+}
+
+ul .sidebox {
+    list-style-type: none;
+    margin-left: 5px;
 }
 
 section > div + div {
@@ -32,20 +85,25 @@ div .time {
     height: 50%;
 }
 
-.span9 .lead {
+.span8 .lead {
     border-bottom: 1px solid #999;
     padding-bottom: 15px;
     margin-bottom: 0px !important;
 }
 
-.span3 .userinfo {
+.userinfo {
     border: 1px solid #DCDCDC;
     height: 150px;
-    width: 205px;
+    width: inherit;
     margin-bottom: 10px;
-    padding: 10px;
+    padding: 5px;
     padding-top: 0px;
 }
+
+.span4 .userinfo {
+    margin-right: 10px !important;
+}
+
 
 .subhead {
 	padding-bottom:30px;
@@ -157,15 +215,11 @@ button.btn.alter:hover {
     float: left;
 }
 
-div .span9 .indented {
+div .span8 .indented {
     margin-left: 50px !important;
     margin-top: 10px !important;  
 }
 
-/*div .span9 .collapse {
-    margin-left: 0px !important;
-    margin-top: 10px !important;
-}*/
 
 .container .starttime {
 	background: transparent;

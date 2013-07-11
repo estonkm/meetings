@@ -84,6 +84,11 @@ $(document).ready(function() {
 
 	var counter = 2;
 
+    $(function() {
+        $( "#id_startdate" ).datepicker();
+        $( "#id_enddate").datepicker();
+    });
+
 	$('#removeitem').hide();
 
 	$('#additem').click(function() {

@@ -25,7 +25,7 @@
 				    <div>
 				        <select id="rightValues" size="4" multiple>
 				        	{% for contact in account.contacts.all %}
-				            <option>{{contact.user.last_name}}, {{contact.user.first_name}} <<em>{{contact.user.email}}</em>></option>
+				            <option>{{contact.last_name}}, {{contact.first_name}} <<em>{{contact.email}}</em>></option>
 				            {% endfor %}
 				        </select>
 				        <div>

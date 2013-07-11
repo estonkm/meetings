@@ -3,8 +3,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, render_to_response
 from django.template import RequestContext
 from django.core.context_processors import csrf
-from data.forms import MeetingForm, UserForm, SettingsForm
-from data.models import Account, Meeting, AgendaItem, Motion, Comment
+from data.forms import *
+from data.models import *
 from django.contrib.auth.models import User
 from datetime import datetime, date
 import time
@@ -13,8 +13,10 @@ from django.contrib.auth import login as auth_login, logout as auth_logout
 import random
 from django.core.urlresolvers import resolve
 from django.utils import simplejson
-import re
+import re, os
 from django.core.mail import send_mail
+from django.conf import settings as dsettings
+from PIL import Image, ImageOps
 #import requests
 
 SENDER = 'Vital Meeting <info@vitalmeeting.com>'
@@ -115,7 +117,7 @@ def create(request):
 				request.session['meeting_no'] = meeting_no
 				request.session.modified=True
 
-				return HttpResponseRedirect('../invite/')
+				return HttpResponseRedirect('../attachorg/')
 			else:
 				errors = {}
 				context['errors'] = errors
@@ -154,14 +156,16 @@ def invite(request):
 					continue
 				e = entry.split('<')
 				e = e[1].split('>')[0]
-				u = User.objects.filter(email=e)
-				if u:
-					account = Account.objects.get(user=u[0])
+				c = Contact.objects.filter(email=e)
+				if c:
+					if c.account:
+						account = c.account
+						meeting.members.add(account)
+						account.meetings_in.add(meeting)
+						account.save()
+						meeting.save()
 					recipients.append(e)
-					meeting.members.add(account)
-					account.meetings_in.add(meeting)
-					account.save()
-					meeting.save()
+
 
 		if request.POST.get('entered'):
 			entered = entered.split('\n')
@@ -211,7 +215,7 @@ def signup(request):
 
 					u = User.objects.create_user(cd['email'], first_name=cd['first_name'],
 						last_name=cd['last_name'], email=cd['email'], password=cd['password'])
-					a = Account(user=u, join_date=datetime.now(), phone='', is_verified=False, verification_key=vkey) 
+					a = Account(user=u, join_date=datetime.now(), is_verified=False, verification_key=vkey) 
 					a.save()
 					# TODO - use verification and don't log on just yet
 					recipient = [u.email]
@@ -305,6 +309,7 @@ def home(request):
 	context['meetingsin'] = a.meetings_in.order_by("id").reverse()
 	context['meetingscreated'] = a.meetings_created.order_by("id").reverse()
 	context['meetingspast'] = a.past_meetings.order_by("id").reverse()
+	context['organizations'] = a.organizations.all()
 
 	return render_to_response('home.html', context)
 
@@ -322,6 +327,7 @@ def contacts(request):
 	context = {}
 	context.update(csrf(request))
 	context['user'] = request.user
+	form = ContactForm()
 
 	a = Account.objects.get(user=request.user)
 	contacts = a.contacts.all()
@@ -329,25 +335,69 @@ def contacts(request):
 	context['meetings'] = a.meetings_in.all()
 
 	if request.method == 'POST':
-		query = request.POST.get('search')
-		if query:
-			u = User.objects.filter(email=query)
-			if u:
-				b = Account.objects.get(user=u[0])
-				a.contacts.add(b)
+		form = ContactForm(request.POST)
+		if 'new_contact' in request.POST:
+			if form.is_valid():
+				cd = form.cleaned_data;
+				u = User.objects.filter(email__exact=cd['email'])
+				matching_account = None
+				if u:
+					matching_account = Account.objects.get(user=u)
+				c = Contact(title=cd['title'], first_name=cd['first_name'], last_name=cd['last_name'],
+						email=cd['email'], address=cd['address'], wphone=cd['wphone'], hphone=cd['hphone'])
+				if matching_account:
+					c.account = matching_account
+				c.save()
+				a.contacts.add(c)
 				a.save()
-				context['result'] = b.user.username + ' was successfully added to your contacts.'
 			else:
 				context['errors'] = 'error'
+
 		if request.POST.get('remove_contact'):
 			cid = request.POST.get('remove_contact')
-			contact = Account.objects.get(id__exact=cid)
+			contact = Contact.objects.get(id__exact=cid)
 			a.contacts.remove(contact)
 			a.save()
 	
 	context['contacts'] = contacts
+	context['form'] = form
 
 	return render_to_response('contacts.html', context)
+
+def addorganizer(request):
+	if not request.user.is_authenticated():
+		return HttpResponseRedirect('/')
+
+	context = {}
+	context.update(csrf(request))
+	form = OrganizationForm()
+	context['form'] = form
+
+	a = Account.objects.get(user=request.user)
+
+	if 'submit_request' in request.POST:
+		form = OrganizationForm(request.POST, request.FILES)
+		if form.is_valid():
+			cd = form.cleaned_data;
+			o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'])
+			o.save()
+			o.manager.add(a)
+			o.save()
+			a.organizations.add(o)
+			a.save()
+
+			if cd['image'] is not None:
+				path = os.path.join(dsettings.MEDIA_ROOT, o.image.url)
+				thumbnail = Image.open(path)
+				thumbnail = thumbnail.resize((175, 175), Image.ANTIALIAS)
+				thumbnail.save(path)
+            
+			return HttpResponseRedirect('../home/')
+
+		else:
+			context['errors'] = errors
+
+	return render_to_response('addorganizer.html', context)
 
 def vote(request):
 
@@ -489,6 +539,10 @@ def meeting(request):
 	context['host'] = meeting.hosts.all()[0]
 	agenda_items = meeting.agenda_items.order_by('number')
 	context['agenda_items'] = agenda_items
+
+	org = meeting.organizations.all()
+	if org:
+		context['org'] = org[0]
 
 	return render_to_response('meeting_page.html', context)
 
@@ -645,9 +699,84 @@ def managemembers(request):
 
 	contacts = []
 	for c in useraccount.contacts.all():
-		if c not in meeting.members.all() and c not in meeting.hosts.all():
+		if c.account:
+			if c not in meeting.members.all() and c not in meeting.hosts.all():
+				contacts.append(c)
+		else:
 			contacts.append(c)
 	context['contacts'] = contacts
 
 	return render_to_response('managemembers.html', context)
+
+def attachorg(request):
+	context = {}
+	context.update(csrf(request))
+	context['user'] = request.user
+
+	form = MeetingOrgForm()
+	context['form'] = form
+
+	if not request.user.is_authenticated():
+		return HttpResponseRedirect('/')
+
+	a = Account.objects.get(user=request.user)
+
+	context['orgs'] = a.organizations.all()
+
+	m = Meeting.objects.filter(meeting_id__exact=request.session['meeting_no'])
+	if m:
+		m = m[0]
+	else:
+		return HttpResponseRedirect('/')
+
+	if request.POST:
+		form = MeetingOrgForm(request.POST, request.FILES)
+		if form.is_valid():
+			cd = form.cleaned_data
+			userinput = ((cd['name'] != '' or cd['contact'] != '') or cd['desc'] != '') or cd['image'] is not None
+			formerror = ((cd['name'] == '' or cd['contact'] == '') or cd['desc'] == '')
+			if userinput and formerror:
+				if cd['name'] == '':
+					context['form.name.errors'] = True
+				if cd['desc'] == '':
+					context['form.desc.errors'] = True
+				if cd['contact'] == '':
+					context['form.contact.errors'] = True
+			elif userinput:
+				o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'])
+				o.save()
+				o.manager.add(a)
+				o.save()
+				a.organizations.add(o)
+				a.save()
+
+				m.organizations.add(o)
+				m.save()
+
+				if cd['image'] is not None:
+					path = os.path.join(dsettings.MEDIA_ROOT, o.image.url)
+					thumbnail = Image.open(path)
+					thumbnail = thumbnail.resize((175, 175), Image.ANTIALIAS)
+					thumbnail.save(path)
+
+				return HttpResponseRedirect('../invite/')
+			else:
+				selected = request.POST['selectorg']
+				if selected is not None and selected != 'None\n':
+					o = Organization.objects.filter(id__exact=selected)
+					if o:
+						o = o[0]
+						m.organizations.add(o)
+						m.save()
+
+						return HttpResponseRedirect('../invite/')
+					else:
+						context['get_org_error'] = True
+
+		else:
+			context['errors'] = errors
+
+
+	return render_to_response('attachorg.html', context)
+
 

@@ -20,8 +20,12 @@ urlpatterns = patterns('',
     (r'^vote/$', views.vote),
     (r'^invite/$', views.invite),
     (r'^settings/$', views.settings),
+    (r'^addorganizer/$', views.addorganizer),
+    (r'^attachorg/$', views.attachorg),
     (r'^managemembers/$', views.managemembers),
     (r'^static/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.STATIC_ROOT}),
+    (r'^media/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.MEDIA_ROOT}),
+
     # Examples:
     # url(r'^$', 'meetingapp.views.home', name='home'),
     # url(r'^meetingapp/', include('meetingapp.foo.urls')),

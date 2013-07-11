@@ -14,12 +14,40 @@ class Account(models.Model):
 	meetings_created = models.ManyToManyField('Meeting', related_name="meetings_created_set", null=True, blank=True)
 	past_meetings = models.ManyToManyField('Meeting', related_name="meetings_past_set", null=True, blank=True)
 	join_date = models.DateField()
-	prof_pic = models.ImageField(upload_to='photos', blank=True, default=False)
-	phone = models.CharField(max_length=20)
-	contacts = models.ManyToManyField('self', blank=True, null=True)
+	prof_pic = models.ImageField(upload_to='photos/accounts', blank=True, default=False)
+	wphone = models.CharField(max_length=20, blank=True, null=True)
+	hphone = models.CharField(max_length=20, blank=True, null=True)
+	contacts = models.ManyToManyField('Contact', related_name='contacts', blank=True, null=True)
 	voted_motions = models.ManyToManyField('Motion', blank=True, null=True)
 	is_verified = models.BooleanField()
 	verification_key = models.CharField(max_length=25)
+	title = models.CharField(max_length=10) # Dr., Mr., Mrs., etc.
+	organizations = models.ManyToManyField('Organization', related_name='orgs', null=True, blank=True)
+	address=models.CharField(max_length=20, blank=True, null=True)
+	page_id = models.CharField(max_length=21)
+	bio = models.CharField(max_length=500, null=True, blank=True)
+	birthdate = models.DateField(null=True, blank=True)
+
+class Contact(models.Model):
+	account = models.ForeignKey('Account', related_name='matching_account', null=True) # a contact may or may not be in the system
+	# ForeignKey so multiple users can enter contact differently and link to same person
+	title = models.CharField(max_length=10, null=True, blank=True)
+	first_name = models.CharField(max_length=30, null=True, blank=True)
+	last_name = models.CharField(max_length=30, null=True, blank=True)
+	email = models.EmailField()
+	wphone = models.CharField(max_length=20, blank=True, null=True)
+	hphone = models.CharField(max_length=20, blank=True, null=True)
+	address = models.CharField(max_length=200, blank=True, null=True)
+	organizations = models.ManyToManyField('Organization', related_name='c_orgs', null=True, blank=True)
+
+class Organization(models.Model):
+	name = models.CharField(max_length=100)
+	desc = models.CharField(max_length=500)
+	contact = models.EmailField(null=True, blank=True)
+	image = models.ImageField(upload_to='photos/orgs', blank=True, null=True)
+	members = models.ManyToManyField('Account', related_name='members', null=True, blank=True)
+	manager = models.ManyToManyField('Account', related_name='manager')
+	page_id = models.CharField(max_length=22)
 
 class Meeting(models.Model):
 	class Meta:
@@ -40,6 +68,7 @@ class Meeting(models.Model):
 	started = models.BooleanField()
 	ended = models.BooleanField()
 	summary = models.CharField(max_length=2000, blank=True)
+	organizations = models.ManyToManyField('Organization', null=True, blank=True)
 
 class AgendaItem(models.Model):
 	class Meta:
@@ -48,6 +77,8 @@ class AgendaItem(models.Model):
 	desc = models.CharField(max_length=10000) # is this needed?
 	number = models.IntegerField()
 	motions = models.ManyToManyField('Motion', related_name="motion_set", null=True, blank=True)
+	edited = models.BooleanField(default=False)
+	edited_on = models.DateTimeField(null=True, blank=True)
 
 class Motion(models.Model):
 	class Meta:
@@ -61,7 +92,9 @@ class Motion(models.Model):
 	comments = models.ManyToManyField('Comment', related_name="comment_set", null=True, blank=True)
 	pastname = models.CharField(max_length=1000, blank=True)
 	pastdesc = models.CharField(max_length=10000, blank=True)
-	modded = models.BooleanField()
+	modded = models.BooleanField(default=False)
+	edited = models.BooleanField(default=False)
+	edited_on = models.DateTimeField(null=True, blank=True)
 
 class Comment(models.Model):
 	class Meta:
@@ -71,5 +104,7 @@ class Comment(models.Model):
 	text = models.CharField(max_length=10000)
 	pasttext = models.CharField(max_length=10000, blank=True)
 	modded = models.BooleanField()
+	edited = models.BooleanField(default=False)
+	edited_on = models.DateTimeField(null=True, blank=True)
 
 
