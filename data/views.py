@@ -397,7 +397,7 @@ def addorganizer(request):
 			return HttpResponseRedirect('../home/')
 
 		else:
-			context['errors'] = errors
+			context['errors'] = 'errors'
 
 	return render_to_response('addorganizer.html', context)
 
