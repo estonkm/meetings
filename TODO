@@ -2,12 +2,58 @@ or, BUGLIST
 
 PENDING:
 
+
 all images resize to 175x175, this is bad and it should be proportionally resizing
 ensure user can't interfere with create->attach org->invite contacts
-*add "invite by email" to "manage members" in a meeting
-*disallow random users from editing agenda items (lol whoops)
 let people/companies rewrite the urls to better suit them, as long as it isn't in the system, so it isn't just random chars
-*fix title of website to be "structured meetings, etc."
-
+no fields are strictly checked yet - like char lengths in forms vs. models vs. what people see.
+no "forgot your password?" function
+if inviting people to a meeting by email, no option to add them as contacts
+make the user verification page look better
+home page is also kinda ugly
+"add a new contact" - if you don't give it an email, it silently fails
+no forms are just to make sure errors are reported (no errors in prof page submit, for example)
+prevent people from participating in non-open meetings
+fill out the timezone options better (kinda random right now)
+"remember me" is still there and still does nothing
+mods have no option to provide reasons why they want to remove info
+"learn more" "contact" "privacy" - all these things are just stubs.
+"return to top" on home page is kinda pointless
+"search existing contacts" is not implemented
+"profile" and "profpage" should really not be separate pages
+adding agenda items is still weird; there's no limit except for a limit of adding 10 every time you visit the page.
+	mechanism also makes page jerk funny
+didn't implement birthdate yet even though it's in the models (for profiles - low priority)
+error page pointed to by "meeting" view not filled out (and should be implemented throughout site so we don't get 404s everywhere)
+when no file chosen, "choose file" bleeds over into name and is ugly
+need anonymous pictures for organizations and users (to make it look better)
+replace the awkward "None"s in the profile fields with placeholders to show information format
+show information in profile better (less of an awkward table)
+ability to edit an organization on its page if you are the creator (maybe like...page reload to an edit mode, b/c js inputting in a table always messes stuff up)
+there's no "request to add an organization" or "request to add as contact" system in place
+also, "members" of organizations might be shown on the home page. a link to the organization's website would also be nice (DATABASE THING).
+sideboxes need fixing up and switching - but that will come when they are tied to their pages
+having south installed might be good
+for inviting members to meetings, you should be able to invite people from your contacts and the system will know to just email them
 
 FIXED:
+
+fix title of website to be "structured meetings, etc."
+time input is a select now
+disallow random users from editing agenda items (lol whoops)
+add "invite by email" to "manage members" in a meeting
+
+
+NEW FEATURES TO ADD:
+
+those pages link to information in the sidebars of meetings (you see a tooltip and then a "go to meeting") - also orgs are linked to page in user profile
+
+people can click on this pages and, if they are users and not already affiliated, add them. - there are buttons on the pages but they don't do anything yet (not implemented)
+
+COMPLETED:
+user can create an organization from home or while creating meeting, and attach it to meetings
+user can change and upload profile info
+modal form for inviting contacts (can not be ones not in database)
+profiles and organizations have viewable pages
+
+

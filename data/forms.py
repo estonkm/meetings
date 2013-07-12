@@ -72,3 +72,6 @@ class SettingsForm(forms.Form):
 	endtime = forms.TimeField(widget=SelectTimeWidget(twelve_hr=True, use_seconds=False), required=False)
 	status = forms.ChoiceField(choices=STATUS, widget=forms.RadioSelect(), required=False)
 
+class ImgForm(forms.Form):
+	image = forms.ImageField()
+

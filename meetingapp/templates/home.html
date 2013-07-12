@@ -71,7 +71,7 @@
 					<div class="tab-pane" id="tab4">
 						{% for org in organizations %}
 						<div class="row homemeetings" style="margin-left: 0px !important; border-bottom: 1px solid #DCDCDC;">
-								<a href="../org/{{ org.page_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{org.name}}</a><text> - {{ org.desc}}</text><br>
+								<a href="../orgs/{{ org.page_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{org.name}}</a><text> - {{ org.desc}}</text><br>
 								<text style="color: #999; font-size: 12px;">contact: {{org.contact}}</text>
 						</div>
 						{% endfor %}

@@ -64,12 +64,11 @@
                 <div class="row ai_row">
                     <div class="row ai_title">
                         <text class="agenda" style="padding-right: 5px;"><span id="ai_num">{{ai.number}}</span>. <span id="ai_name">{{ai.name}}</span></text>
+                        {% if user == host.user %}
                         <button class="btn btn-mini" name="editai" style="margin-top: -5px !important;" id="{{ai.id}}"><i class="icon-pencil"></i> edit</button>
+                        {% endif %}
                         <button class="btn hoverblack alter" data-toggle="collapse" style="margin-top: -5px !important;" id="showmotions_{{ai.id}}" data-target="#ai_{{ai.id}}">show all motions ({{ai.motions.all.count}})</button>
                         {% if user.is_authenticated %}<button class="btn hoverblack alter" style="margin-top: -5px !important;" data-toggle="collapse" name="addmotion" data-target="#addmotion_{{ai.id}}">add a motion</a>{% endif %}
-                        {% if user == host.user %}
-
-                        {% endif %}
                     </div>
                     <div class="row" style="margin-bottom: 20px !important" id="ai_{{ai.id}}">
                         {% for motion in ai.motions.all %}
