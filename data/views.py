@@ -774,7 +774,7 @@ def attachorg(request):
 						context['get_org_error'] = True
 
 		else:
-			context['errors'] = errors
+			context['errors'] = 'errors'
 
 
 	return render_to_response('attachorg.html', context)
