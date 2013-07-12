@@ -5,32 +5,65 @@
 <div class="container">
 	<div class="row">
 		<div class="span9">
-			<table class="table">
+			<table class="table" style="height: 100% !important;"> <!-- Needed to set this to 100% for bottom-positioning to work! -->
                 <tbody>
                     <tr>
-                        <td>{% if account.prof_pic %}<img src="{{account.prof_pic.url}}" />{% endif %}</td>
-                        <td><h4>{{account.user.last_name}}, {{account.user.first_name}}</h4><br>
-                            <a href="../account/{{account.page_id}}">See My Public Profile</a></td>
+                        <td>
+                            <div style="position:relative; height:100%"><!--  And then do this -->
+                                <form enctype="multipart/form-data" method='post' id="picform" style='margin: 0px; padding: 0px;'>{% csrf_token %}
+                                    {% if account.prof_pic != 'False' %}
+                                    <img src="{{account.prof_pic.url}}" /><br><br><br><br><br><br>
+                                    {% endif %}
+                                    <span style="position:absolute !important; bottom: 5px !important;">
+                                        <i class="icon-camera"></i>
+                                        <text style="font-size: 12px;"> {% if account.prof_pic != 'False' %} change {% else %} add {% endif %}profile picture:</text>
+                                        {{form.image}}
+                                        <button type="submit" name="pic" class="btn btn-mini btn-primary" style="margin-top: 3px !important;">{% if account.prof_pic != 'False' %} change picture {% else %} add picture {% endif %}</button>
+                                    </span>
+                                </form>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="position:relative; height:100%">
+                                <h3>{{account.user.last_name}}, {{account.user.first_name}}</h3><br><br>
+                                <a href="../profile/{{account.page_id}}" style="position:absolute !important; bottom: 15px !important;">See My Public Profile</a>
+                            </div>
+                        </td>
                     </tr>
                     <tr>
-                        <th>Brief Bio:</th>
-                        <td>{{account.bio}}</td>
+                        <th style="vertical-align: middle;">Brief Bio:</th>
+                        <td>
+                            <form method='post' style='margin: 0px; padding: 0px; margin-top: 10px;'>{% csrf_token %}
+                                <textarea rows='4' cols='50' style="width: 75%;" name='bio'>{{account.bio}}</textarea>
+                                <button type='submit' style="margin-top: -9px;" class='btn btn-mini btn-primary'>Save</button>
+                            </form>
+                        </td>
                     </tr>
                     <tr>
                         <th>Email:</th>
                         <td>{{account.user.email}}</td>
                     </tr>
                     <tr>
-                        <th>Work Phone:</th>
-                        <td>{{account.user.wphone}}</td>
+                        <th style="vertical-align: middle;">Work Phone:</th>
+                        <td>
+                            <form method='post' style='margin: 0px; padding: 0px; margin-top: 10px;'>{% csrf_token %}
+                                <input type='text' name='wphone' value='{{account.wphone}}' />
+                                <button type='submit' style="margin-top: -9px;" class='btn btn-mini btn-primary'>Save</button>
+                            </form>
+                        </td>
                     </tr>
                     <tr>
-                        <th>Home Phone:</th>
-                        <td>{{account.user.hphone}}</td>
+                        <th style="vertical-align: middle;">Home Phone:</th>
+                        <td>
+                            <form method='post' style='margin: 0px; padding: 0px; margin-top: 10px;'>{% csrf_token %}
+                                <input type='text' name='hphone' value='{{account.hphone}}'></input>
+                                <button type='submit' style="margin-top: -9px;" class='btn btn-mini btn-primary'>Save</button>
+                            </form>
+                        </td>
                     </tr>
                     <tr>
                         <th>Join Date:</th>
-                        <td>{{account.user.join_date}}</td>
+                        <td>{{account.join_date}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -52,5 +85,6 @@
 		</div>
 	</div>
 </div>
+
 
 {% endblock %}

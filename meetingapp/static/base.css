@@ -8,6 +8,16 @@ div {
 	display: block;
 	vertical-align: baseline;
 }
+
+.prof-edit {
+    float:right;
+}
+
+/* remove row lines */
+/*.table th, .table td { 
+     border-top: none; 
+ }*/
+
 /*
 div .info {
     width:500px !important;
@@ -16,6 +26,13 @@ div .info {
 }*/
 
 .controls input[type="file"] {
+    line-height: 15px !important;
+    height: 20px;
+    margin-top:5px;
+}
+
+select,
+input[type="file"] {
     line-height: 15px !important;
     height: 20px;
     margin-top:5px;

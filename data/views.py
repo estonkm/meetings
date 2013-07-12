@@ -207,15 +207,19 @@ def signup(request):
 					context['retype_failed'] = True
 				else:
 					vkey = ''
+					pid = ''
 
 					random.seed()
 
 					for i in range(25):
 						vkey += chr(int(random.random()*25)+97)
 
+					for i in range(21):
+						pid += chr(int(random.random()*25)+97)
+
 					u = User.objects.create_user(cd['email'], first_name=cd['first_name'],
 						last_name=cd['last_name'], email=cd['email'], password=cd['password'])
-					a = Account(user=u, join_date=datetime.now(), is_verified=False, verification_key=vkey) 
+					a = Account(user=u, join_date=datetime.now(), is_verified=False, verification_key=vkey, page_id=pid) 
 					a.save()
 					# TODO - use verification and don't log on just yet
 					recipient = [u.email]
@@ -318,8 +322,47 @@ def profile(request):
 	context.update(csrf(request))
 	context['user'] = request.user
 
+	form = ImgForm()
+	context['form'] = form
+
 	account = Account.objects.get(user=request.user)
 	context['account'] = account
+
+	if request.POST:
+		if 'pic' in request.POST:
+			form = ImgForm(request.POST, request.FILES)
+			if form.is_valid():
+				cd = form.cleaned_data
+				account.prof_pic = cd['image']
+				account.save()
+
+				if cd['image'] is not None:
+					path = os.path.join(dsettings.MEDIA_ROOT, account.prof_pic.url)
+					thumbnail = Image.open(path)
+					thumbnail = thumbnail.resize((175, 175), Image.ANTIALIAS)
+					thumbnail.save(path)
+
+		if 'bio' in request.POST:
+			account.bio = request.POST.get('bio')
+			account.save()
+
+		if 'wphone' in request.POST:
+			wphone = request.POST.get('wphone')
+			wphone = wphone.replace('-', '').replace(' ', '').replace('(', '').replace(')', '')
+			if re.match("^[0-9]*$", wphone):
+				account.wphone = wphone
+				account.save()
+			else:
+				context['wphone_error'] = True
+
+		if 'hphone' in request.POST:
+			hphone = request.POST.get('hphone')
+			hphone = hphone.replace('-', '').replace(' ', '').replace('(', '').replace(')', '')
+			if re.match("^[0-9]*$", hphone):
+				account.hphone = hphone
+				account.save()
+			else:
+				context['hphone_error'] = True
 
 	return render_to_response('profile.html', context)
 
@@ -372,6 +415,7 @@ def addorganizer(request):
 	context.update(csrf(request))
 	form = OrganizationForm()
 	context['form'] = form
+	context['user'] = request.user
 
 	a = Account.objects.get(user=request.user)
 
@@ -379,7 +423,15 @@ def addorganizer(request):
 		form = OrganizationForm(request.POST, request.FILES)
 		if form.is_valid():
 			cd = form.cleaned_data;
-			o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'])
+
+			random.seed()
+
+			pid = ''
+			for i in range(22):
+				# TODO: add upper/lower case letters as well for extra protection
+				pid += chr(int(random.random()*25)+97)
+
+			o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'], page_id=pid)
 			o.save()
 			o.manager.add(a)
 			o.save()
@@ -638,7 +690,7 @@ def managemembers(request):
 
 	context['meeting'] = meeting
 
-	if request.method == 'POST':
+	if request.POST:
 		added1 = request.POST.get('added1')
 		added2 = request.POST.get('added2')
 		added3 = request.POST.get('added3')
@@ -686,6 +738,19 @@ def managemembers(request):
 					account = Account.objects.get(user=u[0])
 					meeting.moderators.add(account)
 					meeting.save()
+
+		if request.POST.get('entered'):
+			entered = request.POST.get('entered')
+			entered = entered.split('\n')
+
+			for e in entered:
+				recipients.append(e)
+
+		if recipients:
+			title = "VitalMeeting: " + meeting.title
+			message = ("You've been invited to attend " + request.user.first_name + " " + request.user.last_name + "'s online meeting discussion, " +
+						"on VitalMeeting.com.\n\nPlease click on " +
+						"http://www.vitalmeeting.com/meeting/"+meeting_no+" to join in.\n\nBest Regards,\n\nVitalMeeting.com")
 
 	members_to_mod = []
 	members_to_remove = []
@@ -743,7 +808,14 @@ def attachorg(request):
 				if cd['contact'] == '':
 					context['form.contact.errors'] = True
 			elif userinput:
-				o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'])
+				random.seed()
+
+				pid = ''
+				for i in range(22):
+					# TODO: add upper/lower case letters as well for extra protection
+					pid += chr(int(random.random()*25)+97)
+
+				o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'], page_id=pid)
 				o.save()
 				o.manager.add(a)
 				o.save()
@@ -778,5 +850,48 @@ def attachorg(request):
 
 
 	return render_to_response('attachorg.html', context)
+
+def orgpage(request):
+	context = {}
+	context.update(csrf(request))
+	context['user'] = request.user
+
+	if request.user.is_authenticated():
+		viewer = Account.objects.get(user=request.user)
+		context['viewer'] = viewer
+
+	path = ''
+	if 'orgs' in request.path:
+		path = request.path.split('/')[2]
+
+	org = Organization.objects.filter(page_id__exact=path)
+	if org:
+		org = org[0]
+		context['org'] = org
+	else:
+		return render_to_response('error.html') # TODO
+	return render_to_response('orgpage.html', context)
+
+def profpage(request):
+	context = {}
+	context.update(csrf(request))
+	context['user'] = request.user
+
+	if request.user.is_authenticated():
+		viewer = Account.objects.get(user=request.user)
+		context['viewer'] = viewer
+
+	path = ''
+	if 'profile' in request.path:
+		path = request.path.split('/')[2]
+
+	account = Account.objects.filter(page_id__exact=path)
+	if account:
+		account = account[0]
+		context['account'] = account
+	else:
+		return render_to_response('error.html') # TODO
+
+	return render_to_response('profpage.html', context)
 
 
