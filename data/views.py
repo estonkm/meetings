@@ -168,7 +168,7 @@ def invite(request):
 
 
 		if request.POST.get('entered'):
-			entered = entered.split('\n')
+			entered = request.POST.get('entered').split('\n')
 
 			for e in entered:
 				recipients.append(e)
