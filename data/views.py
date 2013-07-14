@@ -158,6 +158,7 @@ def invite(request):
 				e = e[1].split('>')[0]
 				c = Contact.objects.filter(email=e)
 				if c:
+					c = c[0]
 					if c.account:
 						account = c.account
 						meeting.members.add(account)
@@ -703,14 +704,16 @@ def managemembers(request):
 					continue
 				e = entry.split('<')
 				e = e[1].split('>')[0]
-				u = User.objects.filter(email=e)
-				if u:
-					account = Account.objects.get(user=u[0])
-					meeting.members.add(account)
-					account.meetings_in.add(meeting)
-					meeting.save()
-					account.save()
-					recipients.append(u.email)
+				c = Contact.objects.filter(email=e)
+				if c:
+					c = c[0]
+					if c.account:
+						account = c.account
+						meeting.members.add(account)
+						account.meetings_in.add(meeting)
+						account.save()
+						meeting.save()
+					recipients.append(e)
 		if added2:
 			added2 = added2.split(',')
 

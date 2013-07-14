@@ -36,6 +36,7 @@ sideboxes need fixing up and switching - but that will come when they are tied t
 having south installed might be good
 for inviting members to meetings, you should be able to invite people from your contacts and the system will know to just email them
 contact info does not display address nor second phone number
+"request entity too large" error if someone gives a picture too big
 
 
 FIXED:
