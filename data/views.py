@@ -179,7 +179,7 @@ def invite(request):
 						"on VitalMeeting.com.\n\nPlease click on " +
 						"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\nBest Regards,\n\nVitalMeeting.com")
 
-		send_mail(title, message, SENDER, recipients)
+			send_mail(title, message, SENDER, recipients)
 
 		return HttpResponseRedirect('../meeting/'+meeting_no)
 
@@ -689,6 +689,7 @@ def managemembers(request):
 		return HttpResponseRedirect('..')
 
 	context['meeting'] = meeting
+	recipients = []
 
 	if request.POST:
 		added1 = request.POST.get('added1')
@@ -709,6 +710,7 @@ def managemembers(request):
 					account.meetings_in.add(meeting)
 					meeting.save()
 					account.save()
+					recipients.append(u.email)
 		if added2:
 			added2 = added2.split(',')
 
@@ -743,8 +745,6 @@ def managemembers(request):
 			entered = request.POST.get('entered')
 			entered = entered.split('\n')
 
-			recipients = []
-
 			for e in entered:
 				recipients.append(e)
 
@@ -753,6 +753,8 @@ def managemembers(request):
 				message = ("You've been invited to attend " + request.user.first_name + " " + request.user.last_name + "'s online meeting discussion, " +
 							"on VitalMeeting.com.\n\nPlease click on " +
 							"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\nBest Regards,\n\nVitalMeeting.com")
+
+				send_mail(title, message, SENDER, recipients)
 
 	members_to_mod = []
 	members_to_remove = []
