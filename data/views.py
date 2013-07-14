@@ -171,7 +171,7 @@ def invite(request):
 			entered = request.POST.get('entered').split('\n')
 
 			for e in entered:
-				recipients.append(e)
+				recipients.append(e.strip('\r'))
 
 		if recipients:
 			title = "VitalMeeting: " + meeting.title
@@ -744,9 +744,10 @@ def managemembers(request):
 		if request.POST.get('entered'):
 			entered = request.POST.get('entered')
 			entered = entered.split('\n')
+			print entered
 
 			for e in entered:
-				recipients.append(e)
+				recipients.append(e.strip('\r'))
 
 			if recipients:
 				title = "VitalMeeting: " + meeting.title
