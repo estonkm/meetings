@@ -803,6 +803,8 @@ def attachorg(request):
 		return HttpResponseRedirect('/')
 
 	if request.POST:
+		if request.POST.get('later'):
+			return HttpResponseRedirect('../invite/')
 		form = MeetingOrgForm(request.POST, request.FILES)
 		if form.is_valid():
 			cd = form.cleaned_data
