@@ -800,6 +800,7 @@ def managemembers(request):
 				e = e[1].split('>')[0]
 
 				meeting.invited += e + ','
+				meeting.save()
 
 				c = Contact.objects.filter(email=e)
 				if c:
@@ -810,7 +811,7 @@ def managemembers(request):
 						account.meetings_in.add(meeting)
 						account.save()
 						meeting.save()
-					recipients.append(e)
+				recipients.append(e)
 		if added2:
 			added2 = added2.split(',')
 
@@ -853,6 +854,7 @@ def managemembers(request):
 			for e in entered:
 				e = e.strip('\r')
 				meeting.invited += e + ','
+				meeting.save()
 
 				recipients.append(e.strip('\r'))
 
@@ -877,8 +879,10 @@ def managemembers(request):
 	contacts = []
 	for c in useraccount.contacts.all():
 		if c.account:
-			if c not in meeting.members.all() and c not in meeting.hosts.all():
+			if c.email not in meeting.invited() and c not in meeting.hosts.all():
 				contacts.append(c)
+		elif c.email not in meeting.invited():
+			contacts.append(c)
 		else:
 			contacts.append(c)
 	context['contacts'] = contacts
