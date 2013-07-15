@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+	<div class="row">
+		<table class="table" style="height: 100% !important;"> <!-- Needed to set this to 100% for bottom-positioning to work! -->
+            <tbody>
+                <tr>
+                    <td>
+                        <div style="position:relative; height:100%"><!--  And then do this -->
+                            {% if account.prof_pic != 'False' %}
+                            <img src="{{account.prof_pic.url}}" /><br><br><br><br><br><br>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="position:relative; height:100%">
+                            <h3>{{account.user.last_name}}, {{account.user.first_name}}</h3><br><br>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th style="vertical-align: middle;">Brief Bio:</th>
+                    <td>
+                        {{account.bio}}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Email:</th>
+                    <td>{{account.user.email}}</td>
+                </tr>
+                <tr>
+                    <th style="vertical-align: middle;">Work Phone:</th>
+                    <td>
+                        {{account.wphone}}
+                    </td>
+                </tr>
+                <tr>
+                    <th style="vertical-align: middle;">Home Phone:</th>
+                    <td>
+                        {{account.hphone}}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Join Date:</th>
+                    <td>{{account.join_date}}</td>
+                </tr>
+            </tbody>
+        </table>
+	</div>
+</div>
+
+{% endblock %}

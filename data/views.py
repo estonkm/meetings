@@ -941,7 +941,8 @@ def orgpage(request):
 		org = org[0]
 		context['org'] = org
 	else:
-		return render_to_response('error.html') # TODO
+		return HttpResponseRedirect('/')
+
 	return render_to_response('orgpage.html', context)
 
 def profpage(request):
