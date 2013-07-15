@@ -581,11 +581,13 @@ def meeting(request):
 							context['not_verified'] = True
 						else:
 							auth_login(request, user)
+							context['user'] = request.user
 							if request.user.email not in meeting.invited:
 								return HttpResponseRedirect('/')
 							else:
 								context['access'] = True
 								context['not_authenticated'] = False
+
 			elif 'cancel' in request.POST:
 				return HttpResponseRedirect('/')
 		elif (not meeting.started or meeting.ended) and (request.user != meeting.hosts.all()[0].user):
