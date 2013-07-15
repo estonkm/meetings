@@ -114,7 +114,7 @@ def create(request):
 				a.meetings_in.add(m)
 				a.save()
 
-				request.session['meeting_no'] = meeting_no
+				request.session['meeting_created'] = meeting_no
 				request.session.modified=True
 
 				return HttpResponseRedirect('../attachorg/')
@@ -136,7 +136,7 @@ def invite(request):
 
 	context['account'] = Account.objects.get(user=request.user)
 
-	meeting_no = request.session['meeting_no']
+	meeting_no = request.session['meeting_created']
 
 	meeting = Meeting.objects.get(meeting_id__exact=meeting_no)
 
@@ -156,6 +156,10 @@ def invite(request):
 					continue
 				e = entry.split('<')
 				e = e[1].split('>')[0]
+
+				meeting.invited += e + ',' #csv
+				meeting.save()
+
 				c = Contact.objects.filter(email=e)
 				if c:
 					c = c[0]
@@ -172,7 +176,10 @@ def invite(request):
 			entered = request.POST.get('entered').split('\n')
 
 			for e in entered:
-				recipients.append(e.strip('\r'))
+				e = e.strip('\r')
+				meeting.invited += e + ','
+				meeting.save()
+				recipients.append(e)
 
 		if recipients:
 			title = "VitalMeeting: " + meeting.title
@@ -222,6 +229,19 @@ def signup(request):
 						last_name=cd['last_name'], email=cd['email'], password=cd['password'])
 					a = Account(user=u, join_date=datetime.now(), is_verified=False, verification_key=vkey, page_id=pid) 
 					a.save()
+
+					for m in Meeting.objects.all():
+						if u.email in m.invited:
+							a.meetings_in.add(m)
+
+					for c in Contact.objects.all():
+						if c.email == u.email:
+							c.account.add(a)
+							c.first_name = u.first_name
+							c.last_name = c.last_name
+							c.save()
+							break
+
 					# TODO - use verification and don't log on just yet
 					recipient = [u.email]
 					message = 'Please go to http://www.vitalmeeting.com/verify/'+vkey+' to verify your account. Thanks!'
@@ -271,8 +291,8 @@ def verify(request):
 			user.backend = 'django.contrib.auth.backends.ModelBackend'
 			auth_login(request, user)
 
-			if 'meeting_no' in request.session:
-				context['meeting'] = request.session['meeting_no']
+			if 'meeting_created' in request.session:
+				context['meeting'] = request.session['meeting_created']
 			return render_to_response('verify.html', context)
 
 def login(request):
@@ -489,15 +509,47 @@ def meeting(request):
 	if meeting:
 		meeting = meeting[0]
 	else:
-		return render_to_response('error.html') # TODO
+		return HttpResponseRedirect('/')
+
+	context['access'] = 'True'
 
 	if meeting.private:
 		if not request.user.is_authenticated():
-			return HttpResponseRedirect('/')
-		if Account.objects.get(user=request.user) not in meeting.members.all():
-			return HttpResponseRedirect('/')
+			#return HttpResponseRedirect('/')
+			context['access'] = 'False'
+			context['not_authenticated'] = True
+		elif meeting.hosts.all()[0] != Account.objects.get(user=request.user):
+				if request.user.email not in meeting.invited:
+					context['access'] = 'False'
+					context['not_invited'] = True
+					return HttpResponseRedirect('/')
+
+		#if Account.objects.get(user=request.user) not in meeting.members.all():
+			#return HttpResponseRedirect('/')
+
+	if request.user.is_authenticated():
+		viewer = Account.objects.get(user=request.user)
+		if request.user.email in meeting.invited:
+			if meeting not in viewer.meetings_in.all():
+				viewer.meetings_in.add(meeting)
+				viewer.save()
 
 	if request.method=='POST':
+		if context['access'] == 'False':
+			if 'login' in request.POST:
+				user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
+				if user is None:
+					# set form errors
+					context['errors'] = True
+				else:
+					auth_login(request, user)
+					if request.user.email not in meeting.invited:
+						return HttpResponseRedirect('/')
+					else:
+						context['access'] = True
+						context['not_authenticated'] = False
+			elif 'cancel' in request.POST:
+				return HttpResponseRedirect('/')
 		if request.POST.get('motionname'):
 			motiontext = request.POST.get('motiontext')
 			motionname = request.POST.get('motionname')
@@ -613,7 +665,7 @@ def settings(request):
 	if not meeting:
 		return HttpResponseRedirect('..')
 	meeting = meeting[0]
-	if request.user.username != meeting.hosts.all()[0].user.username:
+	if request.user != meeting.hosts.all()[0].user:
 		return HttpResponseRedirect('..')
 
 	context['meeting'] = meeting
@@ -686,7 +738,7 @@ def managemembers(request):
 	if not meeting:
 		return HttpResponseRedirect('..')
 	meeting = meeting[0]
-	if request.user.username != meeting.hosts.all()[0].user.username:
+	if request.user != meeting.hosts.all()[0].user:
 		return HttpResponseRedirect('..')
 
 	context['meeting'] = meeting
@@ -704,6 +756,9 @@ def managemembers(request):
 					continue
 				e = entry.split('<')
 				e = e[1].split('>')[0]
+
+				meeting.invited += e + ','
+
 				c = Contact.objects.filter(email=e)
 				if c:
 					c = c[0]
@@ -738,6 +793,11 @@ def managemembers(request):
 					continue
 				e = entry.split('<')
 				e = e[1].split('>')[0]
+
+				# TEST THIS
+				meeting.invited = re.sub(e+',', '', meeting.invited)
+				meeting.save()
+
 				u = User.objects.filter(email=e)
 				if u:
 					account = Account.objects.get(user=u[0])
@@ -747,9 +807,11 @@ def managemembers(request):
 		if request.POST.get('entered'):
 			entered = request.POST.get('entered')
 			entered = entered.split('\n')
-			print entered
 
 			for e in entered:
+				e = e.strip('\r')
+				meeting.invited += e + ','
+
 				recipients.append(e.strip('\r'))
 
 			if recipients:
@@ -796,14 +858,14 @@ def attachorg(request):
 
 	context['orgs'] = a.organizations.all()
 
-	m = Meeting.objects.filter(meeting_id__exact=request.session['meeting_no'])
+	m = Meeting.objects.filter(meeting_id__exact=request.session['meeting_created'])
 	if m:
 		m = m[0]
 	else:
 		return HttpResponseRedirect('/')
 
 	if request.POST:
-		if request.POST.get('later'):
+		if 'later' in request.POST:
 			return HttpResponseRedirect('../invite/')
 		form = MeetingOrgForm(request.POST, request.FILES)
 		if form.is_valid():

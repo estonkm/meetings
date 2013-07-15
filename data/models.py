@@ -27,6 +27,7 @@ class Account(models.Model):
 	page_id = models.CharField(max_length=21)
 	bio = models.CharField(max_length=500, null=True, blank=True)
 	birthdate = models.DateField(null=True, blank=True)
+	notifications = models.TextField()
 
 class Contact(models.Model):
 	account = models.ForeignKey('Account', related_name='matching_account', null=True) # a contact may or may not be in the system
@@ -48,6 +49,7 @@ class Organization(models.Model):
 	members = models.ManyToManyField('Account', related_name='members', null=True, blank=True)
 	manager = models.ManyToManyField('Account', related_name='manager')
 	page_id = models.CharField(max_length=22)
+	website = models.CharField(max_length=100, blank=True, null=True)
 
 class Meeting(models.Model):
 	class Meta:
@@ -69,6 +71,7 @@ class Meeting(models.Model):
 	ended = models.BooleanField()
 	summary = models.CharField(max_length=2000, blank=True)
 	organizations = models.ManyToManyField('Organization', null=True, blank=True)
+	invited = models.TextField()
 
 class AgendaItem(models.Model):
 	class Meta:
