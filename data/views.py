@@ -879,9 +879,9 @@ def managemembers(request):
 	contacts = []
 	for c in useraccount.contacts.all():
 		if c.account:
-			if c.email not in meeting.invited() and c not in meeting.hosts.all():
+			if c.email not in meeting.invited and c not in meeting.hosts.all():
 				contacts.append(c)
-		elif c.email not in meeting.invited():
+		elif c.email not in meeting.invited:
 			contacts.append(c)
 		else:
 			contacts.append(c)
