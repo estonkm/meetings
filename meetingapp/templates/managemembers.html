@@ -21,7 +21,7 @@
 				    <div>
 				        <select id="rightValues1" size="4" multiple>
 				        	{% for contact in contacts %}
-				            <option>{% if contact.last_name %}{{contact.last_name}}{% endif %}{% if contact.last_name %}{% if contact.first_name %}, {% endif %}{% if contact.first_name %}{{contact.first_name}} {% endif %}<<em>{{contact.email}}</em>></option>
+				            <option>{% if contact.last_name %}{{contact.last_name}}{% endif %}{% if contact.last_name %}{% if contact.first_name %}, {% endif %}{% endif %}{% if contact.first_name %}{{contact.first_name}} {% endif %}<<em>{{contact.email}}</em>></option>
 				            {% endfor %}
 				        </select>
 				        <div>
