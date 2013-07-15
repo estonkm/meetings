@@ -883,8 +883,6 @@ def managemembers(request):
 				contacts.append(c)
 		elif c.email not in meeting.invited:
 			contacts.append(c)
-		else:
-			contacts.append(c)
 	context['contacts'] = contacts
 
 	return render_to_response('managemembers.html', context)
