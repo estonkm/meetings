@@ -858,13 +858,13 @@ def managemembers(request):
 
 				recipients.append(e.strip('\r'))
 
-			if recipients:
-				title = "VitalMeeting: " + meeting.title
-				message = ("You've been invited to attend " + request.user.first_name + " " + request.user.last_name + "'s online meeting discussion, " +
-							"on VitalMeeting.com.\n\nPlease click on " +
-							"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\nBest Regards,\n\nVitalMeeting.com")
+		if recipients:
+			title = "VitalMeeting: " + meeting.title
+			message = ("You've been invited to attend " + request.user.first_name + " " + request.user.last_name + "'s online meeting discussion, " +
+						"on VitalMeeting.com.\n\nPlease click on " +
+						"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\nBest Regards,\n\nVitalMeeting.com")
 
-				send_mail(title, message, SENDER, recipients)
+			send_mail(title, message, SENDER, recipients)
 
 	members_to_mod = []
 	members_to_remove = []
