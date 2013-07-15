@@ -12,7 +12,14 @@
 		{% if errors %}
 		<div class="control-group">
 			<div class="controls">
-				<h5 style="color: red;">Invalid login credentials</h5>
+				<h5 style="color: red;">Invalid login credentials.</h5>
+			</div>
+		</div>
+		{% endif %}
+		{% if not_verified %}
+		<div class="control-group">
+			<div class="controls">
+				<h5 style="color: red;">This account has not yet been verified.</h5>
 			</div>
 		</div>
 		{% endif %}

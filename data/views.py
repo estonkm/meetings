@@ -38,11 +38,16 @@ def index(request):
 	if request.method == 'POST':
 		user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
 		if user is None:
-			print "Invalid login credentials"
+
 			# set form errors
 			context['errors'] = True
 			return render_to_response('login.html', context)
 		else:
+			a = Account.objects.filter(user=user)
+			if a:
+				if not a[0].is_verified:
+					context['not_verified'] = True
+					return render_to_response('login.html', context)
 			auth_login(request, user)
 			# sets session; redirect to home page for user
 			return HttpResponseRedirect('../home/')
@@ -54,12 +59,17 @@ def create(request):
 	context.update(csrf(request))
 	form = MeetingForm()
 
-	if not request.user.is_authenticated():
+	if not request.user.is_authenticated() and not 'account' in request.session:
 		request.session['fromcreate'] = True
 		request.session.modified = True
+		print 'hi'
 		return HttpResponseRedirect('../signup/')
 
-	context['user'] = request.user
+	if not 'account' in request.session:
+		context['user'] = request.user
+		a = Account.objects.get(user=request.user)
+	else:
+		a = request.session['account']
 
 	if request.method == 'POST':
 		form = MeetingForm(request.POST)
@@ -69,7 +79,6 @@ def create(request):
 				#u = User.objects.get(username__exact='temp')
 				#a = Account(user=u, join_date=datetime.now(), phone='eh')
 				#TODO: clean these hard-coded things
-				a = Account.objects.get(user=request.user)
 
 				s = True
 				if cd['status'] == 'Public':
@@ -131,10 +140,15 @@ def invite(request):
 	context.update(csrf(request))
 	context['user'] = request.user
 
-	if not request.user.is_authenticated():
+	if not request.user.is_authenticated() and not 'account' in request.session:
 		return HttpResponseRedirect('../signup/')
 
-	context['account'] = Account.objects.get(user=request.user)
+	if not 'account' in request.session:
+		a = Account.objects.get(user=request.user)
+	else:
+		a = request.session['account']
+
+	context['account'] = a
 
 	meeting_no = request.session['meeting_created']
 
@@ -183,12 +197,14 @@ def invite(request):
 
 		if recipients:
 			title = "VitalMeeting: " + meeting.title
-			message = ("You've been invited to attend " + request.user.first_name + " " + request.user.last_name + "'s online meeting discussion, " +
+			message = ("You've been invited to attend " + a.user.first_name + " " + a.user.last_name + "'s online meeting discussion, " +
 						"on VitalMeeting.com.\n\nPlease click on " +
 						"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\nBest Regards,\n\nVitalMeeting.com")
 
 			send_mail(title, message, SENDER, recipients)
 
+		request.session['account'] = ''
+		request.session.modified = True
 		return HttpResponseRedirect('../meeting/'+meeting_no)
 
 	return render_to_response('invite.html', context)
@@ -233,12 +249,16 @@ def signup(request):
 					for m in Meeting.objects.all():
 						if u.email in m.invited:
 							a.meetings_in.add(m)
+							m.members.add(a)
+							m.save()
+					a.save()
+
 
 					for c in Contact.objects.all():
 						if c.email == u.email:
-							c.account.add(a)
+							c.account = a
 							c.first_name = u.first_name
-							c.last_name = c.last_name
+							c.last_name = u.last_name
 							c.save()
 							break
 
@@ -253,7 +273,9 @@ def signup(request):
 
 					if 'fromcreate' in request.session:
 						#return HttpResponseRedirect('../create/')
-						context['destination'] = '../create'
+						context['destination'] = '../create/'
+						request.session['account'] = a
+						request.session.modified = True
 					else:
 						#return HttpResponseRedirect('../home/')
 						context['destination'] = '../home/'
@@ -309,6 +331,11 @@ def login(request):
 				# set form errors
 				context['errors'] = True
 			else:
+				a = Account.objects.filter(user=user)
+				if a:
+					if not a[0].is_verified:
+						context['not_verified'] = True
+						return render_to_response('login.html', context)
 				auth_login(request, user)
 				# sets session; redirect to home page for user
 				return HttpResponseRedirect('../home/')
@@ -537,105 +564,120 @@ def meeting(request):
 	if request.method=='POST':
 		if context['access'] == 'False':
 			if 'login' in request.POST:
+				user = User.objects.filter(username=request.POST.get('username'), password=request.POST.get('password'))
+				if user:
+					a_temp = Account.objects.filter(user=user)
+					if a_temp:
+						a_temp = a_temp[0]
+						if not a_temp.is_verified:
+							context['not_verified'] = True
 				user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
 				if user is None:
 					# set form errors
 					context['errors'] = True
 				else:
-					auth_login(request, user)
-					if request.user.email not in meeting.invited:
-						return HttpResponseRedirect('/')
-					else:
-						context['access'] = True
-						context['not_authenticated'] = False
+					a = Account.objects.filter(user=user)
+					if a:
+						if not a[0].is_verified:
+							context['not_verified'] = True
+						else:
+							auth_login(request, user)
+							if request.user.email not in meeting.invited:
+								return HttpResponseRedirect('/')
+							else:
+								context['access'] = True
+								context['not_authenticated'] = False
 			elif 'cancel' in request.POST:
 				return HttpResponseRedirect('/')
-		if request.POST.get('motionname'):
-			motiontext = request.POST.get('motiontext')
-			motionname = request.POST.get('motionname')
-			if motionname:
-				motion = Motion(user=Account.objects.get(user=request.user), timestamp=datetime.now(), 
-					name=motionname, desc=motiontext, likes=0, dislikes=0, pastname=motionname,
-					pastdesc=motiontext, modded=False)
+		elif (not meeting.started or meeting.ended) and (request.user != meeting.hosts.all()[0].user):
+			context['closed_error'] = True
+		else:
+			if request.POST.get('motionname'):
+				motiontext = request.POST.get('motiontext')
+				motionname = request.POST.get('motionname')
+				if motionname:
+					motion = Motion(user=Account.objects.get(user=request.user), timestamp=datetime.now(), 
+						name=motionname, desc=motiontext, likes=0, dislikes=0, pastname=motionname,
+						pastdesc=motiontext, modded=False)
+					motion.save()
+
+					ai_id = request.POST.get('agendaid')
+					modified_ai = AgendaItem.objects.get(id__exact=ai_id)
+					modified_ai.motions.add(motion)
+					modified_ai.save()
+
+			if request.POST.get('comment'):
+				comment = request.POST.get('comment')
+				if comment:
+					comment = Comment(user=Account.objects.get(user=request.user), timestamp=datetime.now(),
+						text=comment, pasttext=comment, modded=False)
+					comment.save()
+
+					motion_id = request.POST.get('motionid')
+					modified_motion = Motion.objects.get(id__exact=motion_id)
+					modified_motion.comments.add(comment)
+					modified_motion.save()
+
+			if 'settings' in request.POST:
+				return HttpResponseRedirect('../settings/')
+
+			if 'members' in request.POST:
+				return HttpResponseRedirect('../managemembers/')
+
+			account = Account.objects.filter(user=request.user)
+			if 'remove_motion' in request.POST:
+				motion_id = request.POST.get('remove_motion')
+				motion = Motion.objects.get(id__exact=motion_id)
+				if account and account[0] == motion.user:
+					motion.name = 'This motion has been removed by its author.'
+				if account and (account[0] in meeting.moderators.all() or account[0] == meeting.hosts.all()[0]):
+					motion.name = 'This motion has been removed by a moderator.'
+					recipient = [motion.user.user.email]
+					message = 'Your motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.'
+					send_mail("Motion removed", message, SENDER, recipient)
+				motion.desc = ''
+				motion.modded = True
 				motion.save()
 
-				ai_id = request.POST.get('agendaid')
-				modified_ai = AgendaItem.objects.get(id__exact=ai_id)
-				modified_ai.motions.add(motion)
-				modified_ai.save()
+			if 'remove_comment' in request.POST:
+				ids = request.POST.get('remove_comment').split(" ")
+				comment_id = ids[0]
+				motion_id = ids[1]
+				comment = Comment.objects.get(id__exact=comment_id)
+				if account and account[0] == comment.user:
+					comment.text = 'This comment has been removed by its author.'
+				elif account and (account[0] in meeting.moderators.all() or account[0] == meeting.hosts.all()[0]):
+					comment.text = 'This comment has been removed by a moderator.'
+					recipient = [comment.user.user.email]
+					motion = Motion.objects.get(id__exact=motion_id)
+					message = 'Your comment on motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.'
+					send_mail("Comment removed", message, SENDER, recipient)
 
-		if request.POST.get('comment'):
-			comment = request.POST.get('comment')
-			if comment:
-				comment = Comment(user=Account.objects.get(user=request.user), timestamp=datetime.now(),
-					text=comment, pasttext=comment, modded=False)
+				comment.modded = True
 				comment.save()
 
-				motion_id = request.POST.get('motionid')
-				modified_motion = Motion.objects.get(id__exact=motion_id)
-				modified_motion.comments.add(comment)
-				modified_motion.save()
+			if 'change_motion' in request.POST:
+				m_id = request.POST.get('m_id')
+				text = request.POST.get('motiontext')
+				title = request.POST.get('m_title')
+				motion = Motion.objects.get(id__exact=m_id)
+				motion.name = title
+				motion.desc = text
+				motion.save()
 
-		if 'settings' in request.POST:
-			return HttpResponseRedirect('../settings/')
+			if 'change_ai' in request.POST:
+				ai_id = request.POST.get('ai_id')
+				name = request.POST.get('name')
+				ai = AgendaItem.objects.get(id__exact=ai_id)
+				ai.name = name
+				ai.save()
 
-		if 'members' in request.POST:
-			return HttpResponseRedirect('../managemembers/')
-
-		account = Account.objects.filter(user=request.user)
-		if 'remove_motion' in request.POST:
-			motion_id = request.POST.get('remove_motion')
-			motion = Motion.objects.get(id__exact=motion_id)
-			if account and account[0] == motion.user:
-				motion.name = 'This motion has been removed by its author.'
-			if account and (account[0] in meeting.moderators.all() or account[0] == meeting.hosts.all()[0]):
-				motion.name = 'This motion has been removed by a moderator.'
-				recipient = [motion.user.user.email]
-				message = 'Your motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.'
-				send_mail("Motion removed", message, SENDER, recipient)
-			motion.desc = ''
-			motion.modded = True
-			motion.save()
-
-		if 'remove_comment' in request.POST:
-			ids = request.POST.get('remove_comment').split(" ")
-			comment_id = ids[0]
-			motion_id = ids[1]
-			comment = Comment.objects.get(id__exact=comment_id)
-			if account and account[0] == comment.user:
-				comment.text = 'This comment has been removed by its author.'
-			elif account and (account[0] in meeting.moderators.all() or account[0] == meeting.hosts.all()[0]):
-				comment.text = 'This comment has been removed by a moderator.'
-				recipient = [comment.user.user.email]
-				motion = Motion.objects.get(id__exact=motion_id)
-				message = 'Your comment on motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.'
-				send_mail("Comment removed", message, SENDER, recipient)
-
-			comment.modded = True
-			comment.save()
-
-		if 'change_motion' in request.POST:
-			m_id = request.POST.get('m_id')
-			text = request.POST.get('motiontext')
-			title = request.POST.get('m_title')
-			motion = Motion.objects.get(id__exact=m_id)
-			motion.name = title
-			motion.desc = text
-			motion.save()
-
-		if 'change_ai' in request.POST:
-			ai_id = request.POST.get('ai_id')
-			name = request.POST.get('name')
-			ai = AgendaItem.objects.get(id__exact=ai_id)
-			ai.name = name
-			ai.save()
-
-		if 'change_comment' in request.POST:
-			c_id = request.POST.get('c_id')
-			text = request.POST.get('commenttext')
-			comment = Comment.objects.get(id__exact=c_id)
-			comment.text = text
-			comment.save()
+			if 'change_comment' in request.POST:
+				c_id = request.POST.get('c_id')
+				text = request.POST.get('commenttext')
+				comment = Comment.objects.get(id__exact=c_id)
+				comment.text = text
+				comment.save()
 
 	request.session['meeting_no'] = path
 	request.session.modified=True
@@ -851,10 +893,13 @@ def attachorg(request):
 	form = MeetingOrgForm()
 	context['form'] = form
 
-	if not request.user.is_authenticated():
+	if not request.user.is_authenticated() and not 'account' in request.session:
 		return HttpResponseRedirect('/')
 
-	a = Account.objects.get(user=request.user)
+	if not 'account' in request.session:
+		a = Account.objects.get(user=request.user)
+	else:
+		a = request.session['account']
 
 	context['orgs'] = a.organizations.all()
 

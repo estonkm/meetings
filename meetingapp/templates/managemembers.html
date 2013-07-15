@@ -21,7 +21,7 @@
 				    <div>
 				        <select id="rightValues1" size="4" multiple>
 				        	{% for contact in contacts %}
-				            <option>{{contact.user.last_name}}, {{contact.user.first_name}} <<em>{{contact.user.email}}</em>></option>
+				            <option>{% if contact.last_name %}{{contact.last_name}}{% endif %}{% if contact.last_name %}{% if contact.first_name %}, {% endif %}{% if contact.first_name %}{{contact.first_name}} {% endif %}<<em>{{contact.email}}</em>></option>
 				            {% endfor %}
 				        </select>
 				        <div>
@@ -47,7 +47,7 @@
 				    <div>
 				        <select id="rightValues2" size="4" multiple>
 				        	{% for member in members_to_remove %}
-				            <option>{{member.user.last_name}}, {{member.user.first_name}} <<em>{{member.user.email}}</em>></option>
+				            <option>{% if member.user.last_name %}{{member.user.last_name}}{% endif%}{% if member.user.last_name %}{% if member.user.first_name %}, {% endif %}{% endif %}{% if member.user.first_name %}{{member.user.first_name}} {% endif %}<<em>{{member.user.email}}</em>></option>
 				            {% endfor %}
 				        </select>
 				        <div>
@@ -73,7 +73,7 @@
 				    <div>
 				        <select id="rightValues3" size="4" multiple>
 				        	{% for member in members_to_mod %}
-				            <option>{{member.user.last_name}}, {{member.user.first_name}} <<em>{{member.user.email}}</em>></option>
+				            <option>{% if member.user.last_name %}{{member.user.last_name}}{% endif%}{% if member.user.last_name %}{% if member.user.first_name %}, {% endif %}{% endif %}{% if member.user.first_name %}{{member.user.first_name}} {% endif %}<<em>{{member.user.email}}</em>></option>
 				            {% endfor %}
 				        </select>
 				        <div>
