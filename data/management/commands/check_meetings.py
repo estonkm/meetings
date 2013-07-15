@@ -15,15 +15,14 @@ class Command(NoArgsCommand):
 			if (now - start).total_seconds() > 0:
 				meeting.started = True
 				meeting.save()
-			if meeting.ended == False:
-				if (now - end).total_seconds() > 0:
-					meeting.ended = True
-					meeting.save()
-					for account in meeting.members.all():
-						account.past_meetings.add(meeting)
-						account.meetings_in.remove(meeting)
-						account.save()
-					for account in meeting.hosts.all():
-						account.past_meetings.add(meeting)
-						account.meetings_in.remove(meeting)
-						account.save()
+			if (now - end).total_seconds() > 0:
+				meeting.ended = True
+				meeting.save()
+				for account in meeting.members.all():
+					account.past_meetings.add(meeting)
+					account.meetings_in.remove(meeting)
+					account.save()
+				for account in meeting.hosts.all():
+					account.past_meetings.add(meeting)
+					account.meetings_in.remove(meeting)
+					account.save()
