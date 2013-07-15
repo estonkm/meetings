@@ -544,16 +544,16 @@ def meeting(request):
 	else:
 		return HttpResponseRedirect('/')
 
-	context['access'] = 'True'
+	context['access'] = True
 
 	if meeting.private:
 		if not request.user.is_authenticated():
 			#return HttpResponseRedirect('/')
-			context['access'] = 'False'
+			context['access'] = False
 			context['not_authenticated'] = True
 		elif meeting.hosts.all()[0] != Account.objects.get(user=request.user):
 				if request.user.email not in meeting.invited:
-					context['access'] = 'False'
+					context['access'] = False
 					context['not_invited'] = True
 					return HttpResponseRedirect('/')
 
@@ -568,15 +568,8 @@ def meeting(request):
 				viewer.save()
 
 	if request.method=='POST':
-		if context['access'] == 'False':
+		if context['access'] == False:
 			if 'login' in request.POST:
-				user = User.objects.filter(username=request.POST.get('username'), password=request.POST.get('password'))
-				if user:
-					a_temp = Account.objects.filter(user=user)
-					if a_temp:
-						a_temp = a_temp[0]
-						if not a_temp.is_verified:
-							context['not_verified'] = True
 				user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
 				if user is None:
 					# set form errors
