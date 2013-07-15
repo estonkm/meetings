@@ -93,15 +93,21 @@ def create(request):
 
 				# these should hopefully return timedeltas and work
 				already_started = False
+				already_ended = False
 
-				enteredtime = datetime.combine(cd['startdate'], cd['starttime'])
+				enteredtimestart = datetime.combine(cd['startdate'], cd['starttime'])
+				enteredtimeend = datetime.combine(cd['enddate'], cd['endtime'])
+
 				rightnow = datetime.now()
-				if (rightnow-enteredtime).total_seconds() > 0:
+				if (rightnow-enteredtimestart).total_seconds() > 0:
 					already_started = True
+				if (rightnow-enteredtimeend).total_seconds() > 0:
+					already_ended = True
+
 
 				m = Meeting(startdate=cd['startdate'], starttime=cd['starttime'], enddate=cd['enddate'],
 					endtime=cd['endtime'], title=cd['title'], desc=cd['desc'], private=s, meeting_id=meeting_no, 
-					started=already_started, ended=False, timezone=cd['timezone'])
+					started=already_started, ended=already_ended, timezone=cd['timezone'])
 				m.save()
 				m.hosts.add(a)
 				m.members.add(a)
