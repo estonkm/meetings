@@ -177,9 +177,19 @@ button.hoverblack {
     cursor:pointer;
 }
 
-.sidebox {
-    overflow: scroll !important; 
-    /*white-space: nowrap !important;*/
+.sideboxHost {
+    overflow: auto; 
+    white-space: nowrap !important;
+}
+
+.sideboxMembers {
+    overflow: auto; 
+    white-space: nowrap !important;
+}
+
+.sideboxMods {
+    overflow: auto; 
+    white-space: nowrap !important;
 }
 
 button.hoverblack:hover {

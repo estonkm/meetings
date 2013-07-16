@@ -243,14 +243,14 @@
                 <p>{{org.contact}}</p>
             </div>
             {% endif %}
-            <div class="userinfo sidebox" style="height: 50px !important;">
+            <div class="userinfo sideboxHost" style="height: 50px !important;">
                 <i class="icon-user"></i>
                 <text class="lead" style="font-size: 15px !important;">Host (1):</text><br>
                 {% for member in m.hosts.all %}
                 <text>{{member.user.last_name}}, {{member.user.first_name}} <<em>{{member.user.email}}</em>></text><br>
                 {% endfor %}
             </div>
-            <div class="userinfo sidebox" style="height: 350px !important;">
+            <div class="userinfo sideboxMembers" style="height: 350px !important;">
                 <i class="icon-user"></i>
                 <text class="lead" style="font-size: 15px !important;">Members ({{m.members.all.count}}):</text><br>
                 {% for member in m.members.all %}
@@ -261,7 +261,7 @@
                 {% endfor %}
             </div>
 
-            <div class="userinfo sidebox" style="height: 50px !important;">
+            <div class="userinfo sideboxMods" style="height: 50px !important;">
                 <i class="icon-user"></i>
                 <text class="lead" style="font-size: 15px !important;">Moderators ({{m.moderators.all.count}}):</text><br>
                 {% if m.moderators.all %}
