@@ -64,7 +64,6 @@ def create(request):
 	if not request.user.is_authenticated() and not 'account' in request.session:
 		request.session['fromcreate'] = True
 		request.session.modified = True
-		print 'hi'
 		return HttpResponseRedirect('../signup/')
 
 	if not 'account' in request.session:
@@ -200,6 +199,12 @@ def invite(request):
 			for e in entered:
 				e = e.strip('\r')
 				meeting.invited += e + ','
+				acct = Account.objects.filter(user=User.objects.get(email=e))
+				if acct:
+					acct = acct[0]
+					acct.meetings_in.add(meeting)
+					meeting.members.add(acct)
+					acct.save()
 				meeting.save()
 				recipients.append(e)
 
@@ -609,12 +614,12 @@ def meeting(request):
 					modified_ai.save()
 
 					recipients = []
+					recipients.append(meeting.hosts.all()[0].user.email)
 					for e in meeting.invited.split(','):
 						if '@' in e:
 							recipients.append(e)
 
-					message = 'A new motion has been added by '+request.user.first_name+' '+request.user.last_name+' to the following agenda item: "'+modified_ai.name+'". You can \
-					visit the meeting page and view this motion at http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
+					message = 'A new motion has been added by '+request.user.first_name+' '+request.user.last_name+' to the following agenda item: "'+modified_ai.name+'". You can visit the meeting page and view this motion at http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
 					title = meeting.title + ': New Motion Added'
 					send_mail(title, message, SENDER, recipients)
 
@@ -631,11 +636,10 @@ def meeting(request):
 					modified_motion.save()
 
 					recipients = []
-					recipients.append(modified_motion.user.user.email)
 					recipients.append(meeting.hosts.all()[0].user.email)
+					recipients.append(modified_motion.user.user.email)
 
-					message = 'A new comment has been added by '+request.user.first_name+' '+request.user.last_name+' to the following motion: "'+modified_motion.name+'". You can \
-					visit the meeting page and view this comment at http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
+					message = 'A new comment has been added by '+request.user.first_name+' '+request.user.last_name+' to the following motion: "'+modified_motion.name+'". You can visit the meeting page and view this comment at http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
 					title = meeting.title + ': New Comment Added'
 					send_mail(title, message, SENDER, recipients)
 
@@ -875,6 +879,12 @@ def managemembers(request):
 			for e in entered:
 				e = e.strip('\r')
 				meeting.invited += e + ','
+				acct = Account.objects.filter(user=User.objects.get(email=e))
+				if acct:
+					acct = acct[0]
+					acct.meetings_in.add(meeting)
+					meeting.members.add(acct)
+					acct.save()
 				meeting.save()
 
 				recipients.append(e.strip('\r'))
