@@ -178,8 +178,8 @@ button.hoverblack {
 }
 
 .sidebox {
-    overflow: auto !important; 
-    white-space: nowrap !important;
+    overflow: scroll !important; 
+    /*white-space: nowrap !important;*/
 }
 
 button.hoverblack:hover {
