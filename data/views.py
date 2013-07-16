@@ -631,7 +631,7 @@ def meeting(request):
 					modified_motion.save()
 
 					recipients = []
-					recipients.append(modified_motion.user.email)
+					recipients.append(modified_motion.user.user.email)
 					recipients.append(meeting.hosts.all()[0].user.email)
 
 					message = 'A new comment has been added by '+request.user.first_name+' '+request.user.last_name+' to the following motion: "'+modified_motion.name+'". You can \
