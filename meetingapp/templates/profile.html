@@ -10,23 +10,25 @@
                     <tr>
                         <td>
                             <div style="position:relative; height:100%"><!--  And then do this -->
-                                <form enctype="multipart/form-data" method='post' id="picform" style='margin: 0px; padding: 0px;'>{% csrf_token %}
+
                                     {% if account.prof_pic != 'False' %}
                                     <img src="{{account.prof_pic.url}}" /><br><br><br><br><br><br>
                                     {% endif %}
-                                    <span style="position:absolute !important; bottom: 5px !important;">
-                                        <i class="icon-camera"></i>
-                                        <text style="font-size: 12px;"> {% if account.prof_pic != 'False' %} change {% else %} add {% endif %}profile picture:</text>
-                                        {{form.image}}
-                                        <button type="submit" name="pic" class="btn btn-mini btn-primary" style="margin-top: 3px !important;">{% if account.prof_pic != 'False' %} change picture {% else %} add picture {% endif %}</button>
-                                    </span>
-                                </form>
                             </div>
                         </td>
                         <td>
                             <div style="position:relative; height:100%">
-                                <h3>{{account.user.last_name}}, {{account.user.first_name}}</h3><br><br>
-                                <a href="../profile/{{account.page_id}}" style="position:absolute !important; bottom: 15px !important;">See My Public Profile</a>
+                                <form enctype="multipart/form-data" method='post' id='picform' style='margin: 0px; padding: 0px;'>{% csrf_token %}
+                                <h3>{{account.user.last_name}}, {{account.user.first_name}}</h3>
+                                <a href="../profile/{{account.page_id}}" style="">See My Public Profile</a>
+                                <br><br><br><br><br><br>
+                                    <span style="position:absolute !important; bottom: 5px !important;">
+                                        <i class="icon-camera"></i>
+                                        <text style="font-size: 14px; margin-right: 7px;"> {% if account.prof_pic != 'False' %} Change {% else %} Add {% endif %}Profile Picture:</text><br>
+                                        <span style="">{{form.image}}</span><br>
+                                        <button type="submit" name="pic" class="btn btn-primary" style="margin-top: 3px !important;">{% if account.prof_pic != 'False' %} Change Picture {% else %} Add Picture {% endif %}</button>
+                                    </span>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -49,6 +51,7 @@
                             <form method='post' style='margin: 0px; padding: 0px; margin-top: 10px;'>{% csrf_token %}
                                 <input type='text' name='wphone' value='{{account.wphone}}' />
                                 <button type='submit' style="margin-top: -9px;" class='btn btn-mini btn-primary'>Save</button>
+                                {% if wphone_errors %}<h5 style="color: red;">Invalid format (Allowed characters: '+', '0-9')</h5>{% endif %}
                             </form>
                         </td>
                     </tr>
@@ -58,6 +61,7 @@
                             <form method='post' style='margin: 0px; padding: 0px; margin-top: 10px;'>{% csrf_token %}
                                 <input type='text' name='hphone' value='{{account.hphone}}'></input>
                                 <button type='submit' style="margin-top: -9px;" class='btn btn-mini btn-primary'>Save</button>
+                                {% if hphone_errors %}<h5 style="color: red;">Invalid format (Allowed characters: '+', '0-9')</h5>{% endif %}
                             </form>
                         </td>
                     </tr>

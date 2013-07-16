@@ -7,16 +7,16 @@ import html5.forms.widgets as html5_widgets
 
 STATUS=[('Public', 'Public'), ('Private', 'Private')]
 TITLES = [('Mr.', 'Mr.'), ('Mrs.', 'Mrs.'), ('Ms.', 'Ms.'), ('Dr.', 'Dr.'), ('None', 'None')]
-TIMEZONES=[('UTC-12:00', 'UTC-12:00'), ('UTC-11:00', 'UTC-11:00'),
-			('UTC-10:00', 'UTC-10:00'), ('UTC-9:00', 'UTC-9:00'), ('PDT (UTC-8:00)', 'PDT (UTC-8:00)'),
-			('MDT (UTC-7:00)', 'MDT (UTC-7:00)'), ('CDT (UTC-6:00)', 'CDT (UTC-6:00)'), 
-			('EDT (UTC-5:00)', 'EDT (UTC-5:00)'), ('UTC-4:00', 'UTC-4:00'), ('UTC-3:00', 'UTC-3:00'), 
-			('UTC-2:00', 'UTC-2:00'), ('GMT (UTC-1:00)', 'GMT (UTC-1:00)'), 
-			('UTC','UTC'), 
-			('UTC+1:00','UTC+1:00'), ('UTC+2:00','UTC+2:00'), ('EAT (UTC+3:00)', 'EAT (UTC+3:00)'),
-			('UTC+4:00', 'UTC+4:00'), ('UTC+5:00', 'UTC+5:00'), ('UTC+6:00', 'UTC+6:00'),
-			('UTC+7:00', 'UTC+7:00'), ('UTC+8:00', 'UTC+8:00'), ('UTC+9:00', 'UTC+9:00'),
-			('UTC+10:00', 'UTC+10:00'), ('UTC+11:00', 'UTC+11:00'), ('UTC+12:00', 'UTC+12:00')]
+TIMEZONES=[('UTC/GMT-12:00', 'UTC/GMT-12:00'), ('UTC/GMT-11:00', 'UTC/GMT-11:00'),
+			('UTC/GMT-10:00', 'UTC/GMT-10:00'), ('UTC/GMT-9:00', 'UTC/GMT-9:00'), ('PDT (UTC/GMT-8:00)', 'PDT (UTC/GMT-8:00)'),
+			('MDT (UTC/GMT-7:00)', 'MDT (UTC/GMT-7:00)'), ('CDT (UTC/GMT-6:00)', 'CDT (UTC/GMT-6:00)'), 
+			('EDT (UTC/GMT-5:00)', 'EDT (UTC/GMT-5:00)'), ('UTC/GMT-4:00', 'UTC/GMT-4:00'), ('UTC/GMT-3:00', 'UTC/GMT-3:00'), 
+			('UTC/GMT-2:00', 'UTC/GMT-2:00'), ('UTC/GMT-1:00', 'UTC/GMT-1:00'), 
+			('UTC/GMT','UTC/GMT'), 
+			('UTC/GMT+1:00','UTC/GMT+1:00'), ('UTC/GMT+2:00','UTC/GMT+2:00'), ('EAT (UTC/GMT+3:00)', 'EAT (UTC/GMT+3:00)'),
+			('UTC/GMT+4:00', 'UTC/GMT+4:00'), ('UTC/GMT+5:00', 'UTC/GMT+5:00'), ('UTC/GMT+6:00', 'UTC/GMT+6:00'),
+			('UTC/GMT+7:00', 'UTC/GMT+7:00'), ('UTC/GMT+8:00', 'UTC/GMT+8:00'), ('UTC/GMT+9:00', 'UTC/GMT+9:00'),
+			('UTC/GMT+10:00', 'UTC/GMT+10:00'), ('UTC/GMT+11:00', 'UTC/GMT+11:00'), ('UTC/GMT+12:00', 'UTC/GMT+12:00')]
 valid_time_formats=['%I:%M%p']
 
 class UserForm(forms.Form):
@@ -44,7 +44,7 @@ class MeetingForm(forms.Form):
 	starttime = forms.TimeField(widget=SelectTimeWidget(twelve_hr=True, use_seconds=False))
 	enddate = forms.DateField()
 	endtime = forms.TimeField(widget=SelectTimeWidget(twelve_hr=True, use_seconds=False))
-	timezone = forms.ChoiceField(choices=TIMEZONES)
+	timezone = forms.ChoiceField(choices=TIMEZONES, widget=forms.Select(attrs={'style':'height: 30px !important;'}))
 	status = forms.ChoiceField(choices=STATUS, widget=forms.RadioSelect())
 
 class LoginForm(forms.Form):

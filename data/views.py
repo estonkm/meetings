@@ -20,6 +20,7 @@ from PIL import Image, ImageOps
 #import requests
 
 SENDER = 'Vital Meeting <info@vitalmeeting.com>'
+SIGNATURE = '\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 
 def mailgun_send(recipients, subject, message):
 	return requests.post(
@@ -202,10 +203,10 @@ def invite(request):
 				recipients.append(e)
 
 		if recipients:
-			title = "VitalMeeting: " + meeting.title
+			title = "Meeting Invite: " + meeting.title
 			message = ("You've been invited to attend " + a.user.first_name + " " + a.user.last_name + "'s online meeting discussion, " +
 						"on VitalMeeting.com.\n\nPlease click on " +
-						"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\nBest Regards,\n\nVitalMeeting.com")
+						"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\n\n\nVitalMeeting.com\nStructured Online Meetings")
 
 			send_mail(title, message, SENDER, recipients)
 
@@ -270,7 +271,7 @@ def signup(request):
 
 					# TODO - use verification and don't log on just yet
 					recipient = [u.email]
-					message = 'Please go to http://www.vitalmeeting.com/verify/'+vkey+' to verify your account. Thanks!'
+					message = 'Please go to http://www.vitalmeeting.com/verify/'+vkey+' to verify your account. Thanks!\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 					send_mail('Account Verification', message, SENDER, recipient)
 
 					#user = authenticate(username=cd['email'], password=cd['password'])
@@ -392,9 +393,9 @@ def profile(request):
 
 				if cd['image'] is not None:
 					path = os.path.join(dsettings.MEDIA_ROOT, account.prof_pic.url)
-					thumbnail = Image.open(path)
-					thumbnail = thumbnail.resize((175, 175), Image.ANTIALIAS)
-					thumbnail.save(path)
+					tn= Image.open(path)
+					tn.thumbnail((200, 200), Image.ANTIALIAS)
+					tn.save(path)
 
 		if 'bio' in request.POST:
 			account.bio = request.POST.get('bio')
@@ -402,21 +403,21 @@ def profile(request):
 
 		if 'wphone' in request.POST:
 			wphone = request.POST.get('wphone')
-			wphone = wphone.replace('-', '').replace(' ', '').replace('(', '').replace(')', '')
-			if re.match("^[0-9]*$", wphone):
+			wphone = re.sub('[- ()]', '', wphone)
+			if re.match("^\+?[0-9]*$", wphone):
 				account.wphone = wphone
 				account.save()
 			else:
-				context['wphone_error'] = True
+				context['wphone_errors'] = True
 
 		if 'hphone' in request.POST:
 			hphone = request.POST.get('hphone')
-			hphone = hphone.replace('-', '').replace(' ', '').replace('(', '').replace(')', '')
-			if re.match("^[0-9]*$", hphone):
+			hphone = re.sub('[- ()]', '', hphone)
+			if re.match("^\+?[0-9]*$", hphone):
 				account.hphone = hphone
 				account.save()
 			else:
-				context['hphone_error'] = True
+				context['hphone_errors'] = True
 
 	return render_to_response('profile.html', context)
 
@@ -494,9 +495,9 @@ def addorganizer(request):
 
 			if cd['image'] is not None:
 				path = os.path.join(dsettings.MEDIA_ROOT, o.image.url)
-				thumbnail = Image.open(path)
-				thumbnail = thumbnail.resize((175, 175), Image.ANTIALIAS)
-				thumbnail.save(path)
+				tn= Image.open(path)
+				tn.thumbnail((200, 200), Image.ANTIALIAS)
+				tn.save(path)
             
 			return HttpResponseRedirect('../home/')
 
@@ -559,6 +560,8 @@ def meeting(request):
 
 		#if Account.objects.get(user=request.user) not in meeting.members.all():
 			#return HttpResponseRedirect('/')
+	print meeting.private
+	print context['access']
 
 	if request.user.is_authenticated():
 		viewer = Account.objects.get(user=request.user)
@@ -568,28 +571,25 @@ def meeting(request):
 				viewer.save()
 
 	if request.method=='POST':
-		if context['access'] == False:
-			if 'login' in request.POST:
-				user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
-				if user is None:
-					# set form errors
-					context['errors'] = True
-				else:
-					a = Account.objects.filter(user=user)
-					if a:
-						if not a[0].is_verified:
-							context['not_verified'] = True
+		# if context['access'] == False:
+		if 'login' in request.POST:
+			user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
+			if user is None:
+				# set form errors
+				context['login_errors'] = True
+			else:
+				a = Account.objects.filter(user=user)
+				if a:
+					if not a[0].is_verified:
+						context['not_verified'] = True
+					else:
+						auth_login(request, user)
+						context['user'] = request.user
+						if (request.user.email not in meeting.invited) and meeting.private:
+							return HttpResponseRedirect('/')
 						else:
-							auth_login(request, user)
-							context['user'] = request.user
-							if request.user.email not in meeting.invited:
-								return HttpResponseRedirect('/')
-							else:
-								context['access'] = True
-								context['not_authenticated'] = False
-
-			elif 'cancel' in request.POST:
-				return HttpResponseRedirect('/')
+							context['access'] = True
+							context['not_authenticated'] = False
 		elif (not meeting.started or meeting.ended) and (request.user != meeting.hosts.all()[0].user):
 			context['closed_error'] = True
 		else:
@@ -607,6 +607,16 @@ def meeting(request):
 					modified_ai.motions.add(motion)
 					modified_ai.save()
 
+					recipients = []
+					for e in meetings.invited.split(','):
+						if '@' in e:
+							recipients.append(e)
+
+					message = 'A new motion has been added by '+request.user.first_name+' '+request.user.last_name+' to the following agenda item: "'+modified_ai.name+'". You can \
+					visit the meeting page and view this motion at http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
+					title = meeting.title + ': New Motion Added'
+					send_mail(title, message, SENDER, recipients)
+
 			if request.POST.get('comment'):
 				comment = request.POST.get('comment')
 				if comment:
@@ -618,6 +628,15 @@ def meeting(request):
 					modified_motion = Motion.objects.get(id__exact=motion_id)
 					modified_motion.comments.add(comment)
 					modified_motion.save()
+
+					recipients = []
+					recipients.append(modified_motion.user.email)
+					recipients.append(meeting.hosts.all()[0].user.email)
+
+					message = 'A new comment has been added by '+request.user.first_name+' '+request.user.last_name+' to the following motion: "'+modified_motion.name+'". You can \
+					visit the meeting page and view this comment at http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
+					title = meeting.title + ': New Comment Added'
+					send_mail(title, message, SENDER, recipients)
 
 			if 'settings' in request.POST:
 				return HttpResponseRedirect('../settings/')
@@ -634,7 +653,7 @@ def meeting(request):
 				if account and (account[0] in meeting.moderators.all() or account[0] == meeting.hosts.all()[0]):
 					motion.name = 'This motion has been removed by a moderator.'
 					recipient = [motion.user.user.email]
-					message = 'Your motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.'
+					message = 'Your motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 					send_mail("Motion removed", message, SENDER, recipient)
 				motion.desc = ''
 				motion.modded = True
@@ -651,7 +670,7 @@ def meeting(request):
 					comment.text = 'This comment has been removed by a moderator.'
 					recipient = [comment.user.user.email]
 					motion = Motion.objects.get(id__exact=motion_id)
-					message = 'Your comment on motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.'
+					message = 'Your comment on motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 					send_mail("Comment removed", message, SENDER, recipient)
 
 				comment.modded = True
@@ -860,10 +879,10 @@ def managemembers(request):
 				recipients.append(e.strip('\r'))
 
 		if recipients:
-			title = "VitalMeeting: " + meeting.title
+			title = "Meeting Invite: " + meeting.title
 			message = ("You've been invited to attend " + request.user.first_name + " " + request.user.last_name + "'s online meeting discussion, " +
 						"on VitalMeeting.com.\n\nPlease click on " +
-						"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\nBest Regards,\n\nVitalMeeting.com")
+						"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\n\n\nVitalMeeting.com\nStructured Online Meetings")
 
 			send_mail(title, message, SENDER, recipients)
 
@@ -947,9 +966,9 @@ def attachorg(request):
 
 				if cd['image'] is not None:
 					path = os.path.join(dsettings.MEDIA_ROOT, o.image.url)
-					thumbnail = Image.open(path)
-					thumbnail = thumbnail.resize((175, 175), Image.ANTIALIAS)
-					thumbnail.save(path)
+					tn= Image.open(path)
+					tn.thumbnail((200, 200), Image.ANTIALIAS)
+					tn.save(path)
 
 				return HttpResponseRedirect('../invite/')
 			else:

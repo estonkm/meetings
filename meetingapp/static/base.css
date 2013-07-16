@@ -78,6 +78,7 @@ input[type="file"] {
 
 .timeselect {
     width: 70px !important;
+    height: 30px !important;
 }
 
 section > div {

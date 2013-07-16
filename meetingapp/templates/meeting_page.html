@@ -70,7 +70,7 @@
                     <button class="btn btn-mini" name="editai" style="margin-top: -5px !important;" id="{{ai.id}}"><i class="icon-pencil"></i> edit</button>
                     {% endif %}
                     <button class="btn hoverblack alter" data-toggle="collapse" style="margin-top: -5px !important;" id="showmotions_{{ai.id}}" data-target="#ai_{{ai.id}}">show all motions ({{ai.motions.all.count}})</button>
-                    {% if user.is_authenticated %}<button class="btn hoverblack alter" style="margin-top: -5px !important;" data-toggle="collapse" name="addmotion" data-target="#addmotion_{{ai.id}}">add a motion</a>{% endif %}
+                    <button class="btn hoverblack alter" style="margin-top: -5px !important;" data-toggle="collapse" name="addmotion" data-target="#addmotion_{{ai.id}}">add a motion</a>
                 </div>
                 <div class="row" style="margin-bottom: 20px !important" id="ai_{{ai.id}}">
                     {% for motion in ai.motions.all %}
@@ -108,7 +108,7 @@
 
                                     <button class="btn hoverblack alter" data-toggle="collapse" data-target="#motion_{{motion.id}}">show comments ({{motion.comments.all.count}})</a>
 
-                                    {% if user.is_authenticated %}<button class="btn hoverblack alter" data-toggle="collapse" data-target="#addcomment_{{motion.id}}">add comment</a>{% endif %}
+                                    <button class="btn hoverblack alter" data-toggle="collapse" name="addcomment" data-target="#addcomment_{{motion.id}}">add comment</a>
                                 </div>
                             </div>
                             <div class="row collapse indented out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
@@ -182,7 +182,7 @@
 
                                     <button class="btn hoverblack alter" data-toggle="collapse" data-target="#motion_{{motion.id}}">show comments ({{motion.comments.all.count}})</a>
 
-                                    {% if user.is_authenticated %}<button class="btn hoverblack alter" data-toggle="collapse" data-target="#addcomment_{{motion.id}}">add comment</a>{% endif %}
+                                    <button class="btn hoverblack alter" data-toggle="collapse" name="addcomment" data-target="#addcomment_{{motion.id}}">add comment</a>
                             </div>
                         </div>
                         <div class="row collapse indented out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
@@ -243,21 +243,14 @@
                 <p>{{org.contact}}</p>
             </div>
             {% endif %}
-            <div class="userinfo sidebox">
+            <div class="userinfo sidebox" style="height: 50px !important;">
                 <i class="icon-user"></i>
                 <text class="lead" style="font-size: 15px !important;">Host (1):</text><br>
                 {% for member in m.hosts.all %}
                 <text>{{member.user.last_name}}, {{member.user.first_name}} <<em>{{member.user.email}}</em>></text><br>
                 {% endfor %}
             </div>
-            <div class="userinfo sidebox">
-                <i class="icon-user"></i>
-                <text class="lead" style="font-size: 15px !important;">Moderators ({{m.moderators.all.count}}):</text><br>
-                {% for member in m.moderators.all %}
-                <text>{{member.user.last_name}}, {{member.user.first_name}} <<em>{{member.user.email}}</em>></text><br>
-                {% endfor %}
-            </div>
-            <div class="userinfo sidebox">
+            <div class="userinfo sidebox" style="height: 350px !important;">
                 <i class="icon-user"></i>
                 <text class="lead" style="font-size: 15px !important;">Members ({{m.members.all.count}}):</text><br>
                 {% for member in m.members.all %}
@@ -266,6 +259,18 @@
                     {{member.user.last_name}}, {{member.user.first_name}}</a> <<em>{{member.user.email}}</em>>
                 </text><br>
                 {% endfor %}
+            </div>
+
+            <div class="userinfo sidebox" style="height: 50px !important;">
+                <i class="icon-user"></i>
+                <text class="lead" style="font-size: 15px !important;">Moderators ({{m.moderators.all.count}}):</text><br>
+                {% if m.moderators.all %}
+                    {% for member in m.moderators.all %}
+                    <text>{{member.user.last_name}}, {{member.user.first_name}} <<em>{{member.user.email}}</em>></text><br>
+                    {% endfor %}
+                {% else %}
+                <text>Moderated by host.</text>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -284,6 +289,55 @@
   </div>
 </div>
 
+<div class="container">
+    <div id="signinModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Please Log In to Perform This Action.</h3>
+      </div>
+      <form class="form-horizontal centered" style="display:inline-block;" method="post">
+          <div class="modal-body"><br>
+            <p>This meeting is public. If you don't have an account, you can sign up 
+             <a href="/signup/">here</a>.<br><br>If you do have an account, please log in below:</p><br>
+                {% csrf_token %}
+                {% if login_errors %}
+                <div class="control-group">
+                    <div class="controls">
+                        <h5 style="color: red;">Invalid login credentials</h5>
+                    </div>
+                </div>
+                {% endif %}
+                <input type="hidden" name="submit_request" value="submit_request">
+                <div class="control-group">
+                    <label class="control-label" for="inputEmail">Email</label>
+                    <div class="controls">
+                        <input type="text" name="username" class="login" placeholder="email" autocomplete="off">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputPassword">Password</label>
+                    <div class="controls">
+                        <input type="password" name="password" class="login" placeholder="password" autocomplete="off">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls"><!-- 
+                        <label class="checkbox">
+                            <input type="checkbox"> Remember me
+                        </label> -->
+                    </div>
+                </div>
+          </div>
+          <div class="modal-footer"><!-- 
+            <button type="button" class="btn btn-primary">Login</button>
+            <button type="button" class="btn btn-danger">Cancel</button> -->
+                <button type="submit" name="login" class="btn btn-primary">Login</button>
+                <button type="submit" data-dismiss="modal" class="btn btn-danger">Cancel</button>
+          </div>
+        </form>
+    </div>
+</div>
+
 
 <script>
 $(function() {
@@ -291,6 +345,29 @@ $(function() {
 
         {% if closed_error %}
         $('#myModal').modal("show");
+        {% endif %}
+
+        {% if not user.is_authenticated %}
+        $('.icon-thumbs-up').click(function(e) {
+            e.preventDefault();
+            $('#signinModal').modal("show");
+        });
+        $('.icon-thumbs-down').click(function(e) {
+            e.preventDefault();
+            $('#signinModal').modal("show");
+        });
+        $('[name=addmotion]').click(function(e) {
+            e.preventDefault();
+            $('#signinModal').modal("show");
+        });
+        $('[name=addcomment]').click(function(e) {
+            e.preventDefault();
+            $('#signinModal').modal("show");
+        });
+        {% endif %}
+
+        {% if login_errors %}
+        $('#signinModal').modal("show");
         {% endif %}
 
         // enable popovers THIS WORKS REMEMBER THIS SYNTAX
@@ -419,7 +496,7 @@ $(function() {
             <p>If you were invited but don't have an account, you can sign up 
              <a href="/signup/">here</a>.<br><br>If you do have an account, please log in below:</p><br>
                 {% csrf_token %}
-                {% if errors %}
+                {% if login_errors %}
                 <div class="control-group">
                     <div class="controls">
                         <h5 style="color: red;">Invalid login credentials</h5>
@@ -451,7 +528,7 @@ $(function() {
             <button type="button" class="btn btn-primary">Login</button>
             <button type="button" class="btn btn-danger">Cancel</button> -->
                 <button type="submit" name="login" class="btn btn-primary">Login</button>
-                <button type="submit" name="cancel" class="btn btn-danger">Cancel</button>
+                <button type="submit" data-dismiss="modal" class="btn btn-danger">Cancel</button>
           </div>
         </form>
     </div>
