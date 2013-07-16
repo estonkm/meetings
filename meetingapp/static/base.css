@@ -31,8 +31,7 @@ div .info {
     margin-top:5px;
 }
 
-select,
-input[type="file"] {
+select input[type="file"] {
     line-height: 15px !important;
     height: 20px;
     margin-top:5px;
@@ -78,10 +77,6 @@ input[type="file"] {
 
 .timeselect {
     width: 70px !important;
-    height: 30px !important;
-}
-
-select .timeselect {
     height: 30px !important;
 }
 
