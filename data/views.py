@@ -609,7 +609,7 @@ def meeting(request):
 					modified_ai.save()
 
 					recipients = []
-					for e in meetings.invited.split(','):
+					for e in meeting.invited.split(','):
 						if '@' in e:
 							recipients.append(e)
 
