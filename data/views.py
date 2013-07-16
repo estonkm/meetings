@@ -59,6 +59,7 @@ def create(request):
 	context = {}
 	context.update(csrf(request))
 	form = MeetingForm()
+	context['user'] = request.user
 
 	if not request.user.is_authenticated() and not 'account' in request.session:
 		request.session['fromcreate'] = True
