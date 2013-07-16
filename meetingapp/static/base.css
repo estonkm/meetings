@@ -177,18 +177,8 @@ button.hoverblack {
     cursor:pointer;
 }
 
-.sideboxHost {
-    overflow: auto; 
-    white-space: nowrap !important;
-}
-
-.sideboxMembers {
-    overflow: auto; 
-    white-space: nowrap !important;
-}
-
-.sideboxMods {
-    overflow: auto; 
+.sidebox {
+    overflow: scroll;
     white-space: nowrap !important;
 }
 
