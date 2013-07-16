@@ -31,7 +31,7 @@ div .info {
     margin-top:5px;
 }
 
-select input[type="file"] {
+input[type="file"] {
     line-height: 15px !important;
     height: 20px;
     margin-top:5px;
