@@ -565,6 +565,8 @@ def meeting(request):
 	except:
 		meetingtz = UTC
 
+	dtnow = (ZONE.localize(datetime.now())).astimezone(meetingtz)
+
 	if meeting.private:
 		if not request.user.is_authenticated():
 			#return HttpResponseRedirect('/')
@@ -613,7 +615,7 @@ def meeting(request):
 				motiontext = request.POST.get('motiontext')
 				motionname = request.POST.get('motionname')
 				if motionname:
-					motion = Motion(user=Account.objects.get(user=request.user), timestamp=(ZONE.localize(datetime.now())).astimezone(meetingtz), 
+					motion = Motion(user=Account.objects.get(user=request.user), timestamp=dtnow, 
 						name=motionname, desc=motiontext, likes=0, dislikes=0, pastname=motionname,
 						pastdesc=motiontext, modded=False)
 					motion.save()
@@ -636,7 +638,7 @@ def meeting(request):
 			if request.POST.get('comment'):
 				comment = request.POST.get('comment')
 				if comment:
-					comment = Comment(user=Account.objects.get(user=request.user), timestamp=(ZONE.localize(datetime.now())).astimezone(meetingtz),
+					comment = Comment(user=Account.objects.get(user=request.user), timestamp=dtnow,
 						text=comment, pasttext=comment, modded=False)
 					comment.save()
 
