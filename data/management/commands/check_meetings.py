@@ -16,7 +16,10 @@ class Command(NoArgsCommand):
 		for meeting in meetings:
 			start = datetime.combine(meeting.startdate, meeting.starttime)
 			end = datetime.combine(meeting.enddate, meeting.endtime)
-			meetingtz = timezone(meeting.timezone)
+			try:
+				meetingtz = timezone(meeting.timezone)
+			except:
+				continue
 
 			start = meetingtz.localize(start)
 			end = meetingtz.localize(end)
