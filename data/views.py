@@ -17,10 +17,13 @@ import re, os
 from django.core.mail import send_mail
 from django.conf import settings as dsettings
 from PIL import Image, ImageOps
+from pytz import timezone
+import pytz
 #import requests
 
 SENDER = 'Vital Meeting <info@vitalmeeting.com>'
 SIGNATURE = '\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
+UTC = pytz.utc
 
 def mailgun_send(recipients, subject, message):
 	return requests.post(
@@ -98,8 +101,10 @@ def create(request):
 
 				enteredtimestart = datetime.combine(cd['startdate'], cd['starttime'])
 				enteredtimeend = datetime.combine(cd['enddate'], cd['endtime'])
+				enteredtimestart = UTC.localize(enteredtimestart)
+				enteredtimeend = UTC.localize(enteredtimeend)
 
-				rightnow = datetime.now()
+				rightnow = UTC.localize(datetime.now())
 				if (rightnow-enteredtimestart).total_seconds() > 0:
 					already_started = True
 				if (rightnow-enteredtimeend).total_seconds() > 0:
@@ -256,7 +261,7 @@ def signup(request):
 
 					u = User.objects.create_user(cd['email'], first_name=cd['first_name'],
 						last_name=cd['last_name'], email=cd['email'], password=cd['password'])
-					a = Account(user=u, join_date=datetime.now(), is_verified=False, verification_key=vkey, page_id=pid) 
+					a = Account(user=u, join_date=UTC.localize(datetime.now()), is_verified=False, verification_key=vkey, page_id=pid) 
 					a.save()
 
 					for m in Meeting.objects.all():
@@ -552,6 +557,7 @@ def meeting(request):
 		return HttpResponseRedirect('/')
 
 	context['access'] = True
+	meetingtz = timezone(meeting.timezone)
 
 	if meeting.private:
 		if not request.user.is_authenticated():
@@ -566,8 +572,6 @@ def meeting(request):
 
 		#if Account.objects.get(user=request.user) not in meeting.members.all():
 			#return HttpResponseRedirect('/')
-	print meeting.private
-	print context['access']
 
 	if request.user.is_authenticated():
 		viewer = Account.objects.get(user=request.user)
@@ -603,7 +607,7 @@ def meeting(request):
 				motiontext = request.POST.get('motiontext')
 				motionname = request.POST.get('motionname')
 				if motionname:
-					motion = Motion(user=Account.objects.get(user=request.user), timestamp=datetime.now(), 
+					motion = Motion(user=Account.objects.get(user=request.user), timestamp=meetingtz.localize(datetime.now()), 
 						name=motionname, desc=motiontext, likes=0, dislikes=0, pastname=motionname,
 						pastdesc=motiontext, modded=False)
 					motion.save()
@@ -626,7 +630,7 @@ def meeting(request):
 			if request.POST.get('comment'):
 				comment = request.POST.get('comment')
 				if comment:
-					comment = Comment(user=Account.objects.get(user=request.user), timestamp=datetime.now(),
+					comment = Comment(user=Account.objects.get(user=request.user), timestamp=meetingtz.localize(datetime.now()),
 						text=comment, pasttext=comment, modded=False)
 					comment.save()
 

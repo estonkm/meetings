@@ -4,20 +4,22 @@ from django.forms import extras
 from custom_widgets import SelectTimeWidget
 import datetime
 import html5.forms.widgets as html5_widgets
+from buildtimezones import fillTZInfo
 
 STATUS=[('Public', 'Public'), ('Private', 'Private')]
 TITLES = [('Mr.', 'Mr.'), ('Mrs.', 'Mrs.'), ('Ms.', 'Ms.'), ('Dr.', 'Dr.'), ('None', 'None')]
-TIMEZONES=[('UTC/GMT-12:00', 'UTC/GMT-12:00'), ('UTC/GMT-11:00', 'UTC/GMT-11:00'),
-			('UTC/GMT-10:00', 'UTC/GMT-10:00'), ('UTC/GMT-9:00', 'UTC/GMT-9:00'), ('PDT (UTC/GMT-8:00)', 'PDT (UTC/GMT-8:00)'),
-			('MDT (UTC/GMT-7:00)', 'MDT (UTC/GMT-7:00)'), ('CDT (UTC/GMT-6:00)', 'CDT (UTC/GMT-6:00)'), 
-			('EDT (UTC/GMT-5:00)', 'EDT (UTC/GMT-5:00)'), ('UTC/GMT-4:00', 'UTC/GMT-4:00'), ('UTC/GMT-3:00', 'UTC/GMT-3:00'), 
-			('UTC/GMT-2:00', 'UTC/GMT-2:00'), ('UTC/GMT-1:00', 'UTC/GMT-1:00'), 
-			('UTC/GMT','UTC/GMT'), 
-			('UTC/GMT+1:00','UTC/GMT+1:00'), ('UTC/GMT+2:00','UTC/GMT+2:00'), ('EAT (UTC/GMT+3:00)', 'EAT (UTC/GMT+3:00)'),
-			('UTC/GMT+4:00', 'UTC/GMT+4:00'), ('UTC/GMT+5:00', 'UTC/GMT+5:00'), ('UTC/GMT+6:00', 'UTC/GMT+6:00'),
-			('UTC/GMT+7:00', 'UTC/GMT+7:00'), ('UTC/GMT+8:00', 'UTC/GMT+8:00'), ('UTC/GMT+9:00', 'UTC/GMT+9:00'),
-			('UTC/GMT+10:00', 'UTC/GMT+10:00'), ('UTC/GMT+11:00', 'UTC/GMT+11:00'), ('UTC/GMT+12:00', 'UTC/GMT+12:00')]
+# TIMEZONES=[('UTC/GMT-12:00', 'UTC/GMT-12:00'), ('UTC/GMT-11:00', 'UTC/GMT-11:00'),
+# 			('UTC/GMT-10:00', 'UTC/GMT-10:00'), ('UTC/GMT-9:00', 'UTC/GMT-9:00'), ('PDT (UTC/GMT-8:00)', 'PDT (UTC/GMT-8:00)'),
+# 			('MDT (UTC/GMT-7:00)', 'MDT (UTC/GMT-7:00)'), ('CDT (UTC/GMT-6:00)', 'CDT (UTC/GMT-6:00)'), 
+# 			('EDT (UTC/GMT-5:00)', 'EDT (UTC/GMT-5:00)'), ('UTC/GMT-4:00', 'UTC/GMT-4:00'), ('UTC/GMT-3:00', 'UTC/GMT-3:00'), 
+# 			('UTC/GMT-2:00', 'UTC/GMT-2:00'), ('UTC/GMT-1:00', 'UTC/GMT-1:00'), 
+# 			('UTC/GMT','UTC/GMT'), 
+# 			('UTC/GMT+1:00','UTC/GMT+1:00'), ('UTC/GMT+2:00','UTC/GMT+2:00'), ('EAT (UTC/GMT+3:00)', 'EAT (UTC/GMT+3:00)'),
+# 			('UTC/GMT+4:00', 'UTC/GMT+4:00'), ('UTC/GMT+5:00', 'UTC/GMT+5:00'), ('UTC/GMT+6:00', 'UTC/GMT+6:00'),
+# 			('UTC/GMT+7:00', 'UTC/GMT+7:00'), ('UTC/GMT+8:00', 'UTC/GMT+8:00'), ('UTC/GMT+9:00', 'UTC/GMT+9:00'),
+# 			('UTC/GMT+10:00', 'UTC/GMT+10:00'), ('UTC/GMT+11:00', 'UTC/GMT+11:00'), ('UTC/GMT+12:00', 'UTC/GMT+12:00')]
 valid_time_formats=['%I:%M%p']
+TIMEZONES = fillTZInfo()
 
 class UserForm(forms.Form):
 	username = forms.CharField(required=False)
