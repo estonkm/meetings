@@ -1,5 +1,4 @@
 HIGHEST PRIORITY:
--system doesn't handle timezones when determining whether or not a meeting started/is over
 -"request entity too large" error if someone gives a picture too big (~ a few MB)
 
 MORE IMPORTANT:
