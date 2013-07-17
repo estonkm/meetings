@@ -560,7 +560,10 @@ def meeting(request):
 		return HttpResponseRedirect('/')
 
 	context['access'] = True
-	meetingtz = timezone(meeting.timezone)
+	try:
+		meetingtz = timezone(meeting.timezone)
+	except:
+		meetingtz = UTC
 
 	if meeting.private:
 		if not request.user.is_authenticated():
