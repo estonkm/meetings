@@ -25,7 +25,7 @@
                                     <span style="position:absolute !important; bottom: 5px !important;">
                                         <i class="icon-camera"></i>
                                         <text style="font-size: 14px; margin-right: 7px;"> {% if account.prof_pic != 'False' %} Change {% else %} Add {% endif %}Profile Picture:</text><br>
-                                        <span style="">{{form.image}}</span><br>
+                                        <span style="">{{form.image}}</span>{% if form.image.errors %}<h5 style="color: red;">Image is too large.</h5>{% endif %}<br>
                                         <button type="submit" name="pic" class="btn btn-primary" style="margin-top: 3px !important;">{% if account.prof_pic != 'False' %} Change Picture {% else %} Add Picture {% endif %}</button>
                                     </span>
                                 </form>

@@ -19,12 +19,21 @@ from django.conf import settings as dsettings
 from PIL import Image, ImageOps
 from pytz import timezone
 import pytz
+from django.utils.timezone import activate
 #import requests
 
 SENDER = 'Vital Meeting <info@vitalmeeting.com>'
 SIGNATURE = '\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 UTC = pytz.utc
 ZONE = timezone('America/Chicago')
+
+def check_img_size(img):
+	# 2.5MB = 2621440
+	MAX_SIZE = "2621440"
+	if img._size > MAX_SIZE:
+		return False
+	else:
+		return True
 
 
 def mailgun_send(recipients, subject, message):
@@ -402,14 +411,17 @@ def profile(request):
 			form = ImgForm(request.POST, request.FILES)
 			if form.is_valid():
 				cd = form.cleaned_data
-				account.prof_pic = cd['image']
-				account.save()
+				if check_img_size(cd['image']):
+					account.prof_pic = cd['image']
+					account.save()
 
-				if cd['image'] is not None:
-					path = os.path.join(dsettings.MEDIA_ROOT, account.prof_pic.url)
-					tn= Image.open(path)
-					tn.thumbnail((200, 200), Image.ANTIALIAS)
-					tn.save(path)
+					if cd['image'] is not None:
+						path = os.path.join(dsettings.MEDIA_ROOT, account.prof_pic.url)
+						tn= Image.open(path)
+						tn.thumbnail((200, 200), Image.ANTIALIAS)
+						tn.save(path)
+				else:
+					context['form.image.errors'] = True
 
 		if 'bio' in request.POST:
 			account.bio = request.POST.get('bio')
@@ -492,28 +504,30 @@ def addorganizer(request):
 		form = OrganizationForm(request.POST, request.FILES)
 		if form.is_valid():
 			cd = form.cleaned_data;
+			if cd['image'] and not check_img_size(cd['image']):
+				context['form.image.errors'] = True
+			else:
+				random.seed()
 
-			random.seed()
+				pid = ''
+				for i in range(22):
+					# TODO: add upper/lower case letters as well for extra protection
+					pid += chr(int(random.random()*25)+97)
 
-			pid = ''
-			for i in range(22):
-				# TODO: add upper/lower case letters as well for extra protection
-				pid += chr(int(random.random()*25)+97)
+				o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'], page_id=pid)
+				o.save()
+				o.manager.add(a)
+				o.save()
+				a.organizations.add(o)
+				a.save()
 
-			o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'], page_id=pid)
-			o.save()
-			o.manager.add(a)
-			o.save()
-			a.organizations.add(o)
-			a.save()
-
-			if cd['image'] is not None:
-				path = os.path.join(dsettings.MEDIA_ROOT, o.image.url)
-				tn= Image.open(path)
-				tn.thumbnail((200, 200), Image.ANTIALIAS)
-				tn.save(path)
-            
-			return HttpResponseRedirect('../home/')
+				if cd['image'] is not None:
+					path = os.path.join(dsettings.MEDIA_ROOT, o.image.url)
+					tn= Image.open(path)
+					tn.thumbnail((200, 200), Image.ANTIALIAS)
+					tn.save(path)
+	            
+				return HttpResponseRedirect('../home/')
 
 		else:
 			context['errors'] = 'errors'
@@ -565,7 +579,9 @@ def meeting(request):
 	except:
 		meetingtz = UTC
 
-	dtnow = (ZONE.localize(datetime.now())).astimezone(meetingtz)
+	activate(meetingtz)
+
+	dtnow = (ZONE.localize(datetime.now())).astimezone(UTC)
 
 	if meeting.private:
 		if not request.user.is_authenticated():
@@ -970,30 +986,33 @@ def attachorg(request):
 				if cd['contact'] == '':
 					context['form.contact.errors'] = True
 			elif userinput:
-				random.seed()
+				if cd['image'] and not check_img_size['image']:
+					context['form.image.errors'] = True
+				else:
+					random.seed()
 
-				pid = ''
-				for i in range(22):
-					# TODO: add upper/lower case letters as well for extra protection
-					pid += chr(int(random.random()*25)+97)
+					pid = ''
+					for i in range(22):
+						# TODO: add upper/lower case letters as well for extra protection
+						pid += chr(int(random.random()*25)+97)
 
-				o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'], page_id=pid)
-				o.save()
-				o.manager.add(a)
-				o.save()
-				a.organizations.add(o)
-				a.save()
+					o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'], page_id=pid)
+					o.save()
+					o.manager.add(a)
+					o.save()
+					a.organizations.add(o)
+					a.save()
 
-				m.organizations.add(o)
-				m.save()
+					m.organizations.add(o)
+					m.save()
 
-				if cd['image'] is not None:
-					path = os.path.join(dsettings.MEDIA_ROOT, o.image.url)
-					tn= Image.open(path)
-					tn.thumbnail((200, 200), Image.ANTIALIAS)
-					tn.save(path)
+					if cd['image'] is not None:
+						path = os.path.join(dsettings.MEDIA_ROOT, o.image.url)
+						tn= Image.open(path)
+						tn.thumbnail((200, 200), Image.ANTIALIAS)
+						tn.save(path)
 
-				return HttpResponseRedirect('../invite/')
+					return HttpResponseRedirect('../invite/')
 			else:
 				selected = request.POST['selectorg']
 				if selected is not None and selected != 'None\n':
