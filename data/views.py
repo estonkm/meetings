@@ -24,6 +24,8 @@ import pytz
 SENDER = 'Vital Meeting <info@vitalmeeting.com>'
 SIGNATURE = '\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 UTC = pytz.utc
+ZONE = timezone('America/Chicago')
+
 
 def mailgun_send(recipients, subject, message):
 	return requests.post(
@@ -80,9 +82,6 @@ def create(request):
 		if request.POST.get('submit_request'):
 			if form.is_valid():
 				cd = form.cleaned_data
-				#u = User.objects.get(username__exact='temp')
-				#a = Account(user=u, join_date=datetime.now(), phone='eh')
-				#TODO: clean these hard-coded things
 
 				s = True
 				if cd['status'] == 'Public':
@@ -101,10 +100,14 @@ def create(request):
 
 				enteredtimestart = datetime.combine(cd['startdate'], cd['starttime'])
 				enteredtimeend = datetime.combine(cd['enddate'], cd['endtime'])
-				enteredtimestart = UTC.localize(enteredtimestart)
-				enteredtimeend = UTC.localize(enteredtimeend)
+				
+				tz = cd['timezone']
+				meetingtz = timezone(tz)
+				enteredtimestart = meetingtz.localize(enteredtimestart)
+				enteredtimeend = meetingtz.localize(enteredtimeend)
 
-				rightnow = UTC.localize(datetime.now())
+				rightnow = (ZONE.localize(datetime.now())).astimezone(meetingtz)
+
 				if (rightnow-enteredtimestart).total_seconds() > 0:
 					already_started = True
 				if (rightnow-enteredtimeend).total_seconds() > 0:
@@ -261,7 +264,7 @@ def signup(request):
 
 					u = User.objects.create_user(cd['email'], first_name=cd['first_name'],
 						last_name=cd['last_name'], email=cd['email'], password=cd['password'])
-					a = Account(user=u, join_date=UTC.localize(datetime.now()), is_verified=False, verification_key=vkey, page_id=pid) 
+					a = Account(user=u, join_date=ZONE.localize(datetime.now()), is_verified=False, verification_key=vkey, page_id=pid) 
 					a.save()
 
 					for m in Meeting.objects.all():
@@ -607,7 +610,7 @@ def meeting(request):
 				motiontext = request.POST.get('motiontext')
 				motionname = request.POST.get('motionname')
 				if motionname:
-					motion = Motion(user=Account.objects.get(user=request.user), timestamp=meetingtz.localize(datetime.now()), 
+					motion = Motion(user=Account.objects.get(user=request.user), timestamp=(ZONE.localize(datetime.now())).astimezone(meetingtz), 
 						name=motionname, desc=motiontext, likes=0, dislikes=0, pastname=motionname,
 						pastdesc=motiontext, modded=False)
 					motion.save()
@@ -630,7 +633,7 @@ def meeting(request):
 			if request.POST.get('comment'):
 				comment = request.POST.get('comment')
 				if comment:
-					comment = Comment(user=Account.objects.get(user=request.user), timestamp=meetingtz.localize(datetime.now()),
+					comment = Comment(user=Account.objects.get(user=request.user), timestamp=(ZONE.localize(datetime.now())).astimezone(meetingtz),
 						text=comment, pasttext=comment, modded=False)
 					comment.save()
 

@@ -4,19 +4,23 @@ from datetime import datetime
 from pytz import timezone
 import pytz
 
+ZONE = timezone('America/Chicago')
+UTC = pytz.utc
+
 class Command(NoArgsCommand):
 	help = 'Checks meeting start/end times against current time'
 	def handle_noargs(self, **options):
 		meetings = Meeting.objects.all()
-		now = datetime.now()
-		utc = pytz.utc
-		now = utc.localize(now)
+		now = ZONE.localize(datetime.now())
 
 		for meeting in meetings:
 			start = datetime.combine(meeting.startdate, meeting.starttime)
 			end = datetime.combine(meeting.enddate, meeting.endtime)
-			start = utc.localize(start)
-			end = utc.localize(end)
+			meetingtz = timezone(meeting.timezone)
+
+			start = meetingtz.localize(start)
+			end = meetingtz.localize(end)
+			now = now.astimezone(meetingtz)
 
 			if (now - start).total_seconds() > 0:
 				meeting.started = True
