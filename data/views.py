@@ -216,12 +216,14 @@ def invite(request):
 			for e in entered:
 				e = e.strip('\r')
 				meeting.invited += e + ','
-				acct = Account.objects.filter(user=User.objects.get(email=e))
-				if acct:
-					acct = acct[0]
-					acct.meetings_in.add(meeting)
-					meeting.members.add(acct)
-					acct.save()
+				u = User.objects.filter(email=e)
+				if u:
+					acct = Account.objects.filter(user=u)
+					if acct:
+						acct = acct[0]
+						acct.meetings_in.add(meeting)
+						meeting.members.add(acct)
+						acct.save()
 				meeting.save()
 				recipients.append(e)
 
@@ -901,12 +903,14 @@ def managemembers(request):
 			for e in entered:
 				e = e.strip('\r')
 				meeting.invited += e + ','
-				acct = Account.objects.filter(user=User.objects.get(email=e))
-				if acct:
-					acct = acct[0]
-					acct.meetings_in.add(meeting)
-					meeting.members.add(acct)
-					acct.save()
+				u = User.objects.filter(email=e)
+				if u:
+					acct = Account.objects.filter(user=u)
+					if acct:
+						acct = acct[0]
+						acct.meetings_in.add(meeting)
+						meeting.members.add(acct)
+						acct.save()
 				meeting.save()
 
 				recipients.append(e.strip('\r'))
