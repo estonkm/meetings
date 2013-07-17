@@ -411,17 +411,14 @@ def profile(request):
 			form = ImgForm(request.POST, request.FILES)
 			if form.is_valid():
 				cd = form.cleaned_data
-				if check_img_size(cd['image']):
-					account.prof_pic = cd['image']
-					account.save()
+				account.prof_pic = cd['image']
+				account.save()
 
-					if cd['image'] is not None:
-						path = os.path.join(dsettings.MEDIA_ROOT, account.prof_pic.url)
-						tn= Image.open(path)
-						tn.thumbnail((200, 200), Image.ANTIALIAS)
-						tn.save(path)
-				else:
-					context['form.image.errors'] = True
+				if cd['image'] is not None:
+					path = os.path.join(dsettings.MEDIA_ROOT, account.prof_pic.url)
+					tn= Image.open(path)
+					tn.thumbnail((200, 200), Image.ANTIALIAS)
+					tn.save(path)
 
 		if 'bio' in request.POST:
 			account.bio = request.POST.get('bio')
@@ -504,30 +501,27 @@ def addorganizer(request):
 		form = OrganizationForm(request.POST, request.FILES)
 		if form.is_valid():
 			cd = form.cleaned_data;
-			if cd['image'] and not check_img_size(cd['image']):
-				context['form.image.errors'] = True
-			else:
-				random.seed()
+			random.seed()
 
-				pid = ''
-				for i in range(22):
-					# TODO: add upper/lower case letters as well for extra protection
-					pid += chr(int(random.random()*25)+97)
+			pid = ''
+			for i in range(22):
+				# TODO: add upper/lower case letters as well for extra protection
+				pid += chr(int(random.random()*25)+97)
 
-				o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'], page_id=pid)
-				o.save()
-				o.manager.add(a)
-				o.save()
-				a.organizations.add(o)
-				a.save()
+			o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'], page_id=pid)
+			o.save()
+			o.manager.add(a)
+			o.save()
+			a.organizations.add(o)
+			a.save()
 
-				if cd['image'] is not None:
-					path = os.path.join(dsettings.MEDIA_ROOT, o.image.url)
-					tn= Image.open(path)
-					tn.thumbnail((200, 200), Image.ANTIALIAS)
-					tn.save(path)
-	            
-				return HttpResponseRedirect('../home/')
+			if cd['image'] is not None:
+				path = os.path.join(dsettings.MEDIA_ROOT, o.image.url)
+				tn= Image.open(path)
+				tn.thumbnail((200, 200), Image.ANTIALIAS)
+				tn.save(path)
+            
+			return HttpResponseRedirect('../home/')
 
 		else:
 			context['errors'] = 'errors'
@@ -986,33 +980,30 @@ def attachorg(request):
 				if cd['contact'] == '':
 					context['form.contact.errors'] = True
 			elif userinput:
-				if cd['image'] and not check_img_size['image']:
-					context['form.image.errors'] = True
-				else:
-					random.seed()
+				random.seed()
 
-					pid = ''
-					for i in range(22):
-						# TODO: add upper/lower case letters as well for extra protection
-						pid += chr(int(random.random()*25)+97)
+				pid = ''
+				for i in range(22):
+					# TODO: add upper/lower case letters as well for extra protection
+					pid += chr(int(random.random()*25)+97)
 
-					o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'], page_id=pid)
-					o.save()
-					o.manager.add(a)
-					o.save()
-					a.organizations.add(o)
-					a.save()
+				o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'], page_id=pid)
+				o.save()
+				o.manager.add(a)
+				o.save()
+				a.organizations.add(o)
+				a.save()
 
-					m.organizations.add(o)
-					m.save()
+				m.organizations.add(o)
+				m.save()
 
-					if cd['image'] is not None:
-						path = os.path.join(dsettings.MEDIA_ROOT, o.image.url)
-						tn= Image.open(path)
-						tn.thumbnail((200, 200), Image.ANTIALIAS)
-						tn.save(path)
+				if cd['image'] is not None:
+					path = os.path.join(dsettings.MEDIA_ROOT, o.image.url)
+					tn= Image.open(path)
+					tn.thumbnail((200, 200), Image.ANTIALIAS)
+					tn.save(path)
 
-					return HttpResponseRedirect('../invite/')
+				return HttpResponseRedirect('../invite/')
 			else:
 				selected = request.POST['selectorg']
 				if selected is not None and selected != 'None\n':
