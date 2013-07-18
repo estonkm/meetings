@@ -11,9 +11,15 @@
 			</div>
 			<div class="row" style="margin-left: 0px !important;">
 				<a href="#cModal" role="button" class="btn" data-toggle="modal">Add a New Contact</a>
-				<a class="cs_import btn" style="margin-left: 10px;">Add from Address Book</a>
+				<a class="cs_import btn" data-toggle: "collapse" data-target:"collapse1" style="margin-left: 10px;">Add from Address Book</a>
 				<input type="text" name='search' style="width: 250px !important; float:right;" placeholder="Search existing contacts (OFF)" class="input-medium search-query">
 			</div><br><br>
+			<div class="row collapse out" id="collapse1" style="margin-left: 0px !important;">
+				<form method="post" id="add_addr_book" style="margin:5 px; padding: 0px;">
+					<textarea name="addr_contacts" style="width:450px;height:82px" id="contact_list"></textarea>
+					<button type="submit" class="btn btn-mini btn-primary">Add to Contacts</button>
+				</form>
+			</div>
 			{% for c in contacts %}
 			<div class="row homemeetings" style="margin-left: 0px !important; border-bottom: 1px solid #DCDCDC;">
 					{% if c.last_name %}<h4>{{c.title}} {{c.last_name}}{% if c.first_name %}, {{c.first_name}} {% endif %}</h4>{% endif %}
@@ -98,20 +104,10 @@
   </div>
 </div>
 
-<form method="post" id="add_addr_book" style="">
-	<textarea style="" id="contact_list"></textarea>
-</form>
-
 <script>
 $(document).ready(function() {
 	$('#add_c').click(function() {
 		$('#c_form').submit();
-	});
-
-	$('#contact_list').change(function() {
-		alert('hi');
-		alert($(this).value);
-		$('#add_addr_book').submit();
 	});
 
 });
