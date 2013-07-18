@@ -462,20 +462,28 @@ def contacts(request):
 		form = ContactForm(request.POST)
 		if 'new_contact' in request.POST:
 			if form.is_valid():
-				cd = form.cleaned_data;
-				u = User.objects.filter(email__exact=cd['email'])
-				matching_account = None
-				if u:
-					matching_account = Account.objects.get(user=u)
-				c = Contact(first_name=cd['first_name'], last_name=cd['last_name'],
-						email=cd['email'], address=cd['address'], wphone=cd['wphone'], hphone=cd['hphone'])
-				if matching_account:
-					c.account = matching_account
-				c.save()
-				a.contacts.add(c)
-				a.save()
+				cd = form.cleaned_data
+				in_contacts = False
+				for c in contacts:
+					if c.email == cd['email']:
+						in_contacts = True
+				if in_contacts:
+					context['in_contacts'] = True
+				else:
+					u = User.objects.filter(email__exact=cd['email'])
+					matching_account = None
+					if u:
+						matching_account = Account.objects.get(user=u)
+					c = Contact(first_name=cd['first_name'], last_name=cd['last_name'],
+							email=cd['email'], address=cd['address'], wphone=cd['wphone'], hphone=cd['hphone'])
+					if matching_account:
+						c.account = matching_account
+					c.save()
+					a.contacts.add(c)
+					a.save()
 			else:
-				context['errors'] = 'error'
+				errors = {}
+				context['errors'] = errors
 
 		if request.POST.get('remove_contact'):
 			cid = request.POST.get('remove_contact')
