@@ -486,28 +486,29 @@ def contacts(request):
 			added = request.POST.get('addr_contacts')
 			added = added.split(',')
 			for contact in added:
-				contact = contact.strip(' ')
-				contact_info = contact.split(' ')
-				c_first_name = ''
-				c_last_name = ''
-				if len(contact_info) > 2:
-					if '<' in contact_info[2]:
-						c_first_name = contact_info[0]
-						c_last_name = contact_info[1]
-						c_email = re.sub('[<>]', '', contact_info[2])
-				elif '<' in contact_info[0]:
-					c_email = re.sub('[<>]', '', contact_info[0])
-				match = Contact.objects.filter(email=c_email)
-				if match:
-					match = match[0]
-					if match not in contacts:
-						a.contacts.add(match)
-						a.save()
-				else:
-					new_c = Contact(first_name=c_first_name, last_name=c_last_name, email=c_email)
-					new_c.save()
-					a.contacts.add(new_c)
-					a.save()
+				if '<' in contact:
+					c_email = re.findall('<.*>', contact)
+					if c_email:
+						c_email = c_email[0].strip('<>')
+						if '@' in c_email:
+							contact = contact.strip(' ')
+							contact_info = contact.split(' ')
+							c_first_name = ''
+							c_last_name = ''
+							if len(contact_info) > 2:
+								c_first_name = contact_info[0]
+								c_last_name = contact_info[1]
+							match = Contact.objects.filter(email=c_email)
+							if match:
+								match = match[0]
+								if match not in contacts:
+									a.contacts.add(match)
+									a.save()
+							else:
+								new_c = Contact(first_name=c_first_name, last_name=c_last_name, email=c_email)
+								new_c.save()
+								a.contacts.add(new_c)
+								a.save()
 	
 	context['contacts'] = contacts
 	context['form'] = form
