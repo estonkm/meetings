@@ -120,6 +120,10 @@ $(document).ready(function() {
 	{% endif %}
 
 });
+
+function show() {
+	$('#collapse1').collapse('show');
+}
 </script>
 
 <script>
@@ -129,7 +133,7 @@ $(document).ready(function() {
 	  ignoreMultipleEmails:true,
 	  afterImport:function(source, success) {
 	  	if (success) {
-	  		$('#collapse1').collapse('show');
+	  		show();
 	  	}
 	  }
 	};
