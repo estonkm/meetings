@@ -108,10 +108,13 @@ $(document).ready(function() {
 		$('#c_form').submit();
 	});
 
-	if($('#contact_list').val()) {
-		alert($(this).val());
+	$('#contact_list').change(function() {
+		alert('hi');
+		alert($(this).value);
 		$('#add_addr_book').submit();
-	}
+	});
+
+	$('#contact_list').
 });
 </script>
 
