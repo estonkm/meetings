@@ -129,9 +129,8 @@ $(document).ready(function() {
 	  ignoreMultipleEmails:true,
 	  afterImport:function(source, success) {
 	  	if (success) {
-	  		$('.collapse').collapse();
 	  	} else {
-	  		$('.collapse').collapse();
+	  		location.reload();
 	  	}
 	  }
 	};
