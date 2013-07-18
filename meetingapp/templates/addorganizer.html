@@ -25,7 +25,13 @@
 		<div class="control-group">
 			<label class="control-label" for="inputPassword">Contact Email</label>
 			<div class="controls">
-				{{form.contact}} {% if form.contact.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+				{{form.contact}} {% if form.contact.errors %}<text style="color: red; padding-left: 5px;">Invalid Input</text>{% endif %}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="inputws">Website</label>
+			<div class="controls">
+				{{form.website}}
 			</div>
 		</div>
 		<div class="control-group">

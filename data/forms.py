@@ -58,20 +58,25 @@ class OrganizationForm(forms.Form):
 	desc = forms.CharField(widget=forms.Textarea(attrs={'rows':'3', 'cols':'40','maxlength':250}))
 	image = forms.ImageField(required=False)
 	contact = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'email'}))
+	website = forms.CharField(required=False)
+
+class OrgEmailForm(forms.Form):
+	contact = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'email'}), required=False)
 
 class MeetingOrgForm(forms.Form):
 	name = forms.CharField(required=False)
 	desc = forms.CharField(widget=forms.Textarea(attrs={'rows':'3', 'cols':'40','maxlength':250}), required=False)
 	image = forms.ImageField(required=False)
 	contact = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'email'}), required=False)
+	website = forms.CharField(required=False)
 
 class SettingsForm(forms.Form):
 	title = forms.CharField(required=False)
 	desc = forms.CharField(widget=forms.Textarea(attrs={'rows':'3', 'cols':'40','maxlength':250}), max_length=500, required=False)
 	startdate = forms.DateField(required=False)
-	starttime = forms.TimeField(widget=SelectTimeWidget(twelve_hr=True, use_seconds=False), required=False)
+	starttime = forms.TimeField(widget=SelectTimeWidget(twelve_hr=True, use_none=True, use_seconds=False), required=False)
 	enddate = forms.DateField(required=False)
-	endtime = forms.TimeField(widget=SelectTimeWidget(twelve_hr=True, use_seconds=False), required=False)
+	endtime = forms.TimeField(widget=SelectTimeWidget(twelve_hr=True, use_none=True, use_seconds=False), required=False)
 	status = forms.ChoiceField(choices=STATUS, widget=forms.RadioSelect(), required=False)
 
 class ImgForm(forms.Form):

@@ -7,38 +7,110 @@
 		<table class="table" style="height: 100% !important;"> <!-- Needed to set this to 100% for bottom-positioning to work! -->
             <tbody>
                 <tr>
-                    <td>
+                    <td style="border-top: none !important;">
                         <div style="position:relative; height:100%"><!--  And then do this -->
                             {% if org.prof_pic != 'False' %}
                             <img src="{{org.image.url}}" /><br><br><br><br><br><br>
                             {% endif %}
                         </div>
                     </td>
-                    <td>
+                    <td style="border-top: none !important;">
                         <div style="position:relative; height:100%">
                             <h3>{{org.name}}</h3><br><br>
+                            {% if viewer == manager %}
+                                <form enctype="multipart/form-data" method='post' id='picform' style='margin: 0px; padding: 0px;'>{% csrf_token %}<br><br><br>
+                                    <span style="position:absolute !important; bottom: 5px !important;">
+                                        <i class="icon-camera"></i>
+                                        <text style="font-size: 14px; margin-right: 7px;"> {% if org.image != 'False' %} Change {% else %} Add {% endif %}Profile Picture:</text><br>
+                                        <span style="">{{form.image}}</span>{% if form.image.errors %}<h5 style="color: red;">Image is too large.</h5>{% endif %}<br>
+                                        <button type="submit" name="pic" class="btn btn-primary" style="margin-top: 3px !important;">{% if org.image != 'False' %} Change Picture {% else %} Add Picture {% endif %}</button>
+                                    </span>
+                                </form>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <th style="vertical-align: middle;">About:</th>
                     <td>
-                        {{org.desc}}
+                        <span id="oldval">{{org.desc}}</span>
+                        {% if viewer == manager %}
+                        <button class="btn btn-mini btn-primary" style="margin-left: 10px !important;" id="edit_desc">edit</button>
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>
                     <th>Contact:</th>
-                    <td>{{org.contact}}</td>
+                    <td>
+                        <span id="oldval">{{org.contact}}</span>
+                        {% if viewer == manager %}
+                        <button class="btn btn-mini btn-primary" style="margin-left: 10px !important;" id="edit_contact">edit</button>
+                        {% endif %}
+                        {% if emailform.contact.errors %}
+                        <text style="color: red; padding-left: 5px;">Not a valid email.</text>
+                        {% endif %}
+                    </td>
                 </tr>
                 <tr>
                     <th style="vertical-align: middle;">Website:</th>
                     <td>
-                        {{org.website}}
+                        <span id="oldval">{{org.website}}</span>
+                        {% if viewer == manager %}
+                        <button class="btn btn-mini btn-primary" style="margin-left: 10px !important;" id="edit_ws">edit</button>
+                        {% endif %}
                     </td>
                 </tr>
             </tbody>
         </table>
 	</div>
 </div>
+
+<script>
+
+$(document).ready(function() {
+    old_desc_html = '';
+    old_contact_html = '';
+    old_ws_html = '';
+    $('#edit_desc').click(function() {
+         parent = $(this).parent();
+         old_desc_html = parent.html();
+         oldval = parent.find('span[id="oldval"]').html();
+         newHTML = "<td><form method='post' style='margin: 0px; margin-top: 5px; margin-bottom: 5px; padding: 0px;'>{% csrf_token %}<textarea rows='4' name='desc' style='width: 70% !important; margin-top: 5px !important; margin-bottom: 5px !important;'>"+oldval+"</textarea><br><button type='submit' name='change_desc' class='btn btn-mini btn-primary' style='margin-left: 5px !important; margin-right: 5px !important;'>Change</button><button name='cancel' id='desc_cancel' class='btn btn-mini btn-danger'>Cancel</button></form></td>";
+         parent.replaceWith(newHTML);
+
+    });
+    $('#desc_cancel').click(function(e) {
+        parent = $(this).parent();
+        parent.replaceWith(old_desc_html);
+    });
+
+
+    $('#edit_contact').click(function() {
+         parent = $(this).parent();
+         old_contact_html = parent.html();
+         oldval = parent.find('span[id="oldval"]').html();
+         newHTML = "<td><form method='post' style='margin: 0px; margin-top: 5px; padding: 0px;'>{% csrf_token %}<input id='id_contact' name='contact' value='"+oldval+"' type='text' /><button type='submit' name='change_contact' class='btn btn-mini btn-primary' style='margin-left: 5px !important; margin-top: -10px !important; margin-right: 5px !important;'>Change</button><button name='cancel' id='contact_cancel' style='margin-top: -10px !important;' class='btn btn-mini btn-danger'>Cancel</button></form></td>";
+         parent.replaceWith(newHTML);
+    });
+    $('#contact_cancel').click(function(e) {
+        parent = $(this).parent();
+        parent.replaceWith(old_contact_html);
+    });
+    $('#edit_ws').click(function() {
+         parent = $(this).parent();
+         old_ws_html = parent.html();
+         oldval = parent.find('span[id="oldval"]').html();
+
+         newHTML = "<td><form method='post' style='margin: 0px; margin-top: 5px; padding: 0px;'>{% csrf_token %}<input type='text' name='ws' value='"+oldval+"'></input><button type='submit' name='change_ws' class='btn btn-mini btn-primary' style='margin-left: 5px !important; margin-top: -10px !important; margin-right: 5px !important;'>Change</button><button name='cancel' id='ws_cancel' style='margin-top: -10px !important;' class='btn btn-mini btn-danger'>Cancel</button></form></td>";
+         parent.replaceWith(newHTML);
+    });
+    $('#ws_cancel').click(function(e) {
+        parent = $(this).parent();
+        parent.replaceWith(old_ws_html);
+
+    });
+});
+
+</script>
 
 {% endblock %}

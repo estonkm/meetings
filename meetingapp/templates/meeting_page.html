@@ -65,7 +65,7 @@
             {% for ai in agenda_items %}
             <div class="row ai_row">
                 <div class="row ai_title">
-                    <text class="agenda" style="padding-right: 5px;"><span id="ai_num">{{ai.number}}</span>. <span id="ai_name">{{ai.name}}</span></text>
+                    <text class="agenda" style="padding-right: 5px;"><span id="ai_num">{{forloop.counter}}</span>. <span id="ai_name">{{ai.name}}</span></text>
                     {% if user == host.user %}
                     <button class="btn btn-mini" name="editai" style="margin-top: -5px !important;" id="{{ai.id}}"><i class="icon-pencil"></i> edit</button>
                     {% endif %}

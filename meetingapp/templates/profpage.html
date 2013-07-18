@@ -7,14 +7,14 @@
 		<table class="table" style="height: 100% !important;"> <!-- Needed to set this to 100% for bottom-positioning to work! -->
             <tbody>
                 <tr>
-                    <td>
+                    <td style="border-top: none !important;">
                         <div style="position:relative; height:100%"><!--  And then do this -->
                             {% if account.prof_pic != 'False' %}
                             <img src="{{account.prof_pic.url}}" /><br><br><br><br><br><br>
                             {% endif %}
                         </div>
                     </td>
-                    <td>
+                    <td style="border-top: none !important;">
                         <div style="position:relative; height:100%">
                             <h3>{{account.user.last_name}}, {{account.user.first_name}}</h3><br><br>
                         </div>

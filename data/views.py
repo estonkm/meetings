@@ -244,13 +244,13 @@ def invite(request):
 def signup(request):
 	context = {}
 	context.update(csrf(request))
-	form = UserForm(request.POST, request.FILES)
-	context['form'] = form
+	form = UserForm()
 
 	if request.user.is_authenticated():
 		return HttpResponseRedirect('../home/')
 
 	if request.method == 'POST':
+		form = UserForm(request.POST, request.FILES)
 		if request.POST.get('submit_request'):
 			if form.is_valid():
 				cd = form.cleaned_data
@@ -315,7 +315,8 @@ def signup(request):
 			else:
 				errors = {}
 				context['errors'] = errors
-				cd = form.cleaned_data
+
+	context['form'] = form
 
 	return render_to_response('signup.html', context)
 
@@ -494,7 +495,6 @@ def addorganizer(request):
 	context = {}
 	context.update(csrf(request))
 	form = OrganizationForm()
-	context['form'] = form
 	context['user'] = request.user
 
 	a = Account.objects.get(user=request.user)
@@ -510,7 +510,7 @@ def addorganizer(request):
 				# TODO: add upper/lower case letters as well for extra protection
 				pid += chr(int(random.random()*25)+97)
 
-			o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'], page_id=pid)
+			o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'], website=cd['website'], page_id=pid)
 			o.save()
 			o.manager.add(a)
 			o.save()
@@ -526,8 +526,10 @@ def addorganizer(request):
 			return HttpResponseRedirect('../home/')
 
 		else:
-			context['errors'] = 'errors'
+			errors = {}
+			context['errors'] = errors
 
+	context['form'] = form
 	return render_to_response('addorganizer.html', context)
 
 def vote(request):
@@ -773,6 +775,7 @@ def settings(request):
 			if cd['startdate']:
 				meeting.startdate = cd['startdate']
 			if cd['starttime']:
+				print cd['starttime']
 				meeting.starttime = cd['starttime']
 			if cd['enddate']:
 				meeting.enddate = cd['enddate']
@@ -798,7 +801,7 @@ def settings(request):
 			while request.POST.get(item_name):
 				agendaitem = request.POST.get(item_name)
 				if agendaitem:
-					i = AgendaItem(name=agendaitem, desc='')
+					i = AgendaItem(name=agendaitem, desc='', number=counter)
 					i.save()
 					meeting.agenda_items.add(i)
 					meeting.save()
@@ -950,7 +953,6 @@ def attachorg(request):
 	context['user'] = request.user
 
 	form = MeetingOrgForm()
-	context['form'] = form
 
 	if not request.user.is_authenticated() and not 'account' in request.session:
 		return HttpResponseRedirect('/')
@@ -991,7 +993,7 @@ def attachorg(request):
 					# TODO: add upper/lower case letters as well for extra protection
 					pid += chr(int(random.random()*25)+97)
 
-				o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'], page_id=pid)
+				o = Organization(name=cd['name'], desc=cd['desc'], image=cd['image'], contact=cd['contact'], website=cd['website'], page_id=pid)
 				o.save()
 				o.manager.add(a)
 				o.save()
@@ -1022,15 +1024,18 @@ def attachorg(request):
 						context['get_org_error'] = True
 
 		else:
+			errors = {}
 			context['errors'] = 'errors'
 
-
+	context['form'] = form
 	return render_to_response('attachorg.html', context)
 
 def orgpage(request):
 	context = {}
 	context.update(csrf(request))
 	context['user'] = request.user
+	emailform = OrgEmailForm()
+	form = ImgForm()
 
 	if request.user.is_authenticated():
 		viewer = Account.objects.get(user=request.user)
@@ -1046,6 +1051,42 @@ def orgpage(request):
 		context['org'] = org
 	else:
 		return HttpResponseRedirect('/')
+
+	context['manager'] = org.manager.all()[0]
+
+	if request.POST:
+		# check for the button; that way, cancel can be a submit too
+		if 'pic' in request.POST:
+			form = ImgForm(request.POST, request.FILES)
+			if form.is_valid():
+				cd = form.cleaned_data
+				org.image = cd['image']
+				org.save()
+				if cd['image'] is not None:
+					path = os.path.join(dsettings.MEDIA_ROOT, org.image.url)
+					tn= Image.open(path)
+					tn.thumbnail((200, 200), Image.ANTIALIAS)
+					tn.save(path)
+
+		if 'change_contact' in request.POST:
+			emailform = OrgEmailForm(request.POST)
+			if emailform.is_valid():
+				cd = emailform.cleaned_data;
+				org.contact = cd['contact']
+			else:
+				errors = {}
+				context['errors'] = errors
+		if 'change_desc' in request.POST:
+			desc = request.POST.get('desc')
+			if desc is not None:
+				org.desc = desc
+		if 'change_ws' in request.POST:
+			ws = request.POST.get('ws')
+			org.website = ws
+		org.save()
+
+	context['emailform'] = emailform
+	context['form'] = form
 
 	return render_to_response('orgpage.html', context)
 

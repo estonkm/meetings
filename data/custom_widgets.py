@@ -32,8 +32,9 @@ class SelectTimeWidget(Widget):
     meridiem_field = '%s_meridiem'
     twelve_hr = False # Default to 24hr. LEAVE THIS FALSE HERE; SET IN FORM
     use_seconds = True
+    use_none = False
     
-    def __init__(self, attrs=None, hour_step=None, minute_step=None, second_step=None, twelve_hr=False, use_seconds=True):
+    def __init__(self, attrs=None, hour_step=None, minute_step=None, second_step=None, twelve_hr=False, use_none=False, use_seconds=True):
         """
         hour_step, minute_step, second_step are optional step values for
         for the range of values for the associated select element
@@ -45,6 +46,9 @@ class SelectTimeWidget(Widget):
         if twelve_hr:
             self.twelve_hr = True # Do 12hr (rather than 24hr)
             self.meridiem_val = 'a.m.' # Default to Morning (A.M.)
+
+        if use_none:
+            self.use_none = True # allow a "none" option in the select form
         
         if hour_step and twelve_hr:
             self.hours = range(1,13,hour_step) 
@@ -122,12 +126,19 @@ class SelectTimeWidget(Widget):
         minute_val = u"%.2d" % minute_val
         second_val = u"%.2d" % second_val
 
-        hour_choices = [("%.2d"%i, "%.2d"%i) for i in self.hours]
+        if self.use_none:
+            hour_choices = [("--", "--")]+[("%.2d"%i, "%.2d"%i) for i in self.hours]
+        else:
+            hour_choices = [("%.2d"%i, "%.2d"%i) for i in self.hours]
         local_attrs = self.build_attrs(id=self.hour_field % id_)
         select_html = Select(choices=hour_choices, attrs={'class':'timeselect'}).render(self.hour_field % name, hour_val, local_attrs)
+
         output.append(select_html)
 
-        minute_choices = [("%.2d"%i, "%.2d"%i) for i in self.minutes]
+        if self.use_none:
+            minute_choices = [("--", "--")]+[("%.2d"%i, "%.2d"%i) for i in self.minutes]
+        else:
+            minute_choices = [("%.2d"%i, "%.2d"%i) for i in self.minutes]
         local_attrs['id'] = self.minute_field % id_
         select_html = Select(choices=minute_choices, attrs={'class':'timeselect'}).render(self.minute_field % name, minute_val, local_attrs)
         output.append(select_html)
@@ -135,7 +146,7 @@ class SelectTimeWidget(Widget):
         if self.use_seconds:
             second_choices = [("%.2d"%i, "%.2d"%i) for i in self.seconds]
             local_attrs['id'] = self.second_field % id_
-            select_html = Select(choices=second_choices, attrs={'class':'timeselect'}).render(self.second_field % name, second_val, local_attrs)
+            select_html = Select(choices=second_choices, attrs={'class':'timeselect'}).render(self.second_frield % name, second_val, local_attrs)
             output.append(select_html)
     
         if self.twelve_hr:
@@ -143,9 +154,13 @@ class SelectTimeWidget(Widget):
             if self.meridiem_val is not None and  self.meridiem_val.startswith('p'):
                     meridiem_choices = [('p.m.','p.m.'), ('a.m.','a.m.')]
             else:
-                meridiem_choices = [('a.m.','a.m.'), ('p.m.','p.m.')]
+                if self.use_none:
+                    meridiem_choices = [('--', '--'), ('a.m.','a.m.'), ('p.m.','p.m.')]
+                else:
+                    meridiem_choices = [('a.m.','a.m.'), ('p.m.','p.m.')]
 
             local_attrs['id'] = local_attrs['id'] = self.meridiem_field % id_
+
             select_html = Select(choices=meridiem_choices, attrs={'class':'timeselect'}).render(self.meridiem_field % name, self.meridiem_val, local_attrs)
             output.append(select_html)
 
@@ -162,6 +177,9 @@ class SelectTimeWidget(Widget):
         s = data.get(self.second_field % name, '00') # second
 
         meridiem = data.get(self.meridiem_field % name, None)
+
+        if (h == '--' or m == '--') or meridiem == '--':
+            return None
 
         #NOTE: if meridiem is None, assume 24-hr
         if meridiem is not None:

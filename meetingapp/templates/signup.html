@@ -16,12 +16,18 @@
 			<label class="control-label" for="inputEmail">First name</label>
 			<div class="controls">
 				{{ form.first_name }}
+				{% if form.first_name.errors %}
+				<text style="color: red; padding-left: 5px;">Required</text>
+				{% endif %}
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label" for="inputEmail">Last name</label>
 			<div class="controls">
 				{{ form.last_name }}
+				{% if form.last_name.errors %}
+				<text style="color: red; padding-left: 5px;">Required</text>
+				{% endif %}
 			</div>
 		</div>
 		{% if email_taken %}
@@ -35,6 +41,9 @@
 			<label class="control-label" for="inputEmail">Email</label>
 			<div class="controls">
 				{{ form.email }}
+				{% if form.email.errors %}
+				<text style="color: red; padding-left: 5px;">Required</text>
+				{% endif %}
 			</div>
 		</div>
 		{% if retype_failed %}

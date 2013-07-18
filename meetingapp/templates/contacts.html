@@ -7,14 +7,13 @@
 		<div class="span9">
 			<!-- Create a New Meeting button goes here -->
 			<div class="row" style="margin-left: 0px !important;">
-				<div style="width: 200px; height: 50px; margin-bottom: 20px; float: left;">
-					<h4 style="margin: 5px !important;">Contacts</h4>
-				</div>
-				<span style="float:right;">
-					<input type="text" name='search' style="width: 200px !important; margin-right: 20px !important;" placeholder="Search existing contacts (OFF)" class="input-medium search-query">
-					<a href="#cModal" role="button" class="btn" data-toggle="modal">Add a New Contact</a>
-				</span>
+				<h3 style="margin: 5px !important;">Contacts</h3>	
 			</div>
+			<div class="row" style="margin-left: 0px !important;">
+				<a href="#cModal" role="button" class="btn" data-toggle="modal">Add a New Contact</a>
+				<a class="cs_import btn" style="margin-left: 10px;">Add from Address Book</a>
+				<input type="text" name='search' style="width: 250px !important; float:right;" placeholder="Search existing contacts (OFF)" class="input-medium search-query">
+			</div><br><br>
 			{% for c in contacts %}
 			<div class="row homemeetings" style="margin-left: 0px !important; border-bottom: 1px solid #DCDCDC;">
 					{% if c.last_name %}<h4>{{c.title}} {{c.last_name}}{% if c.first_name %}, {{c.first_name}} {% endif %}</h4>{% endif %}
@@ -99,12 +98,30 @@
   </div>
 </div>
 
+<form method="post" id="add_addr_book" style="display:none;">
+	<textarea style="display:none;" id="contact_list"></textarea>
+</form>
+
 <script>
 $(document).ready(function() {
 	$('#add_c').click(function() {
 		$('#c_form').submit();
 	});
+
+	$('#contact_list').change(function() {
+		alert($(this).val());
+		$('#add_addr_book').submit();
+	});
 });
 </script>
+
+<script type="text/javascript">
+	var csPageOptions = {
+	  domain_key:"FNJFAM6WXGREJEM5ZX5D", 
+	  textarea_id:"contact_list"
+	};
+</script>
+
+<script type="text/javascript" src="https://api.cloudsponge.com/address_books.js"></script>
 
 {% endblock %}
