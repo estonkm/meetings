@@ -127,11 +127,10 @@ $(document).ready(function() {
 	  domain_key:"FNJFAM6WXGREJEM5ZX5D", 
 	  textarea_id:"contact_list",
 	  ignoreMultipleEmails:true,
-	  afterImport:function(source, success) {
-	  	if (success) {
-	  		var oForm = document.getElementById('add_addr_book');
-	  		oForm.submit();
-	  	}
+	  afterSubmitContacts:function(contacts, source, owner) {
+	  		// var oForm = document.getElementById('add_addr_book');
+	  		// oForm.submit();
+	  		$('#collapse1').collapse('show');
 	  }
 	};
 </script>
