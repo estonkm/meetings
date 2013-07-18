@@ -104,6 +104,14 @@ $(document).ready(function() {
 		$('#c_form').submit();
 	});
 
+	{% if form.errors %}
+	$('#cModal').modal('show');
+	{% endif %}
+
+	{% if in_contacts %}
+	$('#cModal').modal('show');
+	{% endif %}
+
 });
 </script>
 
