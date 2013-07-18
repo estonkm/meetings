@@ -127,8 +127,10 @@ $(document).ready(function() {
 	  domain_key:"FNJFAM6WXGREJEM5ZX5D", 
 	  textarea_id:"contact_list",
 	  ignoreMultipleEmails:true,
-	  beforeClosing:function() {
-	  	location.reload();
+	  afterImport:function(source, success) {
+	  	if (success) {
+	  		$('#collapse1').collapse('show');
+	  	}
 	  }
 	};
 </script>
