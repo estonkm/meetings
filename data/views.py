@@ -467,7 +467,7 @@ def contacts(request):
 				matching_account = None
 				if u:
 					matching_account = Account.objects.get(user=u)
-				c = Contact(title=cd['title'], first_name=cd['first_name'], last_name=cd['last_name'],
+				c = Contact(first_name=cd['first_name'], last_name=cd['last_name'],
 						email=cd['email'], address=cd['address'], wphone=cd['wphone'], hphone=cd['hphone'])
 				if matching_account:
 					c.account = matching_account
