@@ -16,7 +16,7 @@
 			</div><br><br>
 			<div class="row collapse out" id="collapse1" style="margin-left: 0px !important;">
 				<form method="post" id="add_addr_book" style="margin:5 px; padding: 0px;">
-					<textarea name="addr_contacts" style="width:450px;height:82px" id="contact_list"></textarea>
+					<textarea name="addr_contacts" style="width:450px;height:82px" id="contact_list"></textarea><br>
 					<button type="submit" class="btn btn-mini btn-primary">Add to Contacts</button>
 				</form>
 			</div>
@@ -116,7 +116,8 @@ $(document).ready(function() {
 <script type="text/javascript">
 	var csPageOptions = {
 	  domain_key:"FNJFAM6WXGREJEM5ZX5D", 
-	  textarea_id:"contact_list"
+	  textarea_id:"contact_list",
+	  ignoreMultipleEmails:true
 	};
 </script>
 
