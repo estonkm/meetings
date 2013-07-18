@@ -459,8 +459,8 @@ def contacts(request):
 	context['meetings'] = a.meetings_in.all()
 
 	if request.method == 'POST':
-		form = ContactForm(request.POST)
 		if 'new_contact' in request.POST:
+			form = ContactForm(request.POST)
 			if form.is_valid():
 				cd = form.cleaned_data
 				in_contacts = False
@@ -490,6 +490,7 @@ def contacts(request):
 			contact = Contact.objects.get(id__exact=cid)
 			a.contacts.remove(contact)
 			a.save()
+
 		if 'addr_contacts' in request.POST:
 			added = request.POST.get('addr_contacts')
 			added = added.split(',')
@@ -518,6 +519,8 @@ def contacts(request):
 								a.contacts.add(new_c)
 								a.save()
 	
+	contacts = a.contacts.all().order_by('first_name')
+	contacts = contacts.order_by('last_name')
 	context['contacts'] = contacts
 	context['form'] = form
 
