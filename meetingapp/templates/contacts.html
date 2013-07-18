@@ -122,7 +122,7 @@ $(document).ready(function() {
 });
 </script>
 
-<script type="text/javascript">
+<script>
 	var csPageOptions = {
 	  domain_key:"FNJFAM6WXGREJEM5ZX5D", 
 	  textarea_id:"contact_list",
@@ -131,7 +131,9 @@ $(document).ready(function() {
 	  	if (success) {
 
 	  	} else {
-	  		$('#collapse1').collapse();
+	  		$(document).ready(function() {
+		  		$('#collapse1').collapse();
+		  	});
 	  	}
 	  }
 	};
