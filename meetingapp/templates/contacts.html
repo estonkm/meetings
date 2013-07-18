@@ -67,9 +67,13 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<div class="controls">
+				<h5 style="color: red;">Email already in contacts.</h5>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label" for="inputEmail">*Email</label>
 			<div class="controls">
-				{% if in_contacts %}<text style="color: red; margin-left: 5px">Email already in contacts</text><br>{% endif %}
 				{{ form.email }} {% if form.email.errors %}<text style="color: red; margin-left: 5px;">Invalid input</text>{% endif %} 
 			</div>
 		</div>
