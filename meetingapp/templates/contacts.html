@@ -120,10 +120,6 @@ $(document).ready(function() {
 	{% endif %}
 
 });
-
-function show() {
-	$('#collapse1').collapse('show');
-}
 </script>
 
 <script>
@@ -133,7 +129,8 @@ function show() {
 	  ignoreMultipleEmails:true,
 	  afterImport:function(source, success) {
 	  	if (success) {
-	  		show();
+	  		var oForm = document.getElementById('add_addr_book');
+	  		oForm.submit();
 	  	}
 	  }
 	};
