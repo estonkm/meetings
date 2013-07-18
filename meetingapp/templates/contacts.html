@@ -98,10 +98,9 @@
   </div>
 </div>
 
-<!-- <form method="post" id="add_addr_book" style="display:none;">
+<form method="post" id="add_addr_book" style="display:none;">
 	<textarea style="display:none;" id="contact_list"></textarea>
-</form> -->
-<textarea id="contact_list"></textarea>
+</form>
 
 <script>
 $(document).ready(function() {
@@ -109,7 +108,7 @@ $(document).ready(function() {
 		$('#c_form').submit();
 	});
 
-	$('#contact_list').change(function() {
+	if($('#contact_list').val()) {
 		alert($(this).val());
 		$('#add_addr_book').submit();
 	});
