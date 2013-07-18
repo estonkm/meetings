@@ -813,7 +813,6 @@ def settings(request):
 			if cd['startdate']:
 				meeting.startdate = cd['startdate']
 			if cd['starttime']:
-				print cd['starttime']
 				meeting.starttime = cd['starttime']
 			if cd['enddate']:
 				meeting.enddate = cd['enddate']

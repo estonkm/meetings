@@ -19,7 +19,7 @@ class Command(NoArgsCommand):
 			try:
 				meetingtz = timezone(meeting.timezone)
 			except:
-				continue
+				meetingtz = UTC
 
 			start = meetingtz.localize(start)
 			end = meetingtz.localize(end)

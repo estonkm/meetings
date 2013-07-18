@@ -87,7 +87,7 @@
                 <i class="icon-user"></i>
                 <text class="lead" style="font-size: 15px !important;">Contacts ({{account.contacts.all.count}}):</text><br><ul class="sidebox" style="margin-left: 5px;">
                 {% for contact in account.contacts.all %}
-                <li>{{contact.last_name}}, {{contact.first_name}} <<em>{{contact.email}}</em>></li>
+                <li>{% if contact.last_name %}{{contact.last_name}}, {% endif %}{{contact.first_name}} <<em>{{contact.email}}</em>></li>
                 {% endfor %}</ul>
             </div>
 		</div>
