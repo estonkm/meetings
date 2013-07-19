@@ -91,9 +91,9 @@
 
 <script>
 $(document).ready(function(){
-	if (document.URL.indexOf('www.') < 0) {
-		window.location = 'www.'+document.URL;
-	});
+	if (window.location.hostname.indexOf('www.') < 0) {
+		window.location = 'www.'+window.location.pathname;
+	}
 });
 </script>
 
