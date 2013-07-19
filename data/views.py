@@ -289,7 +289,7 @@ def invite(request):
 
 			send_mail(title, message, SENDER, recipients)
 
-		request.session['account'] = ''
+		del request.session['account']
 		request.session.modified = True
 		return HttpResponseRedirect('../meeting/'+meeting_no)
 
