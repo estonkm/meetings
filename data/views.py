@@ -1010,7 +1010,7 @@ def managemembers(request):
 
 		if recipients:
 			title = "Meeting Invite: " + meeting.title
-			message = ("You've been invited to attend " + request.user.first_name + " " + request.user.last_name + "'s online meeting discussion, " +
+			message = ("You've been invited to attend " + request.user.first_name + " " + request.user.last_name + "'s online meeting discussion " +
 						"on VitalMeeting.com.\n\nPlease click on " +
 						"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\n\n\nVitalMeeting.com\nStructured Online Meetings")
 
