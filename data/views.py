@@ -661,6 +661,9 @@ def meeting(request):
 		return HttpResponseRedirect('/')
 
 	context['access'] = True
+	context['not_verified'] = False
+	context['login_errors'] = False
+
 	try:
 		meetingtz = timezone(meeting.timezone)
 	except:

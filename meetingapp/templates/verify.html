@@ -3,12 +3,13 @@
 {% block content %}
 
 <div class="container">
-	<div class="row">
+	<div class="row" style="margin-left: 0px !important; margin-bottom: 50px !important;">
 		<h3>Your account has been validated!</h3>
 		{% if meeting %}
-		<a href="../meeting/{{meeting}}">Click here to go to the meeting you just created.</a><br>
+		<a href="../meeting/{{meeting}}" class="btn btn-warning">Go to the meeting you just created.</a>
 		{% endif %}
-		<a href="../home/">Click here to go home.</a><br><br>
+		<a href="../profile" class="btn btn-success">Fill out your profile information.</a>
+		<a href="../home/" class="btn btn-primary">Go to your meetings page.</a><br><br>
 	</div>
 </div>
 

@@ -28,6 +28,9 @@ class Account(models.Model):
 	bio = models.CharField(max_length=500, null=True, blank=True)
 	birthdate = models.DateField(null=True, blank=True)
 	notifications = models.TextField()
+	display = models.CharField(max_length=500, null=True, blank=True)
+	receive_emails = models.ManyToManyField('Meeting', related_name="meetings_emails", null=True, blank=True)
+
 
 class Contact(models.Model):
 	account = models.ForeignKey('Account', related_name='matching_account', null=True) # a contact may or may not be in the system
@@ -72,6 +75,8 @@ class Meeting(models.Model):
 	summary = models.CharField(max_length=2000, blank=True)
 	organizations = models.ManyToManyField('Organization', null=True, blank=True)
 	invited = models.TextField()
+	location = models.CharField(max_length=200, null=True, blank=True)
+	keywords = models.CharField(max_length=200, null=True, blank=True)
 
 class AgendaItem(models.Model):
 	class Meta:

@@ -306,6 +306,13 @@
                     </div>
                 </div>
                 {% endif %}
+                {% if not_verified %}
+                <div class="control-group">
+                    <div class="controls">
+                        <h5 style="color: red;">This account has not yet been verified.</h5>
+                    </div>
+                </div>
+                {% endif %} 
                 <input type="hidden" name="submit_request" value="submit_request">
                 <div class="control-group">
                     <label class="control-label" for="inputEmail">Email</label>
@@ -366,6 +373,10 @@ $(function() {
         {% endif %}
 
         {% if login_errors %}
+        $('#signinModal').modal("show");
+        {% endif %}
+
+        {% if not_verified %}
         $('#signinModal').modal("show");
         {% endif %}
 
