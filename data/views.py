@@ -247,7 +247,7 @@ def invite(request):
 			added = request.POST.get('addr_contacts')
 			added = added.split(',')
 			for contact in added:
-				c_email = re.findall('[\S]*@[\S]\.[\S]', contact)
+				c_email = re.findall('[\S]*@[\S]*\.[\S]*', contact)
 				if c_email:
 					c_email = c_email[0].strip('<>')
 					recipients.append(c_email)
@@ -548,7 +548,7 @@ def contacts(request):
 			added = request.POST.get('addr_contacts')
 			added = added.split(',')
 			for contact in added:
-				c_email = re.findall('[\S]*@[\S]\.[\S]', contact)
+				c_email = re.findall('[\S]*@[\S]*\.[\S]*', contact)
 				if c_email:
 					c_email = c_email[0].strip('<>')
 					contact = contact.strip(' ')
