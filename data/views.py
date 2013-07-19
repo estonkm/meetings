@@ -178,7 +178,12 @@ def invite(request):
 
 	meeting = Meeting.objects.get(meeting_id__exact=meeting_no)
 
+	remember = False
+
 	if request.method=='POST':
+		if 'remember' in request.POST:
+			remember = True
+
 		if "later" in request.POST:
 			return HttpResponseRedirect('../meeting/'+meeting_no)
 
@@ -218,14 +223,63 @@ def invite(request):
 				meeting.invited += e + ','
 				u = User.objects.filter(email=e)
 				if u:
-					acct = Account.objects.filter(user=u)
+					acct = Account.objects.filter(user=u[0])
 					if acct:
 						acct = acct[0]
 						acct.meetings_in.add(meeting)
 						meeting.members.add(acct)
 						acct.save()
+				match = Contact.objects.filter(email=e)
+				if remember:
+					if match:
+						if match not in a.contacts.all():
+							a.contacts.add(match[0])
+							a.save()
+					else:
+						new_c = Contact(email=e)
+						new_c.save()
+						a.contacts.add(new_c)
+						a.save()
 				meeting.save()
 				recipients.append(e)
+
+		if request.POST.get('addr_contacts'):
+			added = request.POST.get('addr_contacts')
+			added = added.split(',')
+			for contact in added:
+				if '<' in contact:
+					c_email = re.findall('<.*>', contact)
+					if c_email:
+						c_email = c_email[0].strip('<>')
+						if '@' in c_email:
+							recipients.append(c_email)
+
+							contact = contact.strip(' ')
+							contact_info = contact.split(' ')
+							c_first_name = ''
+							c_last_name = ''
+							if len(contact_info) > 2:
+								c_first_name = contact_info[0]
+								c_last_name = contact_info[1]
+							match = Contact.objects.filter(email=c_email)
+							u = User.objects.filter(email=c_email)
+							if u:
+								acct = Account.objects.filter(user=u[0])
+								if acct:
+									acct = acct[0]
+									acct.meetings_in.add(meeting)
+									meeting.members.add(acct)
+									acct.save()
+							if remember:
+								if match:
+									if match not in a.contacts.all():
+										a.contacts.add(match[0])
+										a.save()
+								else:
+									new_c = Contact(first_name=c_first_name, last_name=c_last_name, email=c_email)
+									new_c.save()
+									a.contacts.add(new_c)
+									a.save()			
 
 		if recipients:
 			title = "Meeting Invite: " + meeting.title
@@ -679,11 +733,11 @@ def meeting(request):
 
 					recipients = []
 					recipients.append(meeting.hosts.all()[0].user.email)
-					for e in meeting.invited.split(','):
-						if '@' in e:
-							recipients.append(e)
+					for mem in meeting.members.all():
+						e = mem.user.email
+						recipients.append(e)
 
-					message = 'A new motion has been added by '+request.user.first_name+' '+request.user.last_name+' to the following agenda item: "'+modified_ai.name+'". You can visit the meeting page and view this motion at http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
+					message = 'A new motion has been added by '+request.user.first_name+' '+request.user.last_name+' to the following agenda item: "'+modified_ai.name+'". \n\nThe motion title is: '+motion.name+'.\n\n You can visit the meeting page and view this motion at http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
 					title = meeting.title + ': New Motion Added'
 					send_mail(title, message, SENDER, recipients)
 
@@ -703,9 +757,10 @@ def meeting(request):
 					recipients.append(meeting.hosts.all()[0].user.email)
 					recipients.append(modified_motion.user.user.email)
 
-					message = 'A new comment has been added by '+request.user.first_name+' '+request.user.last_name+' to the following motion: "'+modified_motion.name+'". You can visit the meeting page and view this comment at http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
+					message = 'A new comment has been added by '+request.user.first_name+' '+request.user.last_name+' to the following motion: "'+modified_motion.name+'". \n\nThe comment reads: "'+comment.text+'".\n\nYou can visit the meeting page and view this comment at http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
 					title = meeting.title + ': New Comment Added'
-					send_mail(title, message, SENDER, recipients)
+					if modified_motion.user in meeting.members.all():
+						send_mail(title, message, SENDER, recipients)
 
 			if 'settings' in request.POST:
 				return HttpResponseRedirect('../settings/')
@@ -723,7 +778,8 @@ def meeting(request):
 					motion.name = 'This motion has been removed by a moderator.'
 					recipient = [motion.user.user.email]
 					message = 'Your motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
-					send_mail("Motion removed", message, SENDER, recipient)
+					if motion.user in meeting.members.all():
+						send_mail("Motion removed", message, SENDER, recipient)
 				motion.desc = ''
 				motion.modded = True
 				motion.save()
@@ -773,7 +829,7 @@ def meeting(request):
 
 	context['m'] = meeting
 	context['host'] = meeting.hosts.all()[0]
-	agenda_items = meeting.agenda_items.order_by('number')
+	agenda_items = meeting.agenda_items.all().order_by('id')
 	context['agenda_items'] = agenda_items
 
 	org = meeting.organizations.all()

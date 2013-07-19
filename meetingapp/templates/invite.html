@@ -38,11 +38,20 @@
 		<div class="control-group">
 			<label class="control-label">Or send email invites:</label>
 			<div class="controls">
-				<textarea name="entered" rows="5" cols="100" style="margin-left: 3px;" placeholder="One email per line"></textarea>
+				<textarea name="entered" style="width:450px;height:82px" placeholder="One email per line"></textarea>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label"><a class="cs_import btn">Invite from Address Book</a></label>
+			<div class="controls">
+				<textarea name="addr_contacts" style="width:450px;height:82px" id="contact_list"></textarea>
 			</div>
 		</div>
 		<div class="control-group">
 			<div class="controls">
+				<label class="checkbox">
+					<input type="checkbox" name="remember"> Save invited contacts
+				</label>
 				<button type="submit" class="btn btn-primary">Invite to Meeting</button>
 				<button type="submit" name="later" class="btn btn-primary">Go Straight to Meeting</button>
 			</div>
@@ -78,5 +87,16 @@ $(function() {
 });
 
 </script>
+
+<script>
+	var csPageOptions = {
+	  domain_key:"FNJFAM6WXGREJEM5ZX5D", 
+	  textarea_id:"contact_list",
+	  ignoreMultipleEmails:true,
+	};
+</script>
+
+<script type="text/javascript" src="https://api.cloudsponge.com/address_books.js"></script>
+
 
 {% endblock %}
