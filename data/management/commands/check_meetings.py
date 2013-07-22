@@ -51,7 +51,8 @@ class Command(NoArgsCommand):
 				title = 'Meeting Ended: '+meeting.title
 				message = 'The meeting "'+meeting.title+'" has ended.\n\n'
 				for a in meeting.agenda_items.all():
-					message += 'In agenda item "'+a.name+'", the most-liked was: "'+a.motions.all()[0]+'".\n\n'
+					if a.motions.all():
+						message += 'In agenda item "'+a.name+'", the most-liked was: "'+a.motions.all()[0]+'".\n\n'
 				message += 'Please visit http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+' to see the full results.'
 				message += SIGNATURE
 
