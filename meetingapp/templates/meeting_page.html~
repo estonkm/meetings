@@ -48,10 +48,10 @@
                         <button class="btn btn-primary alter" type="submit" name="settings" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Settings</button>
 			<button class="btn alter" type="submit" name="members" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Manage Members</button>
 			</form>
-			{% endif %}
-			{% if user != host.user %}
-				{% if meeting.friend_invites %}
-				<a class="cs_import btn">Invite friends from Address Book</a><br>
+			{% else %}	
+			{% if m.friend_invites %}
+				<br>
+				<a class="cs_import btn" style="margin-top: 2px !important;">Invite friends from Address Book</a>
 				<img src="{% static "google.png" %}" class="addrbook">
 				<img src="{% static "apple.png" %}" class="addrbook">
 				<img src="{% static "yahoo.png" %}" class="addrbook">
@@ -361,6 +361,22 @@
         </form>
     </div>
 </div>
+
+
+<script>
+	var csPageOptions = {
+	  domain_key:"RZ7M43JLPAH6JHE45ATN", 
+	  textarea_id:"contact_list",
+	  ignoreMultipleEmails:true,
+	  afterSubmitContacts:function(contacts, source, owner) {
+	  		// var oForm = document.getElementById('add_addr_book');
+	  		// oForm.submit();
+	  		$('#collapse1').collapse('show');
+	  }
+	};
+</script>
+
+<script type="text/javascript" src="https://api.cloudsponge.com/address_books.js"></script>
 
 
 <script>

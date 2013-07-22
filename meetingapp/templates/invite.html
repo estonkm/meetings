@@ -81,11 +81,14 @@ label {
 		<div class="control-group">
 			<div class="controls">
 				<label class="checkbox">
-					<input type="checkbox" name="remember"> Save invited contacts
-					{% if meeting.private %}
-					<input type="checkbox" name="allow_fi"> Allow meeting members to invite others to this meeting {% endif %}
-					<br>
+					<input type="checkbox" name="remember"> Save invited contacts</input>
 				</label>
+				{% if meeting.private %}
+				<label class="checkbox">
+					<input type="checkbox" name="allow_fi"> Allow meeting members to invite others to this meeting</input>
+				</label>
+				{% endif %}
+				<br>
 				<button type="submit" class="btn btn-primary">Invite to Meeting</button>
 				<button type="submit" name="later" class="btn btn-primary">Go Straight to Meeting</button>
 			</div>

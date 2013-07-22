@@ -193,7 +193,7 @@ def invite(request):
 		if 'allow_fi' in request.POST:
 			meeting.friend_invites = True
 		else:
-			meetin.friend_invites = False
+			meeting.friend_invites = False
 		meeting.save()
 
 		if "later" in request.POST:
@@ -758,7 +758,7 @@ def meeting(request):
 				if recipients:
 					title = "Meeting Invite: " + meeting.title
 					message = ("You've been invited to attend " + a.user.first_name + " " + a.user.last_name + "'s online meeting discussion, " +
-"on VitalMeeting.com.\n\nPlease click on " +
+						"on VitalMeeting.com.\n\nPlease click on " +
 						"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\n\n\nVitalMeeting.com\nStructured Online Meetings")
 					send_mail(title, message, SENDER, recipients)
 
@@ -925,7 +925,11 @@ def settings(request):
 					meeting.private = True
 				else:
 					meeting.private = False
-
+			if cd['fi']:
+				if cd['fi'] == 'Yes':
+					meeting.friend_invites = True
+				else:
+					meeting.friend_invites = False
 			removed = request.POST.get('removed')
 			if removed:
 				removed = removed.split(',')

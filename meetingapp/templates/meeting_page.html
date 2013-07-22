@@ -48,10 +48,10 @@
                         <button class="btn btn-primary alter" type="submit" name="settings" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Settings</button>
 			<button class="btn alter" type="submit" name="members" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Manage Members</button>
 			</form>
-			{% endif %}
-			{% if user != host.user %}
-				{% if meeting.friend_invites %}
-				<a class="cs_import btn">Invite friends from Address Book</a><br>
+			{% else %}	
+			{% if m.friend_invites %}
+				<br>
+				<a class="cs_import btn" style="margin-top: 2px !important;">Invite friends from Address Book</a>
 				<img src="{% static "google.png" %}" class="addrbook">
 				<img src="{% static "apple.png" %}" class="addrbook">
 				<img src="{% static "yahoo.png" %}" class="addrbook">
@@ -60,7 +60,7 @@
 				<div class="row collapse out" id="collapse1" style="margin-left: 0px !important;">
 					<form method="post" id="add_addr_book" style="margin:5 px; padding: 0px;">{% csrf_token %}
 						<textarea name="addr_contacts" style="width:450px;height:82px" id="contact_list"></textarea><br>
-						<button type="submit" class="btn btn-mini btn-primary">Add to Contacts</button>
+						<button type="submit" class="btn btn-mini btn-primary">Invite to meeting</button>
 					</form>
 				</div>
 				{% endif %}

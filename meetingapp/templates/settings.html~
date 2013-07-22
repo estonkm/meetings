@@ -65,12 +65,6 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Allow members to invite others?</td>
-					<td>{% if meeting.friend_invites %}Yes{% else %}No{% endif %}</td>
-					<td> 
-						{{form.fi}}
-					</td>
-				<tr>
 					<td></td>
 					<td><a href="../meeting/{{meeting.meeting_id}}" class="btn btn-danger">Return to Meeting</a></td>
 					<td><button class="btn btn-primary" type="submit" name="changes">Submit Changes</button></td>

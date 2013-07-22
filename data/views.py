@@ -193,7 +193,7 @@ def invite(request):
 		if 'allow_fi' in request.POST:
 			meeting.friend_invites = True
 		else:
-			meetin.friend_invites = False
+			meeting.friend_invites = False
 		meeting.save()
 
 		if "later" in request.POST:
@@ -925,7 +925,11 @@ def settings(request):
 					meeting.private = True
 				else:
 					meeting.private = False
-
+			if cd['fi']:
+				if cd['fi'] == 'Yes':
+					meeting.friend_invites = True
+				else:
+					meeting.friend_invites = False
 			removed = request.POST.get('removed')
 			if removed:
 				removed = removed.split(',')
