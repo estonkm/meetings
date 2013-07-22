@@ -729,7 +729,7 @@ def meeting(request):
 		elif (not meeting.started or meeting.ended) and (request.user != meeting.hosts.all()[0].user):
 			context['closed_error'] = True
 		else:
-			if request.POST.get('addr_contacts'):
+			if request.POST.get('addr_contacts') and viewer:
 				added = request.POST.get('addr_contacts')
 				added = added.split(',')
 				recipients = []
@@ -757,7 +757,7 @@ def meeting(request):
 								acct.save()
 				if recipients:
 					title = "Meeting Invite: " + meeting.title
-					message = ("You've been invited to attend " + a.user.first_name + " " + a.user.last_name + "'s online meeting discussion, " +
+					message = ("You've been invited to attend " + viewer.user.first_name + " " + viewer.user.last_name + "'s online meeting discussion, " +
 						"on VitalMeeting.com.\n\nPlease click on " +
 						"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\n\n\nVitalMeeting.com\nStructured Online Meetings")
 					send_mail(title, message, SENDER, recipients)
