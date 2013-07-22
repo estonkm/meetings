@@ -77,7 +77,7 @@ class Meeting(models.Model):
 	invited = models.TextField()
 	location = models.CharField(max_length=200, null=True, blank=True)
 	keywords = models.CharField(max_length=200, null=True, blank=True)
-	friend_invites = models.NullBooleanField(null=True)
+	friend_invites = models.BooleanField()
 
 class AgendaItem(models.Model):
 	class Meta:

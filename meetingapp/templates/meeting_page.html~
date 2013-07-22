@@ -364,22 +364,6 @@
 
 
 <script>
-	var csPageOptions = {
-	  domain_key:"RZ7M43JLPAH6JHE45ATN", 
-	  textarea_id:"contact_list",
-	  ignoreMultipleEmails:true,
-	  afterSubmitContacts:function(contacts, source, owner) {
-	  		// var oForm = document.getElementById('add_addr_book');
-	  		// oForm.submit();
-	  		$('#collapse1').collapse('show');
-	  }
-	};
-</script>
-
-<script type="text/javascript" src="https://api.cloudsponge.com/address_books.js"></script>
-
-
-<script>
 $(function() {
     $(document).ready(function(){ 
 
