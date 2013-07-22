@@ -28,7 +28,7 @@ class Command(NoArgsCommand):
 			end = meetingtz.localize(end)
 			now = now.astimezone(meetingtz)
 
-			if (now - start).total_seconds() > 0:
+			if (now - start).total_seconds() > 0 and meeting.started is False:
 				meeting.started = True
 				meeting.save()
 				recipients = []
@@ -38,7 +38,7 @@ class Command(NoArgsCommand):
 				title = 'Meeting Starting: '+meeting.title
 				message = 'The meeting "'+meeting.title+'" is now open! Please visit http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+' to join in'+SIGNATURE
 				send_mail(title, message, SENDER, recipients)
-			if (now - end).total_seconds() > 0:
+			if (now - end).total_seconds() > 0 and meeting.ended is False:
 				meeting.ended = True
 				meeting.save()
 				recipients = []
