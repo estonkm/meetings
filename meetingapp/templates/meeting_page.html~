@@ -44,7 +44,7 @@
                     <text style="font-weight: bold !important;">Timezone: </text>
 		    <text style="margin-left: 5px;">{{m.timezone}}</text><br> 
 		    {% if user == host.user %}
-		    <form method="post" style="margin-top: 20px !important;">{% csrf_token %}
+		    	<form method="post" style="margin-top: 20px !important;">{% csrf_token %}
                         <button class="btn btn-primary alter" type="submit" name="settings" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Settings</button>
 			<button class="btn alter" type="submit" name="members" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Manage Members</button>
 			</form>
@@ -64,6 +64,21 @@
 					</form>
 				</div>
 				{% endif %}
+			{% endif %}
+			{% if user.is_authenticated %}
+			<form method="post" style="margin-top: 20px !important;">{% csrf_token %}
+				Receive notifications from this meeting? 
+				<button class="btn btn-mini" name="get_emails" id="get_emails">Yes</button>
+				<button class="btn btn-mini" name="stop_emails" id="stop_emails">No</button>
+				{% if notifications_modified %}
+					<br><text style="font-style: italic;">
+					{% if receiving %}
+					Thanks! You will receive all notifications from this meeting.
+					{% else %}
+					Thanks! You won't receive any notifications from this meeting.
+					{% endif %}</text>
+				{% endif %}
+			</form>
 			{% endif %}
                 </div>
             </div>

@@ -2,10 +2,13 @@ from django.core.management.base import NoArgsCommand
 from data.models import *
 from datetime import datetime
 from pytz import timezone
+from django.core.mail import send_mail
 import pytz
 
 ZONE = timezone('America/Chicago')
 UTC = pytz.utc
+SENDER = 'Vital Meeting <info@vitalmeeting.com>'
+SIGNATURE = '\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 
 class Command(NoArgsCommand):
 	help = 'Checks meeting start/end times against current time'
@@ -28,14 +31,30 @@ class Command(NoArgsCommand):
 			if (now - start).total_seconds() > 0:
 				meeting.started = True
 				meeting.save()
+				recipients = []
+				for mem in meeting.members.all():
+					e = mem.user.email
+					recipients.append(e)
+				title = 'Meeting Starting: '+meeting.title
+				message = 'The meeting "'+meeting.title+'" is now open! Please visit http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+' to join in'+SIGNATURE
+				send_mail(title, message, SENDER, recipients)
 			if (now - end).total_seconds() > 0:
 				meeting.ended = True
 				meeting.save()
+				recipients = []
 				for account in meeting.members.all():
 					account.past_meetings.add(meeting)
 					account.meetings_in.remove(meeting)
 					account.save()
-				for account in meeting.hosts.all():
-					account.past_meetings.add(meeting)
-					account.meetings_in.remove(meeting)
-					account.save()
+					e = account.user.email
+					recipients.append(e)
+				title = 'Meeting Ended: '+meeting.title
+				message = 'The meeting "'+meeting.title+'" has ended.\n\n'
+				for a in meeting.agenda_items.all():
+					message += 'In agenda item "'+a.name+'", the most-liked was: "'+a.motions.all()[0]+'".\n\n'
+				message += 'Please visit http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+' to see the full results.'
+				message += SIGNATURE
+
+				send_mail(title, message, SENDER, recipients)
+
+

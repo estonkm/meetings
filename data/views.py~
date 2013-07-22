@@ -192,8 +192,6 @@ def invite(request):
 
 		if 'allow_fi' in request.POST:
 			meeting.friend_invites = True
-		else:
-			meeting.friend_invites = False
 		meeting.save()
 
 		if "later" in request.POST:
@@ -675,6 +673,7 @@ def meeting(request):
 	context['access'] = True
 	context['not_verified'] = False
 	context['login_errors'] = False
+	context['notifications_modified'] = False
 
 	try:
 		meetingtz = timezone(meeting.timezone)
@@ -705,6 +704,11 @@ def meeting(request):
 			if meeting not in viewer.meetings_in.all():
 				viewer.meetings_in.add(meeting)
 				viewer.save()
+		if meeting in viewer.receive_emails.all():
+			context['currently_receiving'] = False
+		else:
+			context['currently_receiving'] = True
+			
 
 	if request.method=='POST':
 		# if context['access'] == False:
@@ -729,6 +733,19 @@ def meeting(request):
 		elif (not meeting.started or meeting.ended) and (request.user != meeting.hosts.all()[0].user):
 			context['closed_error'] = True
 		else:
+			if 'get_emails' in request.POST and viewer:
+				viewer.receive_emails.add(meeting)
+				viewer.save()
+				context['receiving'] = True
+				context['notifications_modified'] = True
+				context['currently_receiving'] = True
+			if 'stop_emails' in request.POST and viewer:
+				if meeting in viewer.receive_emails.all():
+					viewer.receive_emails.remove(meeting)
+					viewer.save()
+				context['notifications_modified'] = True
+				context['receiving'] = False
+				context['currently_receiving'] = False
 			if request.POST.get('addr_contacts') and viewer:
 				added = request.POST.get('addr_contacts')
 				added = added.split(',')
@@ -778,10 +795,10 @@ def meeting(request):
 					modified_ai.save()
 
 					recipients = []
-					recipients.append(meeting.hosts.all()[0].user.email)
 					for mem in meeting.members.all():
-						e = mem.user.email
-						recipients.append(e)
+						if meeting in mem.receive_emails.all():
+							e = mem.user.email
+							recipients.append(e)
 
 					message = 'A new motion has been added by '+request.user.first_name+' '+request.user.last_name+' to the following agenda item: "'+modified_ai.name+'". \n\nThe motion title is: '+motion.name+'.\n\n You can visit the meeting page and view this motion at http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
 					title = meeting.title + ': New Motion Added'
@@ -800,8 +817,10 @@ def meeting(request):
 					modified_motion.save()
 
 					recipients = []
-					recipients.append(meeting.hosts.all()[0].user.email)
-					recipients.append(modified_motion.user.user.email)
+					if meeting in meeting.hosts.all()[0].receive_emails.all():
+						recipients.append(meeting.hosts.all()[0].user.email)
+					if meeting in modified_motion.user.receive_emails.all():
+						recipients.append(modified_motion.user.user.email)
 
 					message = 'A new comment has been added by '+request.user.first_name+' '+request.user.last_name+' to the following motion: "'+modified_motion.name+'". \n\nThe comment reads: "'+comment.text+'".\n\nYou can visit the meeting page and view this comment at http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
 					title = meeting.title + ': New Comment Added'
