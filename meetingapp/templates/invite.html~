@@ -90,7 +90,7 @@ $(function() {
 
 <script>
 	var csPageOptions = {
-	  domain_key:"RZ7M43JLPAH6JHE45ATN", 
+	  domain_key:"FNJFAM6WXGREJEM5ZX5D", 
 	  textarea_id:"contact_list",
 	  ignoreMultipleEmails:true,
 	};
