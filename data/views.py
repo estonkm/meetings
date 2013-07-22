@@ -99,7 +99,7 @@ def create(request):
 				fi = True
 				if s:
 					fi = False
-
+				print fi
 
 				random.seed()
 
@@ -192,8 +192,6 @@ def invite(request):
 
 		if 'allow_fi' in request.POST:
 			meeting.friend_invites = True
-		else:
-			meeting.friend_invites = False
 		meeting.save()
 
 		if "later" in request.POST:
