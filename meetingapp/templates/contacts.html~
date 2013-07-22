@@ -2,6 +2,8 @@
 
 {% block content %}
 
+{% load static %}
+
 <div class="container">
 	<div class="row">
 		<div class="span9">
@@ -10,9 +12,17 @@
 				<h3 style="margin: 5px !important;">Contacts</h3>	
 			</div>
 			<div class="row" style="margin-left: 0px !important;">
-				<a href="#cModal" role="button" class="btn" data-toggle="modal">Add a New Contact</a>
-				<a class="cs_import btn" style="margin-left: 10px;">Add from Address Book</a>
-				<input type="text" name='search' style="width: 250px !important; float:right;" placeholder="Search existing contacts (OFF)" class="input-medium search-query">
+
+				<a href="cModal" role="button" class="btn" data-toggle="modal">Add a New Contact</a>
+				<input type="text" name='search' style="width: 250px !important; float:right;" placeholder="Search existing contacts (OFF)" class="input-medium search-query"><br>
+				<a class="cs_import btn" style="margin-top: 5px !important;">Add from Address Book</a>
+				<span style="margin-top: 5px;">
+					<img src="{% static "google.png" %}">
+					<img src="{% static "apple.png" %}">
+					<img src="{% static "yahoo.png" %}">
+					<img src="{% static "aol.png" %}">
+					<img src="{% static "msn.png" %}">
+				</span>
 			</div><br><br>
 			<div class="row collapse out" id="collapse1" style="margin-left: 0px !important;">
 				<form method="post" id="add_addr_book" style="margin:5 px; padding: 0px;">{% csrf_token %}

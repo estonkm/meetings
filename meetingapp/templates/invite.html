@@ -1,6 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+{% load static %}
+
+<style>
+
+.form-horizontal {
+/*	margin-left: 5% !important;
+*/}
+
+.form-horizontal .control-label {
+	width: 185px !important;
+	text-align: center;
+}
+
+.form-horizontal .controls {
+	padding-left: 30px !important;
+}
+
+label {
+	cursor: hand !important;
+}
+
+</style>
+
 <div class="container">
 	<form class="form-horizontal" style="display:inline-block;" method="post">
 		{% csrf_token %}
@@ -42,7 +66,14 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label"><a class="cs_import btn">Invite from Address Book</a></label>
+			<label class="control-label">
+				<a class="cs_import btn" style="padding: 10px !important;">Invite from Address Book</a><br>
+				<img src="{% static "google.png" %}" class="addrbook">
+				<img src="{% static "apple.png" %}" class="addrbook">
+				<img src="{% static "yahoo.png" %}" class="addrbook">
+				<img src="{% static "aol.png" %}" class="addrbook">
+				<img src="{% static "msn.png" %}" class="addrbook">
+			</label>
 			<div class="controls">
 				<textarea name="addr_contacts" style="width:450px;height:82px" id="contact_list"></textarea>
 			</div>
