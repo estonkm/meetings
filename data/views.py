@@ -41,8 +41,19 @@ def check_img_size(img):
 # used
 def send_email_invite(meeting, user, recipients):
 		title = "Meeting Invite: " + meeting.title
+		items = meeting.agenda_items.all()
+		org = meeting.organizations.all()
+		org_details = ''
+		if org:
+			org = org[0]
+			org_details = 'This meeting is sponsored by '+org.name+'.\n\n'
+		ai_details = ''
+		if items:
+			ai_details += 'The agenda items for the meeting are as follows:\n'
+		for ai in items:
+			ai_details += ai.name + '\n'
 		message = ("You've been invited to attend " + user.first_name + " " + user.last_name + "'s online meeting discussion " +
-					"on VitalMeeting.com.\n\nPlease click on " +
+					"on VitalMeeting.com.\n\n"+org_details+ai_details+"\n\nPlease click on " +
 					"http://vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in."+SIGNATURE)
 
 		send_mail(title, message, SENDER, recipients)
