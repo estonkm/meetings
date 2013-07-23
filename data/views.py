@@ -294,7 +294,7 @@ def invite(request):
 			title = "Meeting Invite: " + meeting.title
 			message = ("You've been invited to attend " + a.user.first_name + " " + a.user.last_name + "'s online meeting discussion, " +
 						"on VitalMeeting.com.\n\nPlease click on " +
-						"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\n\n\nVitalMeeting.com\nStructured Online Meetings")
+						"http://vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\n\n\nVitalMeeting.com\nStructured Online Meetings")
 
 			send_mail(title, message, SENDER, recipients)
 
@@ -360,7 +360,7 @@ def signup(request):
 
 					# TODO - use verification and don't log on just yet
 					recipient = [u.email]
-					message = 'Please go to http://www.vitalmeeting.com/verify/'+vkey+' to verify your account. Thanks!\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
+					message = 'Please go to http://vitalmeeting.com/verify/'+vkey+' to verify your account. Thanks!\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 					send_mail('Account Verification', message, SENDER, recipient)
 
 					#user = authenticate(username=cd['email'], password=cd['password'])
@@ -781,7 +781,7 @@ def meeting(request):
 					title = "Meeting Invite: " + meeting.title
 					message = ("You've been invited to attend " + viewer.user.first_name + " " + viewer.user.last_name + "'s online meeting discussion, " +
 						"on VitalMeeting.com.\n\nPlease click on " +
-						"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\n\n\nVitalMeeting.com\nStructured Online Meetings")
+						"http://vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\n\n\nVitalMeeting.com\nStructured Online Meetings")
 					send_mail(title, message, SENDER, recipients)
 
 
@@ -805,7 +805,7 @@ def meeting(request):
 							e = mem.user.email
 							recipients.append(e)
 
-					message = 'A new motion has been added by '+request.user.first_name+' '+request.user.last_name+' to the following agenda item: "'+modified_ai.name+'". \n\nThe motion title is: '+motion.name+'.\n\n You can visit the meeting page and view this motion at http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
+					message = 'A new motion has been added by '+request.user.first_name+' '+request.user.last_name+' to the following agenda item: "'+modified_ai.name+'". \n\nThe motion title is: '+motion.name+'.\n\n You can visit the meeting page and view this motion at http://vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
 					title = meeting.title + ': New Motion Added'
 					send_mail(title, message, SENDER, recipients)
 
@@ -827,7 +827,7 @@ def meeting(request):
 					if meeting in modified_motion.user.receive_emails.all():
 						recipients.append(modified_motion.user.user.email)
 
-					message = 'A new comment has been added by '+request.user.first_name+' '+request.user.last_name+' to the following motion: "'+modified_motion.name+'". \n\nThe comment reads: "'+comment.text+'".\n\nYou can visit the meeting page and view this comment at http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
+					message = 'A new comment has been added by '+request.user.first_name+' '+request.user.last_name+' to the following motion: "'+modified_motion.name+'". \n\nThe comment reads: "'+comment.text+'".\n\nYou can visit the meeting page and view this comment at http://vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
 					title = meeting.title + ': New Comment Added'
 					if modified_motion.user in meeting.members.all():
 						send_mail(title, message, SENDER, recipients)
@@ -1085,11 +1085,48 @@ def managemembers(request):
 
 				recipients.append(e.strip('\r'))
 
+		if request.POST.get('addr_contacts'):
+			added = request.POST.get('addr_contacts')
+			added = added.split(',')
+			for contact in added:
+				c_email = re.findall('[\S]*@[\S]*\.[\S]*', contact)
+				if c_email:
+					c_email = c_email[0].strip('<>')
+					recipients.append(c_email)
+					meeting.invited += e + ','
+
+					contact = contact.strip(' ')
+					contact_info = contact.split(' ')
+					c_first_name = ''
+					c_last_name = ''
+					if len(contact_info) > 2:
+						c_first_name = contact_info[0]
+						c_last_name = contact_info[1]
+					match = Contact.objects.filter(email=c_email)
+					u = User.objects.filter(email=c_email)
+					if u:
+						acct = Account.objects.filter(user=u[0])
+						if acct:
+							acct = acct[0]
+							acct.meetings_in.add(meeting)
+							meeting.members.add(acct)
+							acct.save()
+					if remember:
+						if match:
+							if match not in a.contacts.all():
+								a.contacts.add(match[0])
+								a.save()
+						else:
+							new_c = Contact(first_name=c_first_name, last_name=c_last_name, email=c_email)
+							new_c.save()
+							a.contacts.add(new_c)
+							a.save()
+
 		if recipients:
 			title = "Meeting Invite: " + meeting.title
 			message = ("You've been invited to attend " + request.user.first_name + " " + request.user.last_name + "'s online meeting discussion " +
 						"on VitalMeeting.com.\n\nPlease click on " +
-						"http://www.vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\n\n\nVitalMeeting.com\nStructured Online Meetings")
+						"http://vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\n\n\nVitalMeeting.com\nStructured Online Meetings")
 
 			send_mail(title, message, SENDER, recipients)
 

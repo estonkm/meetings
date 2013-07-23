@@ -36,7 +36,7 @@ class Command(NoArgsCommand):
 					e = mem.user.email
 					recipients.append(e)
 				title = 'Meeting Starting: '+meeting.title
-				message = 'The meeting "'+meeting.title+'" is now open! Please visit http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+' to join in.'+SIGNATURE
+				message = 'The meeting "'+meeting.title+'" is now open! Please visit http://vitalmeeting.com/meeting/'+meeting.meeting_id+' to join in.'+SIGNATURE
 				send_mail(title, message, SENDER, recipients)
 			if (now - end).total_seconds() >= 0 and meeting.ended is False:
 				meeting.ended = True
@@ -53,7 +53,7 @@ class Command(NoArgsCommand):
 				for a in meeting.agenda_items.all():
 					if a.motions.all():
 						message += 'In agenda item "'+a.name+'", the most-liked was: "'+a.motions.all()[0]+'".\n\n'
-				message += 'Please visit http://www.vitalmeeting.com/meeting/'+meeting.meeting_id+' to see the full results.'
+				message += 'Please visit http://vitalmeeting.com/meeting/'+meeting.meeting_id+' to see the full results.'
 				message += SIGNATURE
 
 				send_mail(title, message, SENDER, recipients)

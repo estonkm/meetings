@@ -95,6 +95,19 @@
 				<a href="../meeting/{{meeting.meeting_id}}" class="btn btn-danger">Return to Meeting</a>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">
+				<a class="cs_import btn" style="padding: 10px !important;">Invite from Address Book</a><br>
+				<img src="{% static "google.png" %}" class="addrbook">
+				<img src="{% static "apple.png" %}" class="addrbook">
+				<img src="{% static "yahoo.png" %}" class="addrbook">
+				<img src="{% static "aol.png" %}" class="addrbook">
+				<img src="{% static "msn.png" %}" class="addrbook">
+			</label>
+			<div class="controls">
+				<textarea name="addr_contacts" style="width:450px;height:82px" id="contact_list"></textarea>
+			</div>
+		</div>
 	</form>
 </div>
 
@@ -172,5 +185,15 @@ $(function() {
 });
 
 </script>
+
+<script>
+	var csPageOptions = {
+	  domain_key:"RZ7M43JLPAH6JHE45ATN", 
+	  textarea_id:"contact_list",
+	  ignoreMultipleEmails:true,
+	};
+</script>
+
+<script type="text/javascript" src="https://api.cloudsponge.com/address_books.js"></script>
 
 {% endblock %}
