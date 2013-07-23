@@ -1111,16 +1111,16 @@ def managemembers(request):
 							acct.meetings_in.add(meeting)
 							meeting.members.add(acct)
 							acct.save()
-					if remember:
-						if match:
-							if match not in a.contacts.all():
-								a.contacts.add(match[0])
-								a.save()
-						else:
-							new_c = Contact(first_name=c_first_name, last_name=c_last_name, email=c_email)
-							new_c.save()
-							a.contacts.add(new_c)
-							a.save()
+					# if remember:
+					# 	if match:
+					# 		if match not in a.contacts.all():
+					# 			a.contacts.add(match[0])
+					# 			a.save()
+					# 	else:
+					# 		new_c = Contact(first_name=c_first_name, last_name=c_last_name, email=c_email)
+					# 		new_c.save()
+					# 		a.contacts.add(new_c)
+					# 		a.save()
 
 		if recipients:
 			title = "Meeting Invite: " + meeting.title
