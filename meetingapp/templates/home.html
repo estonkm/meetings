@@ -82,11 +82,11 @@
 			</div>
 		</div>
 		<div class="span3">
-            <div class="userinfo" style="padding: 5px !important; padding-left: 10px !important;">
+            <div class="userinfo sidebox" style="padding: 5px !important; padding-left: 10px !important;">
 	            <h4>{{ account.user.first_name }} {{ account.user.last_name }}</h4>
             	{% if account.prof_pic != 'False' %}
             	<img src="{{account.prof_pic.url}}" style="width: 50px; height: auto;"><br>{% endif %}
-	            {{ account.user.email }}
+	            {{ account.user.email }}<br>
 	            <a href="../profile/{{account.page_id}}">View public profile</a>
             </div>
             <div class="userinfo sidebox">
