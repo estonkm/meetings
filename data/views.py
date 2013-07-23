@@ -798,7 +798,6 @@ def meeting(request):
 
 			if request.POST.get('addr_contacts') and viewer:
 				added = request.POST.get('addr_contacts')
-				added = added.split(',')
 				recipients = handle_addr_book(viewer, meeting, added, False)
 
 				if recipients:
@@ -1108,7 +1107,6 @@ def managemembers(request):
 
 		if request.POST.get('addr_contacts'):
 			added = request.POST.get('addr_contacts')
-			added = added.split(',')
 			recipients += handle_addr_book(useraccount, meeting, added, False)
 
 		if recipients:
