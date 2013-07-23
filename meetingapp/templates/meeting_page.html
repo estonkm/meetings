@@ -117,7 +117,7 @@
                     {% if user == host.user %}
                     <button class="btn btn-mini" name="editai" style="margin-top: -5px !important;" id="{{ai.id}}"><i class="icon-pencil"></i> edit</button>
                     {% endif %}
-                    <button class="btn hoverblack alter" data-toggle="collapse" style="margin-top: -5px !important;" id="showmotions_{{ai.id}}" data-target="#ai_{{ai.id}}">show all motions ({{ai.motions.all.count}})</button>
+                    <button class="btn hoverblack alter" data-toggle="collapse" style="margin-top: -5px !important;" id="showmotions_{{ai.id}}" data-target=".ai_{{ai.id}}">show all motions ({{ai.motions.all.count}})</button>
                     <button class="btn hoverblack alter" style="margin-top: -5px !important;" data-toggle="collapse" name="addmotion" data-target="#addmotion_{{ai.id}}">add a motion</a>
                 </div>
                 <div class="row" style="margin-bottom: 20px !important">
@@ -193,8 +193,8 @@
                             </div>
                             {% endif %}
                         </div>
-                        <div class="collapse out" id="ai_{{ai.id}}">
-                        {% else %}
+                            {% else %}
+                            <div class="collapse out ai_{{ai.id}}" id="ai_{{ai.id}}">
                             <div class="row motion">
                                 <div class="row motiontitle">
                                     {% if motion.modded %}
@@ -265,9 +265,9 @@
                                 </div>
                                 {% endif %}
                             </div>
-                        
+                        </div>
                         {% endif %}
-                    </div>
+
                     </div>
                     {% endfor %}
                     <div class="row motion collapse indented out" style="border-bottom: none !important;" id="addmotion_{{ai.id}}">
