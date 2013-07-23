@@ -193,8 +193,8 @@
                             </div>
                             {% endif %}
                         </div>
-                        {% else %}
                         <div class="collapse out" id="ai_{{ai.id}}">
+                        {% else %}
                             <div class="row motion">
                                 <div class="row motiontitle">
                                     {% if motion.modded %}
@@ -265,8 +265,9 @@
                                 </div>
                                 {% endif %}
                             </div>
-                        </div>
-                    {% endif %}
+                        
+                        {% endif %}
+                    </div>
                     </div>
                     {% endfor %}
                     <div class="row motion collapse indented out" style="border-bottom: none !important;" id="addmotion_{{ai.id}}">
