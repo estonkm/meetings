@@ -261,6 +261,7 @@ def invite(request):
 				if c_email:
 					c_email = c_email[0].strip('<>')
 					recipients.append(c_email)
+					meeting.invited += e + ','
 
 					contact = contact.strip(' ')
 					contact_info = contact.split(' ')
@@ -755,6 +756,7 @@ def meeting(request):
 					if c_email:
 						c_email = c_email[0].strip('<>')
 						recipients.append(c_email)
+						meeting.invited += e + ','
 	
 						contact = contact.strip(' ')
 						contact_info = contact.split(' ')
