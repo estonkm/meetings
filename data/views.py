@@ -261,7 +261,7 @@ def invite(request):
 				if c_email:
 					c_email = c_email[0].strip('<>')
 					recipients.append(c_email)
-					meeting.invited += e + ','
+					meeting.invited += c_email + ','
 
 					contact = contact.strip(' ')
 					contact_info = contact.split(' ')
@@ -759,7 +759,7 @@ def meeting(request):
 					if c_email:
 						c_email = c_email[0].strip('<>')
 						recipients.append(c_email)
-						meeting.invited += e + ','
+						meeting.invited += c_email + ','
 	
 						contact = contact.strip(' ')
 						contact_info = contact.split(' ')
@@ -1093,7 +1093,7 @@ def managemembers(request):
 				if c_email:
 					c_email = c_email[0].strip('<>')
 					recipients.append(c_email)
-					meeting.invited += e + ','
+					meeting.invited += c_email + ','
 
 					contact = contact.strip(' ')
 					contact_info = contact.split(' ')
