@@ -91,7 +91,7 @@
             </div>
             <div class="userinfo sidebox">
                 <i class="icon-user"></i>
-                <text class="lead" style="font-size: 15px !important;">Contacts ({{account.contacts.all.count}}):</text><br><ul class="sidebox" style="margin-left: 5px;">
+                <text class="lead" style="font-weight: bold; font-size: 15px !important;">Contacts ({{account.contacts.all.count}}):</text><br><ul class="sidebox" style="">
                 {% for contact in account.contacts.all %}
                 <li>{% if contact.last_name %}{{contact.last_name}}{% if contact.first_name %},{% endif %} {% endif %} {% if contact.first_name %}{{contact.first_name}}{% endif %} <<em>{{contact.email}}</em>></li>
                 {% endfor %}</ul>
