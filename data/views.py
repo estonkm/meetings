@@ -705,6 +705,9 @@ def meeting(request):
 			if meeting not in viewer.meetings_in.all():
 				viewer.meetings_in.add(meeting)
 				viewer.save()
+			if viewer not in meeting.members.all():
+				meeting.members.add(viewer)
+				meeting.save()
 		if meeting in viewer.receive_emails.all():
 			context['currently_receiving'] = True 
 		else:
