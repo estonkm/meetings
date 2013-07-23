@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>VitalMeeting &middot; Structured Online Meetings</title>
+    <title>Vital Meeting &middot; Structured Online Meetings</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -13,7 +13,9 @@
     <!-- Le styles -->
     <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
     <link href="{% static "bootstrap/css/bootstrap-responsive.css" %}" rel="stylesheet">
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
     <style>
 
     /* GLOBAL STYLES
@@ -295,6 +297,16 @@
                                    <link rel="shortcut icon" href="../assets/ico/favicon.png">
   </head>
 
+<script type='text/javascript'>
+  var _glc =_glc || []; _glc.push('all_ag9jb250YWN0dXN3aWRnZXRyDgsSBXVzZXJzGJ7RuwIM');
+  var glcpath = (('https:' == document.location.protocol) ? 'https://my.clickdesk.com/livily/browser/' : 
+  'http://gae.clickdesk.com/livily/browser/');
+  var glcp = (('https:' == document.location.protocol) ? 'https://' : 'http://');
+  var glcspt = document.createElement('script'); glcspt.type = 'text/javascript'; 
+  glcspt.async = true; glcspt.src = glcpath + 'livechat.js';
+  var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glcspt, s);
+</script>
+
   <body>
 
 
@@ -341,11 +353,11 @@
               <span class="icon-bar"></span>
             </button>
 
-            <a class="brand" href=>VitalMeeting</a>
+            <a class="brand" href=>Vital Meeting</a>
             <div class="nav-collapse collapse">
               <ul class="nav">
-                <li class="active"><a href="#">Learn More</a></li>
-                <li><a href="#">Contact</a></li>
+                <li class="active"><a data-toggle="modal" role="button" href="#myModal">Learn More</a></li>
+                <li><a data-toggle="modal" role="button" href="#myModal">Contact</a></li>
               </u1>
             </div>
 
@@ -371,7 +383,7 @@
           <img src="{% static "darker.jpg" %}" alt="">
           <div class="container">
             <div class="carousel-caption">
-              <h1>VitalMeeting</h1>
+              <h1>Vital Meeting.</h1>
               <p class="lead">It makes meetings easy. It's free.</p>
               <a class="btn btn-large btn-primary" href="../create/">Create a New Meeting</a>
 
@@ -444,22 +456,25 @@
       <!-- FOOTER -->
       <div class="container">
         <footer>
-          <p class="pull-right"><a href="#">Back to top</a></p>
-          <p>&copy; 2013 VitalMeeting, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+          <p>&copy; 2013 Vital Meeting, Inc. &middot; <a data-toggle="modal" role="button" href="#myModal">Privacy</a> &middot; <a data-toggle="modal" role="button" href="#myModal">Terms</a></p>
         </footer>
       </div>
 
     </div><!-- /.container -->
 
+  <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="myModalLabel">Under Construction</h3>
+    </div>
+    <div class="modal-body">
+      <p>Please check back later!</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
+    </div>
+  </div>
+
   </body>
 
-<script>
-// $(document).ready(function() {
-// $(document).ready(function(){
-//   if (window.location.hostname.indexOf('www.') < 0) {
-//     window.location.replace('www.vitalmeeting.com'+window.location.pathname);
-//   }
-// });
-// });
-</script>
 </html>

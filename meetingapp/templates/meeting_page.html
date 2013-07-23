@@ -67,6 +67,7 @@
 			{% endif %}
 			{% if user.is_authenticated %}
 			<form method="post" style="margin-top: 20px !important;">{% csrf_token %}
+                <i class="icon-envelope"></i>
 				{% if currently_receiving %} You are currently receiving email notifications from this meeting. <br> Stop receiving notifications? 
 				<button class="btn btn-mini" name="stop_emails" id="stop_emails">Stop</button>
 				{% else %} You are currently not receiving email notifications from this meeting. <br> Start receiving notifications?
@@ -81,6 +82,18 @@
 					{% endif %}</text>
 				{% endif %}
 			</form>
+            {% if user == host.user %}
+                {% if pending %}
+                <form method="post" style="margin-top: 20px !important;">{% csrf_token %}
+                    <i class="icon-envelope"></i> You have unsent email invites. Send these now? 
+                    <button class="btn btn-mini" name="send_pending">Send</button>
+                    {% if just_sent %}
+                    <br>
+                    Thanks! The emails were sent.
+                    {% endif %}
+                </form>
+                {% endif %}
+            {% endif %}
 			{% endif %}
                 </div>
             </div>

@@ -203,6 +203,12 @@ button.btn.alter:hover {
     margin-left:inherit;
 }
 
+.row .profrow {
+    margin-left: 0px !important; 
+    border-bottom: 1px solid #DCDCDC; 
+    margin-top: 5px !important;
+}
+
 
 .agendaItem {
 	border-bottom: 1px solid #999;

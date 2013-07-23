@@ -29,7 +29,7 @@
 				</form>
 			</div>
 			{% for c in contacts %}
-			<div class="row homemeetings" style="margin-left: 0px !important; border-bottom: 1px solid #DCDCDC;">
+			<div class="row homemeetings profrow">
 					{% if c.last_name %}<h4>{{c.last_name}}{% if c.first_name %}, {{c.first_name}} {% endif %}</h4>{% endif %}
                     <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
 	                    <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_contact" value="{{c.id}}">Remove</button>
@@ -40,8 +40,12 @@
 			{% endfor %}
 		</div>
 		<div class="span3">
-            <div class="userinfo">
-                <text class="lead" style="font-size: 15px !important;">Me</text>
+            <div class="userinfo" style="padding: 5px !important; padding-left: 10px !important;">
+	            <h4>{{ account.user.first_name }} {{ account.user.last_name }}</h4>
+            	{% if account.prof_pic != 'False' %}
+            	<img src="{{account.prof_pic.url}}" style="width: 50px; height: auto;"><br>{% endif %}
+	            {{ account.user.email }}
+	            <a href="../profile/{{account.page_id}}">View public profile</a>
             </div>
             <div class="userinfo sidebox">
                 <text class="lead" style="font-size: 15px !important;">Meetings</text><br>

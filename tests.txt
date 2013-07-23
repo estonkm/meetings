@@ -1,0 +1,22 @@
+THINGS THAT NEED TESTING - look for each location in the code, and update accordingly
+
+refactored today:
+-moved send email invites out
+-moved get info from addr book import out
+
+added today:
+-hold invitations during meeting setup, invite later
+
+
+
+general tests:
+
+-both kinds of meetings (public, private)
+-emails get sent out when I expect them to
+-people have permissions that they are expected to
+-meeting start/end times behave as expected, along with emails (cron)
+-meeting status behaves as expected
+-forms with multiple sections don't interfere
+-form errors always get validated
+-large numbers of comments, motions, etc. don't mess up the UI
+-creating a meeting and then immediately creating another is no problem

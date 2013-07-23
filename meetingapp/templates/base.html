@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>VitalMeeting &middot; Structured Online Meetings</title>
+	<title>Vital Meeting &middot; Structured Online Meetings</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -28,6 +28,18 @@
 
 
 </head>
+
+<script type='text/javascript'>
+  var _glc =_glc || []; _glc.push('all_ag9jb250YWN0dXN3aWRnZXRyDgsSBXVzZXJzGJ7RuwIM');
+  var glcpath = (('https:' == document.location.protocol) ? 'https://my.clickdesk.com/livily/browser/' : 
+  'http://gae.clickdesk.com/livily/browser/');
+  var glcp = (('https:' == document.location.protocol) ? 'https://' : 'http://');
+  var glcspt = document.createElement('script'); glcspt.type = 'text/javascript'; 
+  glcspt.async = true; glcspt.src = glcpath + 'livechat.js';
+  var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glcspt, s);
+</script>
+
+
 <body>
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner">
@@ -37,14 +49,14 @@
                 	<input type="password" name="password" class="login" placeholder="password" autocomplete="off">
                 	<button type="submit" class="btn btn-primary">Log In</button>
             	</form>-->
-				<a class="brand" href="..">VitalMeeting</a>
+				<a class="brand" href="..">Vital Meeting</a>
 				<div class="nav-collapse collapse">
 					<c class="nav">
 						<li class="">
-							<a href="#">Learn More</a>
+							<a data-toggle="modal" role="button" href="#myModal">Learn More</a>
 						</li>
 						<li class="">
-							<a href="#">Contact</a>
+							<a data-toggle="modal" role="button" href="#myModal">Contact</a>
 						</li>
 						<li class="">
 							<a href="/create/">Create a New Meeting</a>
@@ -83,11 +95,24 @@
     <div class="container">
 	    <footer>
 	        <p class="pull-right"><a href="#">Back to top</a></p>
-	        <p>&copy; 2013 VitalMeeting, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+	        <p>&copy; 2013 VitalMeeting, Inc. &middot; <a data-toggle="modal" role="button" href="#myModal">Privacy</a> &middot; <a data-toggle="modal" role="button" href="#myModal">Terms</a></p>
 	    </footer>
 	</div>
 
 </body>
+
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Under Construction</h3>
+  </div>
+  <div class="modal-body">
+    <p>Please check back later!</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
+  </div>
+</div>
 
 <script>
 // $(document).ready(function(){

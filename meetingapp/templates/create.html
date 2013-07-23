@@ -56,6 +56,13 @@
 				{{ form.starttime }} {% if form.starttime.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
 			</div>
 		</div>
+		{% if time_mismatch %}
+		<div class="control-group">
+			<div class="controls">
+				<h5 style="color: red;">Date/time error: the meeting ends before it starts!</h5>
+			</div>
+		</div>
+		{% endif %}
 		<div class="control-group">
 			<label class="control-label" for="inputDate">End Date</label>
 			<div class="controls">

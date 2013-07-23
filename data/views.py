@@ -27,6 +27,9 @@ SIGNATURE = '\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 UTC = pytz.utc
 ZONE = timezone('America/Chicago')
 
+#------------------- HELPER FUNCTIONS ----------------------------------------#
+
+# not used
 def check_img_size(img):
 	# 2.5MB = 2621440
 	MAX_SIZE = "2621440"
@@ -35,7 +38,63 @@ def check_img_size(img):
 	else:
 		return True
 
+# used
+def send_email_invite(meeting, user, recipients):
+		title = "Meeting Invite: " + meeting.title
+		message = ("You've been invited to attend " + user.first_name + " " + user.last_name + "'s online meeting discussion " +
+					"on VitalMeeting.com.\n\nPlease click on " +
+					"http://vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in."+SIGNATURE)
 
+		send_mail(title, message, SENDER, recipients)
+
+# used 
+
+# handles the input from the external address book;
+# "remember" is optional parameter--to save these contacts into the
+# account's contacts
+# returns the valid emails in a list
+def handle_addr_book(account, meeting, added, save):
+	added = added.split(',')
+	recipients = []
+	for contact in added:
+		c_email = re.findall('[\S]*@[\S]*\.[\S]*', contact)
+		if c_email:
+			c_email = c_email[0].strip('<>')
+			recipients.append(c_email)
+
+			if meeting:
+				meeting.invited += c_email + ','
+
+			contact = contact.strip(' ')
+			contact_info = contact.split(' ')
+			c_first_name = ''
+			c_last_name = ''
+			if len(contact_info) > 2:
+				c_first_name = contact_info[0]
+				c_last_name = contact_info[1]
+			match = Contact.objects.filter(email=c_email)
+			u = User.objects.filter(email=c_email)
+
+			if u and meeting:
+				a = Account.objects.filter(user=u[0])
+				if a:
+					a = a[0]
+					a.meetings_in.add(meeting)
+					meeting.members.add(a)
+					a.save()
+			if save:
+				if match:
+					if match not in account.contacts.all():
+						account.contacts.add(match[0])
+						account.save()
+				else:
+					new_c = Contact(first_name=c_first_name, last_name=c_last_name, email=c_email)
+					new_c.save()
+					account.contacts.add(new_c)
+					account.save()	
+	return recipients
+
+# not used
 def mailgun_send(recipients, subject, message):
 	return requests.post(
 		"https://api.mailgun.net/v2/rs3945.mailgun.org/messages",
@@ -44,6 +103,8 @@ def mailgun_send(recipients, subject, message):
 				"to": recipients,
 				"subject": subject,
 				"text": message})
+
+#----------------------------------------------------------------------------#
 
 def index(request):
 	context = {}
@@ -127,6 +188,10 @@ def create(request):
 				if (rightnow-enteredtimeend).total_seconds() > 0:
 					already_ended = True
 
+				if (enteredtimestart-enteredtimeend).total_seconds() > 0:
+					context['time_mismatch'] = True
+					context['form'] = form
+					return render_to_response('create.html', context)
 
 				m = Meeting(startdate=cd['startdate'], starttime=cd['starttime'], enddate=cd['enddate'],
 					endtime=cd['endtime'], title=cd['title'], desc=cd['desc'], private=s, meeting_id=meeting_no, 
@@ -185,6 +250,7 @@ def invite(request):
 	context['meeting'] = meeting
 
 	remember = False
+	invite_later = False
 
 	if request.method=='POST':
 		if 'remember' in request.POST:
@@ -196,6 +262,9 @@ def invite(request):
 
 		if "later" in request.POST:
 			return HttpResponseRedirect('../meeting/'+meeting_no)
+
+		if "invite_later" in request.POST:
+			invite_later = True
 
 		added = request.POST.get('added')
 		entered = request.POST.get('entered')
@@ -255,48 +324,16 @@ def invite(request):
 
 		if request.POST.get('addr_contacts'):
 			added = request.POST.get('addr_contacts')
-			added = added.split(',')
-			for contact in added:
-				c_email = re.findall('[\S]*@[\S]*\.[\S]*', contact)
-				if c_email:
-					c_email = c_email[0].strip('<>')
-					recipients.append(c_email)
-					meeting.invited += c_email + ','
+			# just copied code over to "handle_addr_book": if something breaks,
+			# add it back
+			recipients += handle_addr_book(a, meeting, added, remember)
 
-					contact = contact.strip(' ')
-					contact_info = contact.split(' ')
-					c_first_name = ''
-					c_last_name = ''
-					if len(contact_info) > 2:
-						c_first_name = contact_info[0]
-						c_last_name = contact_info[1]
-					match = Contact.objects.filter(email=c_email)
-					u = User.objects.filter(email=c_email)
-					if u:
-						acct = Account.objects.filter(user=u[0])
-						if acct:
-							acct = acct[0]
-							acct.meetings_in.add(meeting)
-							meeting.members.add(acct)
-							acct.save()
-					if remember:
-						if match:
-							if match not in a.contacts.all():
-								a.contacts.add(match[0])
-								a.save()
-						else:
-							new_c = Contact(first_name=c_first_name, last_name=c_last_name, email=c_email)
-							new_c.save()
-							a.contacts.add(new_c)
-							a.save()			
+		if recipients and not invite_later:
+			send_email_invite(meeting, a.user, recipients)
 
-		if recipients:
-			title = "Meeting Invite: " + meeting.title
-			message = ("You've been invited to attend " + a.user.first_name + " " + a.user.last_name + "'s online meeting discussion, " +
-						"on VitalMeeting.com.\n\nPlease click on " +
-						"http://vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\n\n\nVitalMeeting.com\nStructured Online Meetings")
-
-			send_mail(title, message, SENDER, recipients)
+		if invite_later:
+			meeting.pending = meeting.invited
+			meeting.save()
 
 		if 'account' in request.session:
 			del request.session['account']
@@ -521,6 +558,7 @@ def contacts(request):
 	contacts = a.contacts.all()
 
 	context['meetings'] = a.meetings_in.all()
+	context['account'] = a
 
 	if request.method == 'POST':
 		if 'new_contact' in request.POST:
@@ -557,29 +595,7 @@ def contacts(request):
 
 		if 'addr_contacts' in request.POST:
 			added = request.POST.get('addr_contacts')
-			added = added.split(',')
-			for contact in added:
-				c_email = re.findall('[\S]*@[\S]*\.[\S]*', contact)
-				if c_email:
-					c_email = c_email[0].strip('<>')
-					contact = contact.strip(' ')
-					contact_info = contact.split(' ')
-					c_first_name = ''
-					c_last_name = ''
-					if len(contact_info) > 2:
-						c_first_name = contact_info[0]
-						c_last_name = contact_info[1]
-					match = Contact.objects.filter(email=c_email)
-					if match:
-						match = match[0]
-						if match not in contacts:
-							a.contacts.add(match)
-							a.save()
-					else:
-						new_c = Contact(first_name=c_first_name, last_name=c_last_name, email=c_email)
-						new_c.save()
-						a.contacts.add(new_c)
-						a.save()
+			handle_addr_book(a, None, added, True)
 	
 	contacts = a.contacts.all().order_by('first_name')
 	contacts = contacts.order_by('last_name')
@@ -708,6 +724,11 @@ def meeting(request):
 			if viewer not in meeting.members.all():
 				meeting.members.add(viewer)
 				meeting.save()
+		if viewer == meeting.hosts.all()[0]:
+			if meeting.pending:
+				context['pending'] = True
+			else:
+				context['pending'] = False
 		if meeting in viewer.receive_emails.all():
 			context['currently_receiving'] = True 
 		else:
@@ -750,39 +771,27 @@ def meeting(request):
 				context['notifications_modified'] = True
 				context['receiving'] = False
 				context['currently_receiving'] = False
+
+			if 'send_pending' in request.POST and viewer:
+				if viewer == meeting.hosts.all()[0]:
+					recipients = []
+					emails = meeting.pending.split(',')
+					for e in emails:
+						if '@' in e:
+							recipients.append(e)
+					if recipients:
+						send_email_invite(meeting, viewer.user, recipients)
+					meeting.pending = ''
+					meeting.save()
+					context['just_sent'] = True
+
 			if request.POST.get('addr_contacts') and viewer:
 				added = request.POST.get('addr_contacts')
 				added = added.split(',')
-				recipients = []
-				for contact in added:
-					c_email = re.findall('[\S]*@[\S]*\.[\S]*', contact)
-					if c_email:
-						c_email = c_email[0].strip('<>')
-						recipients.append(c_email)
-						meeting.invited += c_email + ','
-	
-						contact = contact.strip(' ')
-						contact_info = contact.split(' ')
-						c_first_name = ''
-						c_last_name = ''
-						if len(contact_info) > 2:
-							c_first_name = contact_info[0]
-							c_last_name = contact_info[1]
-						match = Contact.objects.filter(email=c_email)
-						u = User.objects.filter(email=c_email)
-						if u:
-							acct = Account.objects.filter(user=u[0])
-							if acct:
-								acct = acct[0]
-								acct.meetings_in.add(meeting)
-								meeting.members.add(acct)
-								acct.save()
+				recipients = handle_addr_book(viewer, meeting, added, False)
+
 				if recipients:
-					title = "Meeting Invite: " + meeting.title
-					message = ("You've been invited to attend " + viewer.user.first_name + " " + viewer.user.last_name + "'s online meeting discussion, " +
-						"on VitalMeeting.com.\n\nPlease click on " +
-						"http://vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\n\n\nVitalMeeting.com\nStructured Online Meetings")
-					send_mail(title, message, SENDER, recipients)
+					send_email_invite(meeting, viewer.user, recipients)
 
 
 			if request.POST.get('motionname'):
@@ -1057,8 +1066,9 @@ def managemembers(request):
 				e = e[1].split('>')[0]
 
 				# TEST THIS
-				meeting.invited = re.sub(e+',', '', meeting.invited)
-				meeting.save()
+				# meeting.invited = re.sub(e+',', '', meeting.invited)
+				# meeting.save()
+
 
 				u = User.objects.filter(email=e)
 				if u:
@@ -1088,47 +1098,10 @@ def managemembers(request):
 		if request.POST.get('addr_contacts'):
 			added = request.POST.get('addr_contacts')
 			added = added.split(',')
-			for contact in added:
-				c_email = re.findall('[\S]*@[\S]*\.[\S]*', contact)
-				if c_email:
-					c_email = c_email[0].strip('<>')
-					recipients.append(c_email)
-					meeting.invited += c_email + ','
-
-					contact = contact.strip(' ')
-					contact_info = contact.split(' ')
-					c_first_name = ''
-					c_last_name = ''
-					if len(contact_info) > 2:
-						c_first_name = contact_info[0]
-						c_last_name = contact_info[1]
-					match = Contact.objects.filter(email=c_email)
-					u = User.objects.filter(email=c_email)
-					if u:
-						acct = Account.objects.filter(user=u[0])
-						if acct:
-							acct = acct[0]
-							acct.meetings_in.add(meeting)
-							meeting.members.add(acct)
-							acct.save()
-					# if remember:
-					# 	if match:
-					# 		if match not in a.contacts.all():
-					# 			a.contacts.add(match[0])
-					# 			a.save()
-					# 	else:
-					# 		new_c = Contact(first_name=c_first_name, last_name=c_last_name, email=c_email)
-					# 		new_c.save()
-					# 		a.contacts.add(new_c)
-					# 		a.save()
+			recipients += handle_addr_book(useraccount, meeting, added, False)
 
 		if recipients:
-			title = "Meeting Invite: " + meeting.title
-			message = ("You've been invited to attend " + request.user.first_name + " " + request.user.last_name + "'s online meeting discussion " +
-						"on VitalMeeting.com.\n\nPlease click on " +
-						"http://vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in.\n\n\n\nVitalMeeting.com\nStructured Online Meetings")
-
-			send_mail(title, message, SENDER, recipients)
+			send_email_invite(meeting, request.user, recipients)
 
 	members_to_mod = []
 	members_to_remove = []

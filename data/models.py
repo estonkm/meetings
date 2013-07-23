@@ -78,6 +78,7 @@ class Meeting(models.Model):
 	location = models.CharField(max_length=200, null=True, blank=True)
 	keywords = models.CharField(max_length=200, null=True, blank=True)
 	friend_invites = models.NullBooleanField(null=True)
+	pending = models.TextField(null=True, blank=True)
 
 class AgendaItem(models.Model):
 	class Meta:
@@ -91,8 +92,7 @@ class AgendaItem(models.Model):
 
 class Motion(models.Model):
 	class Meta:
-		ordering=['id']
-		ordering=['-likes']
+		ordering=['id', '-likes']
 	user = models.ForeignKey('Account', related_name="motion_user")
 	timestamp = models.DateTimeField()
 	name = models.CharField(max_length=1000)
