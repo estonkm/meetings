@@ -48,8 +48,8 @@
 	            <a href="../profile/{{account.page_id}}">View public profile</a>
             </div>
             <div class="userinfo sidebox">
-                <text class="lead" style="font-size: 15px !important;">Meetings</text><br>
-                <ul class="sidebox" style="margin-left: 5px;">{% for meeting in meetings %}
+                <text class="lead" style="font-weight: bold !important; font-size: 15px !important;">Meetings</text><br>
+                <ul class="sidebox" style="margin-left: 0px;">{% for meeting in meetings %}
                 <li>{{meeting.title}}</li>
                 {% endfor %}</ul>
             </div>
