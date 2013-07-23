@@ -4,6 +4,27 @@
 
 {% load static %}
 
+<style>
+
+.form-horizontal {
+/*	margin-left: 5% !important;
+*/}
+
+.form-horizontal .control-label {
+	width: 185px !important;
+	text-align: center;
+}
+
+.form-horizontal .controls {
+	padding-left: 30px !important;
+}
+
+label {
+	cursor: hand !important;
+}
+
+</style>
+
 <div class="container">
 	<form class="form-horizontal" style="display:inline-block;" method="post">
 		{% csrf_token %}
@@ -92,12 +113,6 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<div class="controls">
-				<button type="submit" class="btn btn-primary">Save Changes</button>
-				<a href="../meeting/{{meeting.meeting_id}}" class="btn btn-danger">Return to Meeting</a>
-			</div>
-		</div>
-		<div class="control-group">
 			<label class="control-label">
 				<a class="cs_import btn" style="padding: 10px !important;">Invite from Address Book</a><br>
 				<img src="{% static "google.png" %}" class="addrbook">
@@ -108,6 +123,12 @@
 			</label>
 			<div class="controls">
 				<textarea name="addr_contacts" style="width:450px;height:82px" id="contact_list"></textarea>
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn btn-primary">Save Changes</button>
+				<a href="../meeting/{{meeting.meeting_id}}" class="btn btn-danger">Return to Meeting</a>
 			</div>
 		</div>
 	</form>
