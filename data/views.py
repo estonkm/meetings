@@ -702,6 +702,7 @@ def meeting(request):
 	context['not_verified'] = False
 	context['login_errors'] = False
 	context['notifications_modified'] = False
+	context['canmod'] = False
 
 	try:
 		meetingtz = timezone(meeting.timezone)
@@ -740,6 +741,8 @@ def meeting(request):
 				context['pending'] = True
 			else:
 				context['pending'] = False
+		if viewer in meeting.hosts.all() or viewer in meeting.moderators.all():
+			context['canmod'] = True
 		if meeting in viewer.receive_emails.all():
 			context['currently_receiving'] = True 
 		else:
@@ -1125,7 +1128,7 @@ def managemembers(request):
 	contacts = []
 	for c in useraccount.contacts.all():
 		if c.account:
-			if c.email not in meeting.invited and c not in meeting.hosts.all():
+			if c.account not in meeting.members.all() and c.account not in meeting.hosts.all():
 				contacts.append(c)
 		elif c.email not in meeting.invited:
 			contacts.append(c)

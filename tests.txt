@@ -20,3 +20,12 @@ general tests:
 -form errors always get validated
 -large numbers of comments, motions, etc. don't mess up the UI
 -creating a meeting and then immediately creating another is no problem
+
+
+
+1. mods disappear
+2. adding to meeting
+just the whole "manage members" page is messed up
+4. mods not available to promote
+5. after remove and hit "save", can't add you back in :(
+
