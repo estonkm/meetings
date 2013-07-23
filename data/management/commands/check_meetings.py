@@ -28,7 +28,7 @@ class Command(NoArgsCommand):
 			end = meetingtz.localize(end)
 			now = now.astimezone(meetingtz)
 
-			if (now - start).total_seconds() > 0 and meeting.started is False:
+			if (now - start).total_seconds() >= 0 and meeting.started is False:
 				meeting.started = True
 				meeting.save()
 				recipients = []
