@@ -241,7 +241,7 @@
                                                         <span id="mo_comment">{{comment.text}}</span>
                                                         <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_comment" value="{{comment.id}} {{motion.id}}">Remove</button>
                                                         {% if comment.user.user == user %}
-                                                        <button class="btn btn-mini" name="editcomment" id="editcomment_{{comment.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
+                                                        <button class="btn btn-mini" name="editcomment" id="{{comment.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
                                                         {% endif %}
                                                     </form>
                                                 {% else %}
