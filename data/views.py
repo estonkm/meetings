@@ -52,7 +52,7 @@ def send_email_invite(meeting, user, recipients):
 			ai_details += 'Agenda Items:\n'
 		for i in range(len(items)):
 			ai_details += str(i+1)+'. '+ items[i].name + '\n'
-		message = ("You've been invited to attend " + user.first_name + " " + user.last_name + "'s online meeting" + org_details
+		message = ("You've been invited to attend " + user.first_name + " " + user.last_name + "'s online meeting" + org_details +
 					"on VitalMeeting.com.\n\n"+ai_details+"\n\nPlease click on " +
 					"http://vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in."+SIGNATURE)
 
