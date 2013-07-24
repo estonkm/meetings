@@ -866,10 +866,11 @@ def meeting(request):
 				motion = Motion.objects.get(id__exact=motion_id)
 				if account and account[0] == motion.user:
 					motion.name = 'This motion has been removed by its author.'
-				if account and (account[0] in meeting.moderators.all() or account[0] == meeting.hosts.all()[0]):
+				elif account and (account[0] in meeting.moderators.all() or account[0] == meeting.hosts.all()[0]):
+					former_name = motion.name
 					motion.name = 'This motion has been removed by a moderator.'
 					recipient = [motion.user.user.email]
-					message = 'Your motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
+					message = 'Your motion "'+former_name+'" in meeting "'+meeting.title+'" has been removed by a moderator.\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 					if motion.user in meeting.members.all():
 						send_mail("Motion removed", message, SENDER, recipient)
 				motion.desc = ''
