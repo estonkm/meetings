@@ -1,6 +1,6 @@
 # Django settings for meetingapp project.
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
