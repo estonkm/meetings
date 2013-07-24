@@ -29,3 +29,6 @@ just the whole "manage members" page is messed up
 4. mods not available to promote
 5. after remove and hit "save", can't add you back in :(
 
+
+fixed some bugs that occurred when motions were > 6 on page. (bug w/ editing comments, bug w/ only first collapsable showing)
+

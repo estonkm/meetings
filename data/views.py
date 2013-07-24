@@ -46,14 +46,14 @@ def send_email_invite(meeting, user, recipients):
 		org_details = ''
 		if org:
 			org = org[0]
-			org_details = 'This meeting is sponsored by '+org.name+'.\n\n'
+			org_details = ', which is sponsored by '+org.name+', '
 		ai_details = ''
 		if items:
-			ai_details += 'The agenda items for the meeting are as follows:\n'
-		for ai in items:
-			ai_details += ai.name + '\n'
-		message = ("You've been invited to attend " + user.first_name + " " + user.last_name + "'s online meeting discussion " +
-					"on VitalMeeting.com.\n\n"+org_details+ai_details+"\n\nPlease click on " +
+			ai_details += 'Agenda Items:\n'
+		for i in range(len(items)):
+			ai_details += str(i+1)+'. '+ items[i].name + '\n'
+		message = ("You've been invited to attend " + user.first_name + " " + user.last_name + "'s online meeting" + org_details
+					"on VitalMeeting.com.\n\n"+ai_details+"\n\nPlease click on " +
 					"http://vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in."+SIGNATURE)
 
 		send_mail(title, message, SENDER, recipients)
