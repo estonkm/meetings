@@ -853,9 +853,6 @@ def meeting(request):
 						context['question'] = q
 						question = q
 
-		meeting.q_started = True
-		meeting.q_ended = False
-		meeting.save()
 		if meeting.started and not meeting.ended:
 			context['active_period'] = True
 		else:
@@ -1249,7 +1246,6 @@ def settings(request):
 			removed = request.POST.get('removed')
 			if removed:
 				removed = removed.split(',')
-				print removed
 				for ai in removed:
 					if ai != '':
 						ai = AgendaItem.objects.get(id__exact=ai)

@@ -1,11 +1,3 @@
-(there are more--just sqlall again)
-
-ALTER TABLE "data_meeting" ADD COLUMN m_type varchar(10);
-ALTER TABLE "data_meeting" ADD COLUMN q_start timestamp with time zone;
-ALTER TABLE "data_meeting" ADD COLUMN q_end timestamp with time zone;
-ALTER TABLE "data_meeting" ADD COLUMN q_started boolean NOT NULL;
-ALTER TABLE "data_meeting" ADD COLUMN q_ended boolean NOT NULL;
-
 CREATE TABLE "data_meeting_questions" (
     "id" serial NOT NULL PRIMARY KEY,
     "meeting_id" integer NOT NULL,
@@ -13,7 +5,6 @@ CREATE TABLE "data_meeting_questions" (
     UNIQUE ("meeting_id", "question_id")
 )
 ;
-
 CREATE TABLE "data_meeting_invitees" (
     "id" serial NOT NULL PRIMARY KEY,
     "meeting_id" integer NOT NULL,
@@ -22,18 +13,17 @@ CREATE TABLE "data_meeting_invitees" (
 )
 ;
 
+ALTER TABLE "data_meeting" ADD COLUMN invitee varchar(75);
+ALTER TABLE "data_meeting" ADD COLUMN accepted boolean;
+ALTER TABLE "data_meeting" ADD COLUMN agreed_yet boolean;
+ALTER TABLE "data_meeting" ADD COLUMN m_type varchar(10);
+ALTER TABLE "data_meeting" ADD COLUMN q_start timestamp with time zone;
+ALTER TABLE "data_meeting" ADD COLUMN q_end timestamp with time zone;
+ALTER TABLE "data_meeting" ADD COLUMN q_started boolean;
+ALTER TABLE "data_meeting" ADD COLUMN q_ended boolean;
+
 ALTER TABLE "data_meeting_questions" ADD CONSTRAINT "meeting_id_refs_id_7a36a50a" FOREIGN KEY ("meeting_id") REFERENCES "data_meeting" ("id") DEFERRABLE INITIALLY DEFERRED;
-
 ALTER TABLE "data_meeting_invitees" ADD CONSTRAINT "meeting_id_refs_id_16c0c468" FOREIGN KEY ("meeting_id") REFERENCES "data_meeting" ("id") DEFERRABLE INITIALLY DEFERRED;
-
-
-CREATE TABLE "data_question" (
-    "id" serial NOT NULL PRIMARY KEY,
-    "timestamp" timestamp with time zone,
-    "answer" text,
-    "selected" boolean NOT NULL
-)
-;
 
 CREATE TABLE "data_question_asker" (
     "id" serial NOT NULL PRIMARY KEY,
@@ -43,6 +33,14 @@ CREATE TABLE "data_question_asker" (
 )
 ;
 
+CREATE TABLE "data_question" (
+    "id" serial NOT NULL PRIMARY KEY,
+    "timestamp" timestamp with time zone,
+    "title" varchar(100),
+    "body" text,
+    "answer" text,
+    "selected" boolean
+)
+;
 ALTER TABLE "data_meeting_questions" ADD CONSTRAINT "question_id_refs_id_2909bf24" FOREIGN KEY ("question_id") REFERENCES "data_question" ("id") DEFERRABLE INITIALLY DEFERRED;
-
 ALTER TABLE "data_question_asker" ADD CONSTRAINT "question_id_refs_id_aa8445fe" FOREIGN KEY ("question_id") REFERENCES "data_question" ("id") DEFERRABLE INITIALLY DEFERRED;
