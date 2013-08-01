@@ -10,6 +10,13 @@ UTC = pytz.utc
 SENDER = 'Vital Meeting <info@vitalmeeting.com>'
 SIGNATURE = '\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 
+def get_recipients(meeting):
+	emails = []
+	for mem in meeting.members.all():
+		e = mem.user.email
+		emails.append(e)
+	return emails
+
 class Command(NoArgsCommand):
 	help = 'Checks meeting start/end times against current time'
 	def handle_noargs(self, **options):
@@ -31,13 +38,9 @@ class Command(NoArgsCommand):
 			if (now - start).total_seconds() >= 0 and meeting.started is False:
 				meeting.started = True
 				meeting.save()
-				recipients = []
-				for mem in meeting.members.all():
-					e = mem.user.email
-					recipients.append(e)
 				title = 'Meeting Starting: '+meeting.title
 				message = 'The meeting "'+meeting.title+'" is now open! Please visit http://vitalmeeting.com/meeting/'+meeting.meeting_id+' to join in.'+SIGNATURE
-				send_mail(title, message, SENDER, recipients)
+				send_mail(title, message, SENDER, get_recipients(meeting))
 			if (now - end).total_seconds() >= 0 and meeting.ended is False:
 				meeting.ended = True
 				meeting.save()
@@ -58,4 +61,17 @@ class Command(NoArgsCommand):
 
 				send_mail(title, message, SENDER, recipients)
 
+			if meeting.m_type == 'Interview':
+				q_start = meetingtz.localize(q_start)
+				q_end = meetingtz.localize(q_end)
+
+				if meeting.q_started is False and (now-q_start).total_seconds() >= 0:
+					meeting.q_started = True
+					meeting.save()
+					title = 'Ask a Question: '+meeting.title
+					message = 'The question period for "'+meeting.title+'" has started! Please visit http://vitalmeeting.com/meeting/'+meeting.meeting_id+' to ask a question.'+SIGNATURE
+					send_mail(title, message, SENDER, get_recipients(meeting))
+				if meeting.q_ended is False and (now-q_end).total_seconds() >= 0:
+					meeting.q_ended = True
+					meeting.save()
 

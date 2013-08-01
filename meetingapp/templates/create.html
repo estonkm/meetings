@@ -76,9 +76,15 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label" for="">Meeting Type</label>
+			<label class="control-label" for="">Meeting Privacy</label>
 			<div class="controls">
 				{{ form.status }} {% if form.status.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="">Interview?</label>
+			<div class="controls">
+				{{ form.interview }} {% if form.interview.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
 			</div>
 		</div>
 		<div class="control-group">

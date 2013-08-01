@@ -19,6 +19,14 @@ img.addrbook {
     margin-top: 5px;
 }
 
+.scrollbox {
+    height: 350px;
+    width: inherit;
+    margin-left: 30px;
+    overflow: scroll;
+    white-space: nowrap !important;
+}
+
 /* remove row lines */
 /*.table th, .table td { 
      border-top: none; 

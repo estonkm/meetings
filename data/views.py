@@ -50,6 +50,9 @@ def send_email_invite(meeting, user, recipients):
 		ai_details = ''
 		if items:
 			ai_details += 'Agenda Items:\n'
+		if meeting.m_type=="Interview":
+			if meeting.invitee in recipients:
+				recipients.remove(meeting.invitee)
 		for i in range(len(items)):
 			ai_details += str(i+1)+'. '+ items[i].name + '\n'
 		message = ("You've been invited to attend " + user.first_name + " " + user.last_name + "'s online meeting" + org_details +
@@ -141,6 +144,71 @@ def index(request):
 
 	return render_to_response('index.html', context)
 
+def setinterview(request):
+	context = {}
+	context.update(csrf(request))
+	form = InterviewForm()
+	context['user'] = request.user
+
+	if not request.user.is_authenticated() and not 'account' in request.session:
+		return HttpResponseRedirect('/')
+
+	if not 'account' in request.session:
+		a = Account.objects.get(user=request.user)
+	else:
+		a = request.session['account']
+
+	context['orgs'] = a.organizations.all()
+
+	m = Meeting.objects.filter(meeting_id__exact=request.session['meeting_created'])
+	if m:
+		m = m[0]
+	else:
+		return HttpResponseRedirect('/')
+
+	if request.method == 'POST':
+		form = InterviewForm(request.POST)
+		if form.is_valid():
+			cd = form.cleaned_data
+
+			enteredtimestart = datetime.combine(cd['startdate'], cd['starttime'])
+			enteredtimeend = datetime.combine(cd['enddate'], cd['endtime'])
+
+			if (enteredtimestart-enteredtimeend).total_seconds() > 0:
+				context['time_mismatch'] = True
+				context['form'] = form
+				return render_to_response('setinterview.html', context)
+
+			m.invitee = cd['email']
+			m.invited = cd['email'] + ','
+			m.q_start = enteredtimestart
+			m.q_end = enteredtimeend
+			if cd['agreed'] == 'Yes':
+				m.accepted = True
+				m.agreed_yet = True
+			else:
+				m.agreed_yet = False
+				host = m.hosts.all()[0]
+				message = (host.user.first_name+' '+host.user.last_name+
+					' would like you to be the subject in the interview "'+m.title+'".\n\n'+
+					'The description is: '+m.desc+'\n\n'+
+					'Please go to http://vitalmeeting.com/meeting/'+m.meeting_id+' to see the details, and to accept or'+
+					' reject this request.'+SIGNATURE)
+				title = "Interview Invite: "+m.title
+				send_mail(title, message, SENDER, [m.invitee])
+			m.save()
+
+			return HttpResponseRedirect('../attachorg', context)
+		else:
+			errors = {}
+			context['errors'] = errors
+
+	context['form'] = form
+
+	return render_to_response('setinterview.html', context)
+
+
+
 def create(request):
 	context = {}
 	context.update(csrf(request))
@@ -171,7 +239,6 @@ def create(request):
 				fi = True
 				if s:
 					fi = False
-				print fi
 
 				random.seed()
 
@@ -204,9 +271,12 @@ def create(request):
 					context['form'] = form
 					return render_to_response('create.html', context)
 
+				# check if question period started yet--report error
+
 				m = Meeting(startdate=cd['startdate'], starttime=cd['starttime'], enddate=cd['enddate'],
 					endtime=cd['endtime'], title=cd['title'], desc=cd['desc'], private=s, meeting_id=meeting_no, 
-					started=already_started, ended=already_ended, timezone=cd['timezone'], friend_invites=fi)
+					started=already_started, ended=already_ended, timezone=cd['timezone'], m_type=cd['interview'], 
+					q_started=False, q_ended=False, friend_invites=fi)
 				m.save()
 				m.hosts.add(a)
 				m.members.add(a)
@@ -231,7 +301,10 @@ def create(request):
 				request.session['meeting_created'] = meeting_no
 				request.session.modified=True
 
-				return HttpResponseRedirect('../attachorg/')
+				if m.m_type == 'Interview':
+					return HttpResponseRedirect('../setinterview/')
+				else:
+					return HttpResponseRedirect('../attachorg/')
 			else:
 				errors = {}
 				context['errors'] = errors
@@ -338,6 +411,9 @@ def invite(request):
 			# just copied code over to "handle_addr_book": if something breaks,
 			# add it back
 			recipients += handle_addr_book(a, meeting, added, remember)
+
+		if (meeting.m_type == 'Interview' and meeting.accepted):
+			invite_later = True
 
 		if recipients and not invite_later:
 			send_email_invite(meeting, a.user, recipients)
@@ -704,6 +780,8 @@ def meeting(request):
 	context['notifications_modified'] = False
 	context['canmod'] = False
 
+	host = meeting.hosts.all()[0]
+
 	try:
 		meetingtz = timezone(meeting.timezone)
 	except:
@@ -727,6 +805,8 @@ def meeting(request):
 		#if Account.objects.get(user=request.user) not in meeting.members.all():
 			#return HttpResponseRedirect('/')
 
+	viewer = None
+
 	if request.user.is_authenticated():
 		viewer = Account.objects.get(user=request.user)
 		if request.user.email in meeting.invited:
@@ -747,189 +827,378 @@ def meeting(request):
 			context['currently_receiving'] = True 
 		else:
 			context['currently_receiving'] = False
+
+	question = None
 			
+	if meeting.m_type == 'Interview': 
+		question_period = (meeting.q_started and not meeting.q_ended)
+		if question_period:
+			context['question_period'] = True
 
-	if request.method=='POST':
-		# if context['access'] == False:
-		if 'login' in request.POST:
-			user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
-			if user is None:
-				# set form errors
-				context['login_errors'] = True
-			else:
-				a = Account.objects.filter(user=user)
-				if a:
-					if not a[0].is_verified:
-						context['not_verified'] = True
-					else:
-						auth_login(request, user)
-						context['user'] = request.user
-						if (request.user.email not in meeting.invited) and meeting.private:
-							return HttpResponseRedirect('/')
-						else:
-							context['access'] = True
-							context['not_authenticated'] = False
-		elif (not meeting.started or meeting.ended) and (request.user != meeting.hosts.all()[0].user):
-			context['closed_error'] = True
+			if request.user.is_authenticated():
+				context['can_ask'] = True
+				if (viewer.user.email == meeting.invitee) or (viewer == host):
+					context['can_ask'] = False
+				if not meeting.accepted:
+					context['can_ask'] = False
+					context['question_period'] = False
+				context['is_invitee'] = False
+				if (viewer.user.email == meeting.invitee):
+					context['is_invitee'] = True
+
+				context['asked'] = False
+				for q in meeting.questions.all():
+					if viewer in q.asker.all():
+						context['asked'] = True
+						context['question'] = q
+						question = q
+
+		meeting.q_started = True
+		meeting.q_ended = False
+		meeting.save()
+		if meeting.started and not meeting.ended:
+			context['active_period'] = True
 		else:
-			if 'get_emails' in request.POST and viewer:
-				viewer.receive_emails.add(meeting)
-				viewer.save()
-				context['receiving'] = True
-				context['notifications_modified'] = True
-				context['currently_receiving'] = True
-			if 'stop_emails' in request.POST and viewer:
-				if meeting in viewer.receive_emails.all():
-					viewer.receive_emails.remove(meeting)
-					viewer.save()
-				context['notifications_modified'] = True
-				context['receiving'] = False
-				context['currently_receiving'] = False
+			context['active_period'] = False
 
-			if 'send_pending' in request.POST and viewer:
-				if viewer == meeting.hosts.all()[0]:
-					recipients = []
-					emails = meeting.pending.split(',')
-					for e in emails:
-						if '@' in e:
-							recipients.append(e)
+		invalid_time = (not meeting.started or meeting.ended) and (not meeting.q_started or meeting.q_ended)
+
+		if request.method=='POST':
+			# if context['access'] == False:
+			if 'login' in request.POST:
+				user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
+				if user is None:
+					# set form errors
+					context['login_errors'] = True
+				else:
+					a = Account.objects.filter(user=user)
+					if a:
+						if not a[0].is_verified:
+							context['not_verified'] = True
+						else:
+							auth_login(request, user)
+							context['user'] = request.user
+							if (request.user.email not in meeting.invited) and meeting.private:
+								return HttpResponseRedirect('/')
+							else:
+								context['access'] = True
+								context['not_authenticated'] = False
+								return HttpResponseRedirect('../meeting/'+meeting.meeting_id)
+			elif invalid_time and (request.user != meeting.hosts.all()[0].user):
+				context['closed_error'] = True
+			else:
+				if 'get_emails' in request.POST and viewer:
+					viewer.receive_emails.add(meeting)
+					viewer.save()
+					context['receiving'] = True
+					context['notifications_modified'] = True
+					context['currently_receiving'] = True
+				if 'stop_emails' in request.POST and viewer:
+					if meeting in viewer.receive_emails.all():
+						viewer.receive_emails.remove(meeting)
+						viewer.save()
+					context['notifications_modified'] = True
+					context['receiving'] = False
+					context['currently_receiving'] = False
+
+				if 'send_pending' in request.POST and viewer:
+					if viewer == meeting.hosts.all()[0]:
+						recipients = []
+						emails = meeting.pending.split(',')
+						for e in emails:
+							if '@' in e:
+								recipients.append(e)
+						if recipients:
+							send_email_invite(meeting, viewer.user, recipients)
+						meeting.pending = ''
+						meeting.save()
+						context['just_sent'] = True
+
+				if request.POST.get('addr_contacts') and viewer:
+					added = request.POST.get('addr_contacts')
+					recipients = handle_addr_book(viewer, meeting, added, False)
+
 					if recipients:
 						send_email_invite(meeting, viewer.user, recipients)
-					meeting.pending = ''
-					meeting.save()
-					context['just_sent'] = True
 
-			if request.POST.get('addr_contacts') and viewer:
-				added = request.POST.get('addr_contacts')
-				recipients = handle_addr_book(viewer, meeting, added, False)
+				if viewer.user.email == meeting.invitee:
+					if ('accept' in request.POST or 'decline' in request.POST) and not meeting.agreed_yet:
+						title = 'Invitee Response: '+meeting.title
+						message = viewer.user.first_name+' '+viewer.user.last_name+' has '
+						if 'accept' in request.POST:
+							meeting.accepted = True
+							meeting.agreed_yet = True
+							response_message = 'Thanks! You have accepted this meeting invitation.'
+							message += 'accepted '
 
-				if recipients:
-					send_email_invite(meeting, viewer.user, recipients)
+							# send held emails
+							if meeting.pending:
+								emails = meeting.pending.split(',')
+								for e in emails:
+									if '@' in e:
+										recipients.append(e)
+								if recipients:
+									send_email_invite(meeting, viewer.user, recipients)
+								meeting.pending = ''
+
+						elif 'decline' in request.POST:
+							meeting.accepted = False
+							meeting.agreed_yet = True
+							response_message = 'Thanks! You have declined this meeting invitation.'
+							message += 'declined '
+
+						meeting.save()
+
+						# notify host of response
+						response_message += ' The host will be notified of your decision.'
+						message += 'your invitation to be interviewed.'+SIGNATURE
+						context['response_message'] = response_message
+						context['show_response_options'] = False
+
+						send_mail(title, message, SENDER, [host.user.email])
+				if question_period:
+					if 'q_asked' in request.POST:
+						q = Question(title=request.POST['title'],
+							body=request.POST['body'], timestamp=dtnow, selected=False)
+						q.save()
+						q.asker.add(viewer)
+						q.save()
+						meeting.questions.add(q)
+						meeting.save()
+						return HttpResponseRedirect('../meeting/'+meeting.meeting_id)
+					elif 'q_edited' in request.POST:
+						if question:
+							question.title = request.POST['title']
+							question.body = request.POST['body']
+							question.save()
+				if 'change_answer' in request.POST:
+					q = Question.objects.get(id__exact=request.POST.get('q_id'))
+					q.answer = request.POST.get('answertext')
+					q.save()
+				if 'response' in request.POST:
+					q = Question.objects.get(id__exact=request.POST.get('q_id'))
+					q.answer = request.POST.get('response')
+					q.save()
+
+				if 'settings' in request.POST:
+					return HttpResponseRedirect('../settings/')
+
+				if 'members' in request.POST:
+					return HttpResponseRedirect('../managemembers/')
+				if 'qgroup' in request.POST:
+					q = Question.objects.get(id__exact=request.POST.get('qgroup'))
+					q.selected = True
+					q.save()
 
 
-			if request.POST.get('motionname'):
-				motiontext = request.POST.get('motiontext')
-				motionname = request.POST.get('motionname')
-				if motionname:
-					motion = Motion(user=Account.objects.get(user=request.user), timestamp=dtnow, 
-						name=motionname, desc=motiontext, likes=0, dislikes=0, pastname=motionname,
-						pastdesc=motiontext, modded=False)
-					motion.save()
+		if viewer:
+			if meeting.accepted is not True and meeting.accepted is not False:
+				context['not_responded'] = True
+				if viewer.user.email == meeting.invitee:
+					context['show_response_options'] = True
 
-					ai_id = request.POST.get('agendaid')
-					modified_ai = AgendaItem.objects.get(id__exact=ai_id)
-					modified_ai.motions.add(motion)
-					modified_ai.save()
+		q_unsent = []
+		q_sent = []
 
-					recipients = []
-					for mem in meeting.members.all():
-						if meeting in mem.receive_emails.all():
-							e = mem.user.email
-							recipients.append(e)
+		for q in meeting.questions.all():
+			if q.selected:
+				q_sent.append(q)
+			else:
+				q_unsent.append(q)
 
-					message = 'A new motion has been added by '+request.user.first_name+' '+request.user.last_name+' to the following agenda item: "'+modified_ai.name+'". \n\nThe motion title is: '+motion.name+'.\n\n You can visit the meeting page and view this motion at http://vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
-					title = meeting.title + ': New Motion Added'
-					send_mail(title, message, SENDER, recipients)
+		context['m'] = meeting
+		context['q_unsent'] = q_unsent
+		context['q_sent'] = q_sent
+		context['user'] = request.user
+		context['host'] = host
 
-			if request.POST.get('comment'):
-				comment = request.POST.get('comment')
-				if comment:
-					comment = Comment(user=Account.objects.get(user=request.user), timestamp=dtnow,
-						text=comment, pasttext=comment, modded=False)
-					comment.save()
+		request.session['meeting_no'] = path
+		request.session.modified=True
 
-					motion_id = request.POST.get('motionid')
-					modified_motion = Motion.objects.get(id__exact=motion_id)
-					modified_motion.comments.add(comment)
-					modified_motion.save()
+		return render_to_response('interview_page.html', context)
+	else:
+		if request.method=='POST':
+			# if context['access'] == False:
+			if 'login' in request.POST:
+				user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
+				if user is None:
+					# set form errors
+					context['login_errors'] = True
+				else:
+					a = Account.objects.filter(user=user)
+					if a:
+						if not a[0].is_verified:
+							context['not_verified'] = True
+						else:
+							auth_login(request, user)
+							context['user'] = request.user
+							if (request.user.email not in meeting.invited) and meeting.private:
+								return HttpResponseRedirect('/')
+							else:
+								context['access'] = True
+								context['not_authenticated'] = False
+			elif (not meeting.started or meeting.ended) and (request.user != meeting.hosts.all()[0].user):
+				context['closed_error'] = True
+			else:
+				if 'get_emails' in request.POST and viewer:
+					viewer.receive_emails.add(meeting)
+					viewer.save()
+					context['receiving'] = True
+					context['notifications_modified'] = True
+					context['currently_receiving'] = True
+				if 'stop_emails' in request.POST and viewer:
+					if meeting in viewer.receive_emails.all():
+						viewer.receive_emails.remove(meeting)
+						viewer.save()
+					context['notifications_modified'] = True
+					context['receiving'] = False
+					context['currently_receiving'] = False
 
-					recipients = []
-					if meeting in meeting.hosts.all()[0].receive_emails.all():
-						recipients.append(meeting.hosts.all()[0].user.email)
-					if meeting in modified_motion.user.receive_emails.all():
-						recipients.append(modified_motion.user.user.email)
+				if 'send_pending' in request.POST and viewer:
+					if viewer == meeting.hosts.all()[0]:
+						recipients = []
+						emails = meeting.pending.split(',')
+						for e in emails:
+							if '@' in e:
+								recipients.append(e)
+						if recipients:
+							send_email_invite(meeting, viewer.user, recipients)
+						meeting.pending = ''
+						meeting.save()
+						context['just_sent'] = True
 
-					message = 'A new comment has been added by '+request.user.first_name+' '+request.user.last_name+' to the following motion: "'+modified_motion.name+'". \n\nThe comment reads: "'+comment.text+'".\n\nYou can visit the meeting page and view this comment at http://vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
-					title = meeting.title + ': New Comment Added'
-					if modified_motion.user in meeting.members.all():
+				if request.POST.get('addr_contacts') and viewer:
+					added = request.POST.get('addr_contacts')
+					recipients = handle_addr_book(viewer, meeting, added, False)
+
+					if recipients:
+						send_email_invite(meeting, viewer.user, recipients)
+
+
+				if request.POST.get('motionname'):
+					motiontext = request.POST.get('motiontext')
+					motionname = request.POST.get('motionname')
+					if motionname:
+						motion = Motion(user=Account.objects.get(user=request.user), timestamp=dtnow, 
+							name=motionname, desc=motiontext, likes=0, dislikes=0, pastname=motionname,
+							pastdesc=motiontext, modded=False)
+						motion.save()
+
+						ai_id = request.POST.get('agendaid')
+						modified_ai = AgendaItem.objects.get(id__exact=ai_id)
+						modified_ai.motions.add(motion)
+						modified_ai.save()
+
+						recipients = []
+						for mem in meeting.members.all():
+							if meeting in mem.receive_emails.all():
+								e = mem.user.email
+								recipients.append(e)
+
+						message = 'A new motion has been added by '+request.user.first_name+' '+request.user.last_name+' to the following agenda item: "'+modified_ai.name+'". \n\nThe motion title is: '+motion.name+'.\n\n You can visit the meeting page and view this motion at http://vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
+						title = meeting.title + ': New Motion Added'
 						send_mail(title, message, SENDER, recipients)
 
-			if 'settings' in request.POST:
-				return HttpResponseRedirect('../settings/')
+				if request.POST.get('comment'):
+					comment = request.POST.get('comment')
+					if comment:
+						comment = Comment(user=Account.objects.get(user=request.user), timestamp=dtnow,
+							text=comment, pasttext=comment, modded=False)
+						comment.save()
 
-			if 'members' in request.POST:
-				return HttpResponseRedirect('../managemembers/')
+						motion_id = request.POST.get('motionid')
+						modified_motion = Motion.objects.get(id__exact=motion_id)
+						modified_motion.comments.add(comment)
+						modified_motion.save()
 
-			account = Account.objects.filter(user=request.user)
-			if 'remove_motion' in request.POST:
-				motion_id = request.POST.get('remove_motion')
-				motion = Motion.objects.get(id__exact=motion_id)
-				if account and account[0] == motion.user:
-					motion.name = 'This motion has been removed by its author.'
-				elif account and (account[0] in meeting.moderators.all() or account[0] == meeting.hosts.all()[0]):
-					former_name = motion.name
-					motion.name = 'This motion has been removed by a moderator.'
-					recipient = [motion.user.user.email]
-					message = 'Your motion "'+former_name+'" in meeting "'+meeting.title+'" has been removed by a moderator.\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
-					if motion.user in meeting.members.all():
-						send_mail("Motion removed", message, SENDER, recipient)
-				motion.desc = ''
-				motion.modded = True
-				motion.save()
+						recipients = []
+						if meeting in meeting.hosts.all()[0].receive_emails.all():
+							recipients.append(meeting.hosts.all()[0].user.email)
+						if meeting in modified_motion.user.receive_emails.all():
+							recipients.append(modified_motion.user.user.email)
 
-			if 'remove_comment' in request.POST:
-				ids = request.POST.get('remove_comment').split(" ")
-				comment_id = ids[0]
-				motion_id = ids[1]
-				comment = Comment.objects.get(id__exact=comment_id)
-				if account and account[0] == comment.user:
-					comment.text = 'This comment has been removed by its author.'
-				elif account and (account[0] in meeting.moderators.all() or account[0] == meeting.hosts.all()[0]):
-					comment.text = 'This comment has been removed by a moderator.'
-					recipient = [comment.user.user.email]
+						message = 'A new comment has been added by '+request.user.first_name+' '+request.user.last_name+' to the following motion: "'+modified_motion.name+'". \n\nThe comment reads: "'+comment.text+'".\n\nYou can visit the meeting page and view this comment at http://vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
+						title = meeting.title + ': New Comment Added'
+						if modified_motion.user in meeting.members.all():
+							send_mail(title, message, SENDER, recipients)
+
+				if 'settings' in request.POST:
+					return HttpResponseRedirect('../settings/')
+
+				if 'members' in request.POST:
+					return HttpResponseRedirect('../managemembers/')
+
+				account = Account.objects.filter(user=request.user)
+				if 'remove_motion' in request.POST:
+					motion_id = request.POST.get('remove_motion')
 					motion = Motion.objects.get(id__exact=motion_id)
-					message = 'Your comment on motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
-					send_mail("Comment removed", message, SENDER, recipient)
+					if account and account[0] == motion.user:
+						motion.name = 'This motion has been removed by its author.'
+					elif account and (account[0] in meeting.moderators.all() or account[0] == meeting.hosts.all()[0]):
+						former_name = motion.name
+						motion.name = 'This motion has been removed by a moderator.'
+						recipient = [motion.user.user.email]
+						message = 'Your motion "'+former_name+'" in meeting "'+meeting.title+'" has been removed by a moderator.\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
+						if motion.user in meeting.members.all():
+							send_mail("Motion removed", message, SENDER, recipient)
+					motion.desc = ''
+					motion.modded = True
+					motion.save()
 
-				comment.modded = True
-				comment.save()
+				if 'remove_comment' in request.POST:
+					ids = request.POST.get('remove_comment').split(" ")
+					comment_id = ids[0]
+					motion_id = ids[1]
+					comment = Comment.objects.get(id__exact=comment_id)
+					if account and account[0] == comment.user:
+						comment.text = 'This comment has been removed by its author.'
+					elif account and (account[0] in meeting.moderators.all() or account[0] == meeting.hosts.all()[0]):
+						comment.text = 'This comment has been removed by a moderator.'
+						recipient = [comment.user.user.email]
+						motion = Motion.objects.get(id__exact=motion_id)
+						message = 'Your comment on motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
+						send_mail("Comment removed", message, SENDER, recipient)
 
-			if 'change_motion' in request.POST:
-				m_id = request.POST.get('m_id')
-				text = request.POST.get('motiontext')
-				title = request.POST.get('m_title')
-				motion = Motion.objects.get(id__exact=m_id)
-				motion.name = title
-				motion.desc = text
-				motion.save()
+					comment.modded = True
+					comment.save()
 
-			if 'change_ai' in request.POST:
-				ai_id = request.POST.get('ai_id')
-				name = request.POST.get('name')
-				ai = AgendaItem.objects.get(id__exact=ai_id)
-				ai.name = name
-				ai.save()
+				if 'change_motion' in request.POST:
+					m_id = request.POST.get('m_id')
+					text = request.POST.get('motiontext')
+					title = request.POST.get('m_title')
+					motion = Motion.objects.get(id__exact=m_id)
+					motion.name = title
+					motion.desc = text
+					motion.save()
 
-			if 'change_comment' in request.POST:
-				c_id = request.POST.get('c_id')
-				text = request.POST.get('commenttext')
-				comment = Comment.objects.get(id__exact=c_id)
-				comment.text = text
-				comment.save()
+				if 'change_ai' in request.POST:
+					ai_id = request.POST.get('ai_id')
+					name = request.POST.get('name')
+					ai = AgendaItem.objects.get(id__exact=ai_id)
+					ai.name = name
+					ai.save()
 
-	request.session['meeting_no'] = path
-	request.session.modified=True
+				if 'change_comment' in request.POST:
+					c_id = request.POST.get('c_id')
+					text = request.POST.get('commenttext')
+					comment = Comment.objects.get(id__exact=c_id)
+					comment.text = text
+					comment.save()
 
-	context['m'] = meeting
-	context['host'] = meeting.hosts.all()[0]
-	agenda_items = meeting.agenda_items.all().order_by('id')
-	context['agenda_items'] = agenda_items
+		request.session['meeting_no'] = path
+		request.session.modified=True
 
-	org = meeting.organizations.all()
-	if org:
-		context['org'] = org[0]
+		context['m'] = meeting
+		context['host'] = meeting.hosts.all()[0]
 
-	return render_to_response('meeting_page.html', context)
+		org = meeting.organizations.all()
+		if org:
+			context['org'] = org[0]
+
+
+		agenda_items = meeting.agenda_items.all().order_by('id')
+		context['agenda_items'] = agenda_items
+		return render_to_response('meeting_page.html', context)
 
 def settings(request):
 	context = {}

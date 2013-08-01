@@ -79,6 +79,26 @@ class Meeting(models.Model):
 	keywords = models.CharField(max_length=200, null=True, blank=True)
 	friend_invites = models.NullBooleanField(null=True)
 	pending = models.TextField(null=True, blank=True)
+	# things below were added to accommodate interview-style meetings 
+	invitees = models.ManyToManyField('Account', related_name="a_invitees", null=True, blank=True)
+	invitee = models.EmailField(null=True, blank=True)
+	accepted = models.NullBooleanField(null=True)
+	agreed_yet = models.NullBooleanField(null=True)
+	m_type = models.CharField(max_length=10, null=True, blank=True)
+	questions = models.ManyToManyField('Question', related_name="q", null=True, blank=True)
+	q_start = models.DateTimeField(null=True)
+	q_end = models.DateTimeField(null=True)
+	q_started = models.NullBooleanField(null=True)
+	q_ended = models.NullBooleanField(null=True)
+
+# whole class added to accommodate interview-style meetings
+class Question(models.Model):
+	asker = models.ManyToManyField('account', related_name='a_asker', null=True, blank=True)
+	timestamp = models.DateTimeField(null=True, blank=True)
+	title = models.CharField(max_length=100, null=True, blank=True)
+	body = models.TextField()
+	answer = models.TextField(null=True)
+	selected = models.NullBooleanField(null=True)
 
 class AgendaItem(models.Model):
 	class Meta:

@@ -7,6 +7,7 @@ import html5.forms.widgets as html5_widgets
 from buildtimezones import fillTZInfo
 
 STATUS=[('Public', 'Public'), ('Private', 'Private')]
+TYPES=[('Normal', 'Normal Meeting'), ('Interview', 'Interview')]
 FI=[('Yes', 'Yes'), ('No', 'No')]
 TITLES = [('Mr.', 'Mr.'), ('Mrs.', 'Mrs.'), ('Ms.', 'Ms.'), ('Dr.', 'Dr.'), ('None', 'None')]
 # TIMEZONES=[('UTC/GMT-12:00', 'UTC/GMT-12:00'), ('UTC/GMT-11:00', 'UTC/GMT-11:00'),
@@ -31,6 +32,14 @@ class UserForm(forms.Form):
 	retype = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'password'}))
 	phone = forms.CharField(required=False)
 
+class InterviewForm(forms.Form):
+	email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'email'}))
+	agreed = forms.ChoiceField(choices=FI, widget=forms.RadioSelect())
+	startdate = forms.DateField()
+	starttime = forms.TimeField(widget=SelectTimeWidget(twelve_hr=True, use_seconds=False))
+	enddate = forms.DateField()
+	endtime = forms.TimeField(widget=SelectTimeWidget(twelve_hr=True, use_seconds=False))
+
 class ContactForm(forms.Form):
 	title = forms.ChoiceField(choices=TITLES, widget=forms.Select(attrs={'style':'width: 70px !important;'}), required=False)
 	first_name = forms.CharField(required=False)
@@ -49,6 +58,7 @@ class MeetingForm(forms.Form):
 	endtime = forms.TimeField(widget=SelectTimeWidget(twelve_hr=True, use_seconds=False))
 	timezone = forms.ChoiceField(choices=TIMEZONES, widget=forms.Select(attrs={'style':'height: 30px !important;'}))
 	status = forms.ChoiceField(choices=STATUS, widget=forms.RadioSelect())
+	interview = forms.ChoiceField(choices=TYPES, widget=forms.RadioSelect())
 
 class LoginForm(forms.Form):
 	username = forms.CharField()

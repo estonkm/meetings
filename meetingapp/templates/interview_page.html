@@ -1,0 +1,474 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% load static %}
+
+{% if access %}
+<!--     <header class="subhead" id="overview">
+        <div class="container">
+            <div class="info">
+                <h2>{{ m.title }}</h2>
+                <p>{{ m.desc }}</p>
+            </div>
+            <div class="time">
+                <div class="row">
+                    <div class="endtime">
+                        <div class="timedisp">{{ m.endtime }}</div>
+                        <div class="datedisp" style="padding-top: 3px;">{{ m.timezone }}<br> {{ m.enddate }}</div>
+                    </div>
+                    <div class="timelabel">Ends:</div>
+                    <div class="starttime">
+                        <div class="timedisp">{{ m.starttime }}</div>
+                        <div class="datedisp" style="padding-top: 3px;">{{ m.timezone }}<br> {{ m.startdate }}</div>
+                    </div>
+                    <div class="timelabel">Starts:</div>
+                </div>
+            </div>
+        </div>
+    </header> -->
+
+<div class="container">
+    <div class="row">
+        <div class="span8">
+            <div class="meetingHead">
+                <h2 style="margin-bottom:20px !important;">{{m.title}}</h2>
+                <div class="desc">
+                    {{m.desc}}
+                </div>
+                <div class="info">
+                    <text style="font-weight: bold !important;">Start: </text>
+                    <text style="margin-left: 5px;">{{m.starttime}} {{m.startdate}}</text><br>
+                    <text style="font-weight: bold !important;">End: </text>
+                    <text style="margin-left: 5px;">{{m.endtime}} {{m.enddate}}</text><br>
+                    <text style="font-weight: bold !important;">Question Period Start: </text>
+                    <text style="margin-left: 5px;">{{m.q_start}}</text><br>
+                    <text style="font-weight: bold !important;">Question Period End: </text>
+                    <text style="margin-left: 5px;">{{m.q_end}}</text><br>
+                    <text style="font-weight: bold !important;">Timezone: </text>
+		    <text style="margin-left: 5px;">{{m.timezone}}</text><br> 
+		    {% if user == host.user %}
+		    	<form method="post" style="margin-top: 20px !important;">{% csrf_token %}
+                            <button class="btn btn-primary alter" type="submit" name="settings" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Settings</button>
+                			<button class="btn alter" type="submit" name="members" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Manage Members</button>
+    			</form>
+                {% if active_period %}
+                    <a data-toggle="modal" href="#sendQModal" class="btn btn-warning">Send Out a New Question</a>
+                {% endif %}
+			{% else %}	
+			{% if m.friend_invites %}
+				<br>
+				<a class="cs_import btn" style="margin-top: 2px !important;">Invite friends from Address Book</a>
+				<img src="{% static "google.png" %}" class="addrbook">
+				<img src="{% static "apple.png" %}" class="addrbook">
+				<img src="{% static "yahoo.png" %}" class="addrbook">
+				<img src="{% static "aol.png" %}" class="addrbook">
+				<img src="{% static "msn.png" %}" class="addrbook">
+				<div class="row collapse out" id="collapse1" style="margin-left: 0px !important;">
+					<form method="post" id="add_addr_book" style="margin:5 px; padding: 0px;">{% csrf_token %}
+						<textarea name="addr_contacts" style="width:450px;height:82px" id="contact_list"></textarea><br>
+						<button type="submit" class="btn btn-mini btn-primary">Invite to meeting</button>
+					</form>
+				</div>
+				{% endif %}
+			{% endif %}
+            {% if question_period %}
+                <h4>Questions are now being accepted!</h4>
+                {% if can_ask %}
+                        {% if asked %}
+                        <a data-toggle="modal" href="#editQ" class="btn btn-warning">Edit Your Question</a>
+                        {% else %}
+                        <a data-toggle="modal" href="#askQ" class="btn btn-warning">Ask a Question</a>
+                        {% endif %}
+                {% endif %}
+            {% endif %}
+			{% if user.is_authenticated %}
+			<form method="post" style="margin-top: 20px !important;">{% csrf_token %}
+                <i class="icon-envelope"></i>
+				{% if currently_receiving %} You are currently receiving email notifications from this meeting. <br> Stop receiving notifications? 
+				<button class="btn btn-mini" name="stop_emails" id="stop_emails">Stop</button>
+				{% else %} You are currently not receiving email notifications from this meeting. <br> Start receiving notifications?
+				<button class="btn btn-mini" name="get_emails" id="get_emails">Start</button>
+				{% endif %}
+				{% if notifications_modified %}
+					<br><text style="font-style: italic;">
+					{% if receiving %}
+					Thanks! You will receive all notifications from this meeting.
+					{% else %}
+					Thanks! You won't receive any notifications from this meeting.
+					{% endif %}</text>
+				{% endif %}
+			</form>
+            {% if user == host.user %}
+                {% if pending %}
+                <form method="post" style="margin-top: 20px !important;">{% csrf_token %}
+                    <i class="icon-envelope"></i> You have unsent email invites. Send these now? 
+                    <button class="btn btn-mini" name="send_pending">Send</button>
+                    {% if just_sent %}
+                    <br>
+                    Thanks! The emails were sent.
+                    {% endif %}
+                </form>
+                {% endif %}
+            {% endif %}
+
+            {% else %}
+            <br>
+            <a href="#signinModal" data-toggle="modal" class="btn btn-primary">Invited to be interviewed? Click here to log in or sign up.</a>
+            <br><br>
+			{% endif %}
+            {% if is_invitee %}
+                {% if show_response_options %}
+                    <form method="post" style="margin-top: 20px !important;">{% csrf_token %}
+                        <h4 style="color: red;">You haven't yet responsed to this interview's invitation. Please choose an option:</h4>
+                        <button class="btn btn-primary" name="accept">Accept</button>
+                        <button class="btn btn-danger" name="decline">Decline</button>
+                    </form>
+                {% endif %}
+                {% if response_message %}
+                    {{response_message}}
+                {% endif %}
+            {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+            <div class="organizerHead">
+                <h3 style="text-align: center; margin-bottom:5px !important;">{{org.name}}</h3>
+                <div style="text-align: center; vertical-align: middle;">
+                    {% if org.image %}<img src='{{org.image.url}}' />{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8">
+            <p class="lead">Questions and Answers</p>
+            {% for q in q_sent %}
+            <div class="row ai_row">
+                <div class="row ai_title">
+                    <text class="agenda">{{q.title}}{% if q.answer %}
+                    {% else %}
+                    <text style="color:red;">(Unanswered Question)</text>
+                    {% endif %}</text><br>
+                    {{q.body}}
+                </div>
+                <div class="row" style="margin-bottom: 20px !important">
+                    <div class="indented">
+                        {% if q.answer %}
+                            <text><span id="old_ans">{{q.answer}}</span></text>
+                            {% if is_invitee %}
+                                <button class="btn btn-mini" name="editanswer" id="{{q.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
+                            {% endif %}
+                        {% else %}
+                            {% if is_invitee %}
+                                <form method="post">{% csrf_token %}
+                                    <input type="hidden" name="q_id" value="{{q.id}}">
+                                    <textarea rows="4" style="width: 400px;" name="response" placeholder="Your response?"></textarea><br>
+                                    <button type="submit" class="btn btn-primary btn-mini" name="submit_response">Respond</button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="span4">
+            {% if org %}
+            <div class="userinfo" style="border: none !important; text-align: center;">
+                <h5>About This Organization:</h5>
+                <p>{{org.desc}}</p>
+                <h5>Contact:</h5>
+                <p>{{org.contact}}</p>
+            </div>
+            {% endif %}
+            <div class="userinfo sidebox" style="height: 75px !important;">
+                <i class="icon-user"></i>
+                <text class="lead" style="font-size: 15px !important;">Host (1):</text><br>
+                {% for member in m.hosts.all %}
+                <text>{{member.user.last_name}}, {{member.user.first_name}} <<em>{{member.user.email}}</em>></text><br>
+                {% endfor %}
+            </div>
+            <div class="userinfo sidebox" style="height: 350px !important;">
+                <i class="icon-user"></i>
+                <text class="lead" style="font-size: 15px !important;">Members ({{m.members.all.count}}):</text><br>
+                {% for member in m.members.all %}
+                <text>
+                    <a href="#" style="color: black !important;" data-toggle="tooltip" data-trigger="hover focus" name="usertip" title="{{member.user.last_name}}, {{member.user.first_name}}" data-html="true" data-content="<a href='/profile/{{member.page_id}}'>Go to profile page</a>">
+                    {{member.user.last_name}}, {{member.user.first_name}}</a> <<em>{{member.user.email}}</em>>
+                </text><br>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Meeting Closed</h3>
+  </div>
+  <div class="modal-body">
+    <p>This meeting is not currently open. Please consult the start/end times.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
+  </div>
+</div>
+
+<div id="editQ" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <form method="post">{% csrf_token %}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Edit Your Question</h3>
+      </div>
+      <div class="modal-body">
+        <input type="text" name="title" style="width: 450px;" value="{{question.title}}"></input><br>
+        <textarea rows='4' style="width: 450px;" name="body">{{question.body}}</textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" name="q_edited" class="btn btn-primary">Edit</button>
+        <button type="button" data-dismiss="modal" class="btn btn-danger">Cancel</button>
+      </div>
+    </form>
+</div>
+
+<div id="sendQModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <form method="post">{% csrf_token %}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Send a Question</h3>
+      </div>
+      <div class="modal-body">
+        <div class="scrollbox">
+            {% for q in q_unsent %}
+            <div class="row" style="border-bottom: 1px solid #FFF; margin-left: 0px !important;">
+                <div style="float: left; width: 300px; margin-left: 0px !important;">
+                    {{q.title}} 
+                </div>
+                <div style="float:right; width: 50px;">
+                    <input type="radio" name="qgroup" value="{{q.id}}">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" name="q_send" class="btn btn-primary">Send</button>
+        <button type="button" data-dismiss="modal" class="btn btn-danger">Cancel</button>
+      </div>
+    </form>
+</div>
+
+<div id="askQ" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <form method="post">{% csrf_token %}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Ask a Question</h3>
+      </div>
+      <div class="modal-body">
+        <input type="text" style="width: 450px;" name="title" placeholder="Your question here"></input><br>
+        <textarea rows='4' style="width: 450px;" name="body" placeholder="Description, if necessary"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" name="q_asked" class="btn btn-primary">Ask</button>
+        <button type="button" data-dismiss="modal" class="btn btn-danger">Cancel</button>
+      </div>
+    </form>
+</div>
+
+<div class="container">
+    <div id="signinModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Log In</h3>
+      </div>
+      <form class="form-horizontal centered" style="display:inline-block;" method="post">
+          <div class="modal-body"><br>
+            <p>This meeting is public. If you don't have an account, you can sign up 
+             <a href="/signup/">here</a>.<br><br>If you do have an account, please log in below:</p><br>
+                {% csrf_token %}
+                {% if login_errors %}
+                <div class="control-group">
+                    <div class="controls">
+                        <h5 style="color: red;">Invalid login credentials</h5>
+                    </div>
+                </div>
+                {% endif %}
+                {% if not_verified %}
+                <div class="control-group">
+                    <div class="controls">
+                        <h5 style="color: red;">This account has not yet been verified.</h5>
+                    </div>
+                </div>
+                {% endif %} 
+                <input type="hidden" name="submit_request" value="submit_request">
+                <div class="control-group">
+                    <label class="control-label" for="inputEmail">Email</label>
+                    <div class="controls">
+                        <input type="text" name="username" class="login" placeholder="email" autocomplete="off">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputPassword">Password</label>
+                    <div class="controls">
+                        <input type="password" name="password" class="login" placeholder="password" autocomplete="off">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls"><!-- 
+                        <label class="checkbox">
+                            <input type="checkbox"> Remember me
+                        </label> -->
+                    </div>
+                </div>
+          </div>
+          <div class="modal-footer"><!-- 
+            <button type="button" class="btn btn-primary">Login</button>
+            <button type="button" class="btn btn-danger">Cancel</button> -->
+                <button type="submit" name="login" class="btn btn-primary">Login</button>
+                <button type="submit" data-dismiss="modal" class="btn btn-danger">Cancel</button>
+          </div>
+        </form>
+    </div>
+</div>
+
+<script>
+	var csPageOptions = {
+	  domain_key:"RZ7M43JLPAH6JHE45ATN", 
+	  textarea_id:"contact_list",
+	  ignoreMultipleEmails:true,
+	  afterSubmitContacts:function(contacts, source, owner) {
+	  		// var oForm = document.getElementById('add_addr_book');
+	  		// oForm.submit();
+	  		$('#collapse1').collapse('show');
+	  }
+	};
+</script>
+
+<script type="text/javascript" src="https://api.cloudsponge.com/address_books.js"></script>
+
+
+<script>
+$(function() {
+    $(document).ready(function(){ 
+
+        {% if closed_error %}
+        $('#myModal').modal("show");
+        {% endif %}
+
+        {% if not user.is_authenticated %}
+
+        {% endif %}
+
+        {% if login_errors %}
+        $('#signinModal').modal("show");
+        {% endif %}
+
+        {% if not_verified %}
+        $('#signinModal').modal("show");
+        {% endif %}
+
+        $('[name=usertip]').popover({'delay': {show: 0, hide: 1000}});
+
+        oldAnswerHTML = '';
+        $('[name="editanswer"]').click(function(e) {
+            e.preventDefault();
+            parent = $(this).parent();
+            text = parent.find('span[id="old_ans"]').html();
+            answerbodyHTML = "<div class='indented'><form method='post' id='edit_q' style='margin: 0px; padding: 0px;'>{% csrf_token %}<textarea rows='4' cols='50' name='answertext' style='width: 90%; margin-top: 5px !important; margin-bottom: 5px !important;'>"+text+"</textarea><input type='hidden' name='q_id' value='"+$(this).attr('id')+"'><button type='submit' name='change_answer' class='btn btn-mini btn-primary' style='margin-left: 5px !important; margin-right: 5px !important;'>Change</button><button name='cancel' id='m_cancel' class='btn btn-mini btn-danger'>Cancel</button></form></div>";
+
+            oldAnswerHTML = parent.html();
+
+            parent.replaceWith(answerbodyHTML);
+
+        });
+    });
+});
+
+</script>
+
+{% else %}
+
+<div class="container">
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">This Meeting is Private.</h3>
+      </div>
+      <form class="form-horizontal centered" style="display:inline-block;" method="post">
+          <div class="modal-body"><br>
+            <p>If you were invited but don't have an account, you can sign up 
+             <a href="/signup/">here</a>.<br><br>If you do have an account, please log in below:</p><br>
+                {% csrf_token %}
+                {% if login_errors %}
+                <div class="control-group">
+                    <div class="controls">
+                        <h5 style="color: red;">Invalid login credentials</h5>
+                    </div>
+                </div>
+                {% endif %}
+                <input type="hidden" name="submit_request" value="submit_request">
+                <div class="control-group">
+                    <label class="control-label" for="inputEmail">Email</label>
+                    <div class="controls">
+                        <input type="text" name="username" class="login" placeholder="email" autocomplete="off">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputPassword">Password</label>
+                    <div class="controls">
+                        <input type="password" name="password" class="login" placeholder="password" autocomplete="off">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls"><!-- 
+                        <label class="checkbox">
+                            <input type="checkbox"> Remember me
+                        </label> -->
+                    </div>
+                </div>
+          </div>
+          <div class="modal-footer"><!-- 
+            <button type="button" class="btn btn-primary">Login</button>
+            <button type="button" class="btn btn-danger">Cancel</button> -->
+                <button type="submit" name="login" class="btn btn-primary">Login</button>
+                <button type="submit" data-dismiss="modal" class="btn btn-danger">Cancel</button>
+          </div>
+        </form>
+    </div>
+</div>
+
+<div class="container">
+    <div id="vModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="vModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="vModalLabel">This account has not been verified.</h3>
+      </div>
+      <form class="form-horizontal centered" style="display:inline-block;" method="post">
+          <div class="modal-body"><br>
+            <p>This account has not yet been verified--a verification email was sent to you.</p><br>
+          <div class="modal-footer">
+                <a href='/' type="submit" name="login" class="btn btn-primary">Go to home</a>
+          </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+$(document).ready(function() {
+    {% if not_verified %}
+    $('#vModal').modal("show");
+    {% else %}
+    $('#myModal').modal("show");
+    {% endif %}
+});
+
+</script>
+
+{% endif %}
+
+{% endblock %}
+

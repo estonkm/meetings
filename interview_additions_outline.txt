@@ -1,0 +1,81 @@
+# Notes for the addition of the "interview-style" meeting
+# Schedule: outlining Tuesday; coding Wednesday; coding and debugging Thursday; submit Thursday night.
+
+1) Creating a Meeting
+
+option to be "interview type" on meeting form. UPDATE FORM
+
+if checked:
+	redirect to new page (part of "create a meeting" sequence) NEW MEETING SEQUENCE PAGE
+	send invite to an invitee via usual email options WRITE A FUNCTION TO PROCESS ALL OF THIS - TOO ANNOYING TO KEEP REPEATING SAME IDEA
+	option: has invitee already agreed? STORE ANSWER IN CONTEXT; ADD LATER CHECKS IN MEETING CREATION (WHEN SENDING OUT EMAILS); REMOVE "UNSENT EMAILS FROM NEW PAGE"
+		-if yes: send email invites as normal; set "accepted" to true in models
+		-if no: say so in context; set "accepted" to null in models (so leave it)
+	set datetime frame for question posting NEW FORM FOR INTERVIEW; LATER: WOULD BE BETTER TO WAIT FOR CEO RESPONSE FIRST THEN SET DATE/TIME
+	return to meeting creation as normal
+
+if meeting is interview-type, checks also performed on start/end of question periods. additional fields are added.
+
+the page itself:
+the page will have no "moderators" section. the normal "meeting information" section will also have a description for the question period. the "organization" section on the side will have an additional box for the CEO/individual who is being interviewed.
+
+add agenda items on separate page (for meetings) - so interview-creators can't see them
+
+
+2) CEO accepts or rejects
+
+CEO gets personalized email and is directed to meeting page. MEETING FUNCTION MAKES USE OF TWO HTML FILES: ONE FOR OLD MEETING, ONE FOR NEW. CREATE ONE FOR NEW.
+if "accepted" is null in models:
+	modal pops up, asking CEO to accept/reject
+	if he accepts: accepted switches to true, emails that were held are sent out
+	if he rejects: meeting page closed off somehow
+	moderator is notified via email of the CEO's decision
+
+
+3) cron monitoring
+
+cron monitors all meetings. if meeting is interview-type, cron also checks datetime of question start/end periods, and switches state appropriately. it sends out emails to invited. it sends out a special "conclusion" email for the interview-type questions.
+
+
+4) Question period
+
+when a user opens up the page, they'll see something large indicating that it is question time for the meeting, with a big button to "ask a question"
+each user can ask up to 2 questions. JUST LOOP THROUGH AND CHECK; ALERT IF THEY'VE ASKED TOO MANY; PERSON SHOULD BE ABLE TO SPECIFY HOW MANY Q THEY WANT PEOPLE TO BE ABLE TO ASK
+each user can see the questions they've asked and modify them.
+
+
+-- want to be done coding up to here by the end of library shift today. yes, done!
+
+
+6) Start of meeting period
+
+the host can see the questions in a nice, graphical modal display (like a scrolling list). he can see which ones are pending (sent but unanswered), which ones are answered, and which ones are unsent. It is a list-select, and then the host hits "Send to CEO" or something. RESTRICT: one only pending question; no sending already-sent questions. Pending questions are made visible to everyone, in the "Questions and Answers" section--they go to the top. Like Agenda Items.
+
+the CEO goes to the page and sees something red or bright next to a question he has not yet answered. He has a button he can use to open up a text field to answer. He can also edit any of his previous answers.
+
+
+-- want to be done with this, testing, and then pushing to the remote server -- by the end of library shift thurs. then dinner w/ jyao!
+
+
+
+that's all!
+
+
+
+SCHEDULE:
+
+by Aug 1: interview-type meetings enabled.
+
+-progress report: this is basically true. however, it isn't well-tested, and hasn't been ported to the remote server yet. I want to have multiple people asking questions, too. And test to ensure regular meetings still work. Other bug: invitee gets emailed (b/c they're in invited). nvm just hacked around this.
+
+when porting:
+-remove the question period always true thing, in meetings
+-fix the database lolz
+-oh and you need to pull the correct branch?
+
+by Aug 8: work on user experience: improve the form UI, make everything less generic bootstrap and hack-y, offer as many explanations as possible; fill out the description stubs on the home page; show lots of "sample meeting" screenshots and stuff. Like, really walk people through this thing. Get Reed to give you photoshop if necessary. Dig into CSS. Also, Eston should come back from the meeting with lots of suggestions, so work on those.
+
+by Aug 15: edit this later. but, for now, I think a good idea is to really modularize and make everything clean and clear, so someone could easily take it over. no more naming objects with 20 different names depending on context. refactor a lot, and test a lot too.
+
+	
+

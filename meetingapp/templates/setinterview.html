@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+	<form class="form-horizontal" style="display:inline-block;" method="post">
+		{% csrf_token %}
+		<input type="hidden" name="submit_request" value="submit_request">
+		<div class="control-group">
+			<div class="controls">
+				<h3>Set Interview</h3>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Invitee</label>
+			<div class="controls">
+				{{ form.email }} 
+				{% if form.email.errors %}
+				<text style="color: red; padding-left: 5px;">Required</text>
+				{% endif %}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Has he/she already agreed to come?</label>
+			<div class="controls">
+				{{ form.agreed}} {% if form.agreed.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="inputDate">Question Period: Start Date</label>
+			<div class="controls">
+				<input type="text" name="startdate" id="id_startdate"> {% if form.startdate.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="inputTime">Start Time</label>
+			<div class="controls">
+				{{ form.starttime }} {% if form.starttime.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
+		</div>
+		{% if time_mismatch %}
+		<div class="control-group">
+			<div class="controls">
+				<h5 style="color: red;">Date/time error: the question period ends before it starts!</h5>
+			</div>
+		</div>
+		{% endif %}
+		<div class="control-group">
+			<label class="control-label" for="inputDate">End Date</label>
+			<div class="controls">
+				<input type="text" name="enddate" id="id_enddate"> {% if form.enddate.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="inputTime">End Time</label>
+			<div class="controls">
+				{{ form.endtime }} {% if form.endtime.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn btn-primary">Set</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+<script>
+
+$(document).ready(function() {
+    $(function() {
+        $( "#id_startdate" ).datepicker();
+        $( "#id_enddate").datepicker();
+    });
+});
+</script>
+
+{% endblock %}
