@@ -66,19 +66,19 @@ class Command(NoArgsCommand):
 				if EMAILS_ENABLED:
 					send_mail(title, message, SENDER, recipients)
 
-			if meeting.m_type:
-				if meeting.m_type == 'Interview':
-					q_start = meeting.q_start
-					q_end = meeting.q_end
+			# if meeting.m_type:
+			# 	if meeting.m_type == 'Interview':
+			# 		q_start = meeting.q_start
+			# 		q_end = meeting.q_end
 
-					if meeting.q_started is False and (now-q_start).total_seconds() >= 0:
-						meeting.q_started = True
-						meeting.save()
-						title = 'Ask a Question: '+meeting.title
-						message = 'The question period for "'+meeting.title+'" has started! Please visit http://vitalmeeting.com/meeting/'+meeting.meeting_id+' to ask a question.'+SIGNATURE
-						if EMAILS_ENABLED:
-							send_mail(title, message, SENDER, get_recipients(meeting))
-					if meeting.q_ended is False and (now-q_end).total_seconds() >= 0:
-						meeting.q_ended = True
-						meeting.save()
+			# 		if meeting.q_started is False and (now-q_start).total_seconds() >= 0:
+			# 			meeting.q_started = True
+			# 			meeting.save()
+			# 			title = 'Ask a Question: '+meeting.title
+			# 			message = 'The question period for "'+meeting.title+'" has started! Please visit http://vitalmeeting.com/meeting/'+meeting.meeting_id+' to ask a question.'+SIGNATURE
+			# 			if EMAILS_ENABLED:
+			# 				send_mail(title, message, SENDER, get_recipients(meeting))
+			# 		if meeting.q_ended is False and (now-q_end).total_seconds() >= 0:
+			# 			meeting.q_ended = True
+			# 			meeting.save()
 
