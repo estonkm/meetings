@@ -67,8 +67,8 @@ class Command(NoArgsCommand):
 					send_mail(title, message, SENDER, recipients)
 
 			if meeting.m_type == 'Interview':
-				q_start = meetingtz.localize(q_start)
-				q_end = meetingtz.localize(q_end)
+				q_start = meetingtz.localize(meeting.q_start)
+				q_end = meetingtz.localize(meeting.q_end)
 
 				if meeting.q_started is False and (now-q_start).total_seconds() >= 0:
 					meeting.q_started = True
