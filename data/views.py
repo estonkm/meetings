@@ -27,7 +27,8 @@ SIGNATURE = '\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 UTC = pytz.utc
 ZONE = timezone('America/Chicago')
 
-EMAILS_ENABLED = True
+EMAILS_ENABLED = False
+# this really impacts the verification process 
 
 #------------------- HELPER FUNCTIONS ----------------------------------------#
 

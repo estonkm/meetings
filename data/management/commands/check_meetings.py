@@ -10,7 +10,7 @@ UTC = pytz.utc
 SENDER = 'Vital Meeting <info@vitalmeeting.com>'
 SIGNATURE = '\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 
-EMAILS_ENABLED = True
+EMAILS_ENABLED = False
 
 
 def get_recipients(meeting):
