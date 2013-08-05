@@ -12,7 +12,7 @@
 
     <!-- Le styles -->
     <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
-<!--     <link href="{% static "bootstrap/css/bootstrap-responsive.css" %}" rel="stylesheet"> -->
+    <link href="{% static "bootstrap/css/bootstrap-responsive.css" %}" rel="stylesheet">
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
@@ -25,7 +25,7 @@
     body {
       padding-bottom: 40px;
       color: #5a5a5a;
-      min-width: 1200px;
+      min-width: 800px;
       width: auto;
     }
     
@@ -317,7 +317,7 @@ var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glc
     ================================================== -->
     <div class="navbar-wrapper">
       <!-- Wrap the .navbar in .container to center it within the absolutely positioned parent. -->
-      <div class="container">
+      <div class="container-fluid">
         <div class="navbar navbar-inverse">
           <div class="navbar-inner">
             <!-- Responsive Navbar Part 1: Button for triggering responsive navbar (not covered in tutorial). Include responsive CSS to utilize. -->
@@ -383,7 +383,7 @@ var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glc
       <div class="carousel-inner">
         <div class="item active">
           <img src="{% static "darker.jpg" %}" alt="">
-          <div class="container">
+          <div class="container-fluid">
             <div class="carousel-caption">
               <h1>Vital Meeting.</h1>
               <p class="lead">It makes meetings easy. It's free.</p>
@@ -456,7 +456,7 @@ var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glc
 
 
       <!-- FOOTER -->
-      <div class="container">
+      <div class="container-fluid">
         <footer>
           <p>&copy; 2013 Vital Meeting, Inc. &middot; <a data-toggle="modal" role="button" href="#myModal">Privacy</a> &middot; <a data-toggle="modal" role="button" href="#myModal">Terms</a></p>
         </footer>
