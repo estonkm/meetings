@@ -70,6 +70,7 @@ by Aug 1: interview-type meetings enabled.
 
 -progress update: pushed to remote server; db edited. still need to test cron shifting, multiple questions, choosing unexpected answers.
 
+-manage members unaltered
 
 
 by Aug 8: work on user experience: improve the form UI, make everything less generic bootstrap and hack-y, offer as many explanations as possible; fill out the description stubs on the home page; show lots of "sample meeting" screenshots and stuff. Like, really walk people through this thing. Get Reed to give you photoshop if necessary. Dig into CSS. Also, Eston should come back from the meeting with lots of suggestions, so work on those.
