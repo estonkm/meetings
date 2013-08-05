@@ -27,6 +27,8 @@ SIGNATURE = '\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 UTC = pytz.utc
 ZONE = timezone('America/Chicago')
 
+EMAILS_ENABLED = True
+
 #------------------- HELPER FUNCTIONS ----------------------------------------#
 
 # not used
@@ -58,8 +60,8 @@ def send_email_invite(meeting, user, recipients):
 		message = ("You've been invited to attend " + user.first_name + " " + user.last_name + "'s online meeting" + org_details +
 					" on VitalMeeting.com.\n\n"+ai_details+"\n\nPlease click on " +
 					"http://vitalmeeting.com/meeting/"+meeting.meeting_id+" to join in."+SIGNATURE)
-
-		send_mail(title, message, SENDER, recipients)
+		if EMAILS_ENABLED:
+			send_mail(title, message, SENDER, recipients)
 
 # used 
 
@@ -195,7 +197,9 @@ def setinterview(request):
 					'Please go to http://vitalmeeting.com/meeting/'+m.meeting_id+' to see the details, and to accept or'+
 					' reject this request.'+SIGNATURE)
 				title = "Interview Invite: "+m.title
-				send_mail(title, message, SENDER, [m.invitee])
+				if EMAILS_ENABLED:
+					send_mail(title, message, SENDER, [m.invitee])
+
 			m.save()
 
 			return HttpResponseRedirect('../attachorg', context)
@@ -485,7 +489,8 @@ def signup(request):
 					# TODO - use verification and don't log on just yet
 					recipient = [u.email]
 					message = 'Please go to http://vitalmeeting.com/verify/'+vkey+' to verify your account. Thanks!\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
-					send_mail('Account Verification', message, SENDER, recipient)
+					if EMAILS_ENABLED:
+						send_mail('Account Verification', message, SENDER, recipient)
 
 					#user = authenticate(username=cd['email'], password=cd['password'])
 					#auth_login(request, user)
@@ -952,7 +957,8 @@ def meeting(request):
 						context['response_message'] = response_message
 						context['show_response_options'] = False
 
-						send_mail(title, message, SENDER, [host.user.email])
+						if EMAILS_ENABLED:
+							send_mail(title, message, SENDER, [host.user.email])
 				if question_period:
 					if 'q_asked' in request.POST:
 						q = Question(title=request.POST['title'],
@@ -1094,7 +1100,8 @@ def meeting(request):
 
 						message = 'A new motion has been added by '+request.user.first_name+' '+request.user.last_name+' to the following agenda item: "'+modified_ai.name+'". \n\nThe motion title is: '+motion.name+'.\n\n You can visit the meeting page and view this motion at http://vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
 						title = meeting.title + ': New Motion Added'
-						send_mail(title, message, SENDER, recipients)
+						if EMAILS_ENABLED:
+							send_mail(title, message, SENDER, recipients)
 
 				if request.POST.get('comment'):
 					comment = request.POST.get('comment')
@@ -1117,7 +1124,8 @@ def meeting(request):
 						message = 'A new comment has been added by '+request.user.first_name+' '+request.user.last_name+' to the following motion: "'+modified_motion.name+'". \n\nThe comment reads: "'+comment.text+'".\n\nYou can visit the meeting page and view this comment at http://vitalmeeting.com/meeting/'+meeting.meeting_id+'.'+SIGNATURE
 						title = meeting.title + ': New Comment Added'
 						if modified_motion.user in meeting.members.all():
-							send_mail(title, message, SENDER, recipients)
+							if EMAILS_ENABLED:
+								send_mail(title, message, SENDER, recipients)
 
 				if 'settings' in request.POST:
 					return HttpResponseRedirect('../settings/')
@@ -1137,7 +1145,8 @@ def meeting(request):
 						recipient = [motion.user.user.email]
 						message = 'Your motion "'+former_name+'" in meeting "'+meeting.title+'" has been removed by a moderator.\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 						if motion.user in meeting.members.all():
-							send_mail("Motion removed", message, SENDER, recipient)
+							if EMAILS_ENABLED:
+								send_mail("Motion removed", message, SENDER, recipient)
 					motion.desc = ''
 					motion.modded = True
 					motion.save()
@@ -1154,7 +1163,8 @@ def meeting(request):
 						recipient = [comment.user.user.email]
 						motion = Motion.objects.get(id__exact=motion_id)
 						message = 'Your comment on motion "'+motion.name+'" in meeting "'+meeting.title+'" has been removed by a moderator.\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
-						send_mail("Comment removed", message, SENDER, recipient)
+						if EMAILS_ENABLED:
+							send_mail("Comment removed", message, SENDER, recipient)
 
 					comment.modded = True
 					comment.save()

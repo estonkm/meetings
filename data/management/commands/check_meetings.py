@@ -10,6 +10,9 @@ UTC = pytz.utc
 SENDER = 'Vital Meeting <info@vitalmeeting.com>'
 SIGNATURE = '\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 
+EMAILS_ENABLED = True
+
+
 def get_recipients(meeting):
 	emails = []
 	for mem in meeting.members.all():
@@ -40,7 +43,8 @@ class Command(NoArgsCommand):
 				meeting.save()
 				title = 'Meeting Starting: '+meeting.title
 				message = 'The meeting "'+meeting.title+'" is now open! Please visit http://vitalmeeting.com/meeting/'+meeting.meeting_id+' to join in.'+SIGNATURE
-				send_mail(title, message, SENDER, get_recipients(meeting))
+				if EMAILS_ENABLED:
+					send_mail(title, message, SENDER, get_recipients(meeting))
 			if (now - end).total_seconds() >= 0 and meeting.ended is False:
 				meeting.ended = True
 				meeting.save()
@@ -59,7 +63,8 @@ class Command(NoArgsCommand):
 				message += 'Please visit http://vitalmeeting.com/meeting/'+meeting.meeting_id+' to see the full results.'
 				message += SIGNATURE
 
-				send_mail(title, message, SENDER, recipients)
+				if EMAILS_ENABLED:
+					send_mail(title, message, SENDER, recipients)
 
 			if meeting.m_type == 'Interview':
 				q_start = meetingtz.localize(q_start)
@@ -70,7 +75,8 @@ class Command(NoArgsCommand):
 					meeting.save()
 					title = 'Ask a Question: '+meeting.title
 					message = 'The question period for "'+meeting.title+'" has started! Please visit http://vitalmeeting.com/meeting/'+meeting.meeting_id+' to ask a question.'+SIGNATURE
-					send_mail(title, message, SENDER, get_recipients(meeting))
+					if EMAILS_ENABLED:
+						send_mail(title, message, SENDER, get_recipients(meeting))
 				if meeting.q_ended is False and (now-q_end).total_seconds() >= 0:
 					meeting.q_ended = True
 					meeting.save()
