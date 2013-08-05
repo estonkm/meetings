@@ -841,6 +841,9 @@ def meeting(request):
 			
 	if meeting.m_type == 'Interview': 
 		question_period = (meeting.q_started and not meeting.q_ended)
+		context['qp'] = question_period
+		context['started'] = meeting.q_started
+		context['ended'] = meeting.q_ended
 		if question_period:
 			context['question_period'] = True
 			if request.user.is_authenticated():
