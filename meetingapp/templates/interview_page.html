@@ -129,7 +129,7 @@
                     {% else %}
                     <text style="color:red;">(Unanswered Question)</text>
                     {% endif %}</text><br>
-                    {{q.body}}<br>
+                    {% if q.body %}{{q.body}}<br>{% endif %}
                     <text style="color: #999; font-size: 12px; float:left;">posted by {{q.asker.user.first_name}} {{q.asker.user.last_name}} on {{q.timestamp}}</text>
                 </div>
                 <div class="row" style="margin-bottom: 20px !important">

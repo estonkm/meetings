@@ -970,10 +970,8 @@ def meeting(request):
 							send_mail(title, message, SENDER, [host.user.email])
 				if question_period:
 					if 'q_asked' in request.POST:
-						q = Question(title=request.POST['title'],
+						q = Question(title=request.POST['title'], user=viewer,
 							body=request.POST['body'], timestamp=dtnow, selected=False)
-						q.save()
-						q.asker.add(viewer)
 						q.save()
 						meeting.questions.add(q)
 						meeting.save()

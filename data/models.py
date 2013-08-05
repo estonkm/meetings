@@ -94,6 +94,7 @@ class Meeting(models.Model):
 # whole class added to accommodate interview-style meetings
 class Question(models.Model):
 	asker = models.ManyToManyField('account', related_name='a_asker', null=True, blank=True)
+	user = models.ForeignKey('Account', related_name='fixed_asker', null=True, blank=True)
 	timestamp = models.DateTimeField(null=True, blank=True)
 	title = models.CharField(max_length=100, null=True, blank=True)
 	body = models.TextField()
