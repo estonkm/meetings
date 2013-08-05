@@ -28,7 +28,7 @@ UTC = pytz.utc
 ZONE = timezone('America/Chicago')
 
 EMAILS_ENABLED = False
-# this really impacts the verification process 
+# this really impacts the verification process m
 
 #------------------- HELPER FUNCTIONS ----------------------------------------#
 
@@ -184,8 +184,11 @@ def setinterview(request):
 
 			m.invitee = cd['email']
 			m.invited = cd['email'] + ','
-			m.q_start = enteredtimestart
-			m.q_end = enteredtimeend
+
+			meetingtz = timezone(m.timezone)
+			m.q_start = meetingtz.localize(enteredtimestart)
+			m.q_end = meetingtz.localize(enteredtimeend)
+			
 			if cd['agreed'] == 'Yes':
 				m.accepted = True
 				m.agreed_yet = True
@@ -841,23 +844,23 @@ def meeting(request):
 		if question_period:
 			context['question_period'] = True
 
-			if request.user.is_authenticated():
-				context['can_ask'] = True
-				if (viewer.user.email == meeting.invitee) or (viewer == host):
-					context['can_ask'] = False
-				if not meeting.accepted:
-					context['can_ask'] = False
-					context['question_period'] = False
-				context['is_invitee'] = False
-				if (viewer.user.email == meeting.invitee):
-					context['is_invitee'] = True
+		if request.user.is_authenticated():
+			context['can_ask'] = True
+			if (viewer.user.email == meeting.invitee) or (viewer == host):
+				context['can_ask'] = False
+			if not meeting.accepted:
+				context['can_ask'] = False
+				context['question_period'] = False
+			context['is_invitee'] = False
+			if (viewer.user.email == meeting.invitee):
+				context['is_invitee'] = True
 
-				context['asked'] = False
-				for q in meeting.questions.all():
-					if viewer in q.asker.all():
-						context['asked'] = True
-						context['question'] = q
-						question = q
+			context['asked'] = False
+			for q in meeting.questions.all():
+				if viewer in q.asker.all():
+					context['asked'] = True
+					context['question'] = q
+					question = q
 
 		if meeting.started and not meeting.ended:
 			context['active_period'] = True
