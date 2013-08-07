@@ -14,7 +14,8 @@
 		<div class="control-group">
 			<label class="control-label" for="">What Kind of Meeting?</label>
 			<div class="controls">
-				{{ form.interview }} {% if form.interview.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+				<span style="list-style-type: none !important;">
+				{{ form.interview }}</span> {% if form.interview.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
 			</div>
 		</div>
 		<div class="control-group">
