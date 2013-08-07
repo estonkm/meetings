@@ -90,8 +90,22 @@ class Meeting(models.Model):
 	q_end = models.DateTimeField(null=True)
 	q_started = models.NullBooleanField(null=True)
 	q_ended = models.NullBooleanField(null=True)
+	# created for interactive chat meetings
+	chat = models.ForeignKey('Chat', null=True, blank=True)
 
-# whole class added to accommodate interview-style meetings
+# class added for interactive chat meetings
+class Chat(models.Model):
+	chatlog = models.TextField(null=True, blank=True)
+	messages = models.ManyToManyField('ChatMessage', null=True, blank=True)
+	banlist = models.ManyToManyField('Account', null=True, blank=True)
+
+# ditto
+class ChatMessage(models.Model):
+	poster = models.ForeignKey('Account', null=True, blank=True)
+	message = models.CharField(max_length=200, null=True, blank=True)
+	timestamp = models.TimeField(null=True)
+
+# class added to accommodate interview-style meetings
 class Question(models.Model):
 	asker = models.ManyToManyField('account', related_name='a_asker', null=True, blank=True)
 	user = models.ForeignKey('Account', related_name='fixed_asker', null=True, blank=True)

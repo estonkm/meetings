@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+	<form class="form-horizontal" style="display:inline-block;" method="post">
+		{% csrf_token %}
+		<input type="hidden" name="submit_request" value="submit_request">
+		<div class="control-group">
+			<div class="controls">
+				<h3>Set Interactive Chat</h3>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Invitee</label>
+			<div class="controls">
+				{{ form.email }} 
+				{% if form.email.errors %}
+				<text style="color: red; padding-left: 5px;">Required</text>
+				{% endif %}
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Has he/she already agreed to come?</label>
+			<div class="controls">
+				{{ form.agreed}} {% if form.agreed.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn btn-primary">Set</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+{% endblock %}

@@ -215,7 +215,63 @@ def setinterview(request):
 
 	return render_to_response('setinterview.html', context)
 
+def setchat(request):
+	context = {}
+	context.update(csrf(request))
+	context['user'] = request.user
+	form = ChatForm()
 
+	if not request.user.is_authenticated() and not 'account' in request.session:
+		return HttpResponseRedirect('/')
+
+	if not 'account' in request.session:
+		a = Account.objects.get(user=request.user)
+	else:
+		a = request.session['account']
+
+	m = Meeting.objects.filter(meeting_id__exact=request.session['meeting_created'])
+	if m:
+		m = m[0]
+	else:
+		return HttpResponseRedirect('/')
+
+	if request.method == 'POST':
+		form = ChatForm(request.POST)
+		if form.is_valid():
+			cd = form.cleaned_data
+
+			m.invitee = cd['email']
+			m.invited = cd['email'] + ','
+
+			if cd['agreed'] == 'Yes':
+				m.accepted = True
+				m.agreed_yet = True
+			else:
+				m.agreed_yet = False
+				host = m.hosts.all()[0]
+				message = (host.user.first_name+' '+host.user.last_name+
+					' would like you to be the subject in the interactive chat "'+m.title+'".\n\n'+
+					'The description is: '+m.desc+'\n\n'+
+					'Please go to http://vitalmeeting.com/meeting/'+m.meeting_id+' to see the details, and to accept or'+
+					' reject this request.'+SIGNATURE)
+				title = "Interview Invite: "+m.title
+				if EMAILS_ENABLED:
+					send_mail(title, message, SENDER, [m.invitee])
+
+			c = Chat(chatlog='')
+			c.save()
+			m.chat = c
+
+			m.save()
+
+			return HttpResponseRedirect('../attachorg', context)
+		else:
+			errors = {}
+			context['errors'] = errors
+
+	context['form'] = form
+
+	return render_to_response('setchat.html', context)
 
 def create(request):
 	context = {}
@@ -311,6 +367,8 @@ def create(request):
 
 				if m.m_type == 'Interview':
 					return HttpResponseRedirect('../setinterview/')
+				elif m.m_type == 'Chat':
+					return HttpResponseRedirect('../setchat/')
 				else:
 					return HttpResponseRedirect('../attachorg/')
 			else:
@@ -768,6 +826,48 @@ def vote(request):
 
 	return HttpResponse('[]', content_type="application/json")
 
+def intersub(request):
+	if not request.user.is_authenticated():
+		return HttpResponseRedirect('/')
+	account = Account.objects.filter(user=request.user)
+	if account:
+		account = account[0]
+	else:
+		return HttpResponseRedirect('/')
+
+
+	if request.method=='POST':
+		meeting = Meeting.objects.filter(id__exact=request.POST['meeting'])
+		if meeting:
+			meeting = meeting[0]
+		else:
+			return HttpResponseRedirect('/')
+
+		if account in meeting.chat.banlist.all():
+			return HttpResponseRedirect('/')
+		if meeting.ended:
+			return HttpResponseRedirect('/')
+
+		chat = meeting.chat
+
+		if chat.chatlog is None:
+			chat.chatlog = ''
+
+		# NOT SAFE XSS - fix later
+		chat.chatlog += ("<div class='msgln'>("+str(datetime.now())+") <b>"+account.user.first_name+' '+account.user.last_name+"</b>: "+
+				request.POST['text']+"<br></div>")
+
+		chat.save()
+
+		return HttpResponse()
+	else:
+		meeting = Meeting.objects.filter(id__exact=request.GET['meeting'])
+		if meeting:
+			meeting = meeting[0]
+		else:
+			return HttpResponseRedirect('/')
+		return HttpResponse(meeting.chat.chatlog)
+
 def meeting(request):
 	context = {}
 	context.update(csrf(request))
@@ -1026,6 +1126,75 @@ def meeting(request):
 		request.session.modified=True
 
 		return render_to_response('interview_page.html', context)
+
+	elif meeting.m_type == 'Chat':
+		if meeting.chat.chatlog != '':
+			context['chatlog'] = meeting.chat.chatlog
+		if request.method=='POST':
+			# if context['access'] == False:
+			if 'login' in request.POST:
+				user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
+				if user is None:
+					# set form errors
+					context['login_errors'] = True
+				else:
+					a = Account.objects.filter(user=user)
+					if a:
+						if not a[0].is_verified:
+							context['not_verified'] = True
+						else:
+							auth_login(request, user)
+							context['user'] = request.user
+							if (request.user.email not in meeting.invited) and meeting.private:
+								return HttpResponseRedirect('/')
+							else:
+								context['access'] = True
+								context['not_authenticated'] = False
+			elif (not meeting.started or meeting.ended) and (request.user != meeting.hosts.all()[0].user):
+				context['closed_error'] = True
+			else:
+				if 'get_emails' in request.POST and viewer:
+					viewer.receive_emails.add(meeting)
+					viewer.save()
+					context['receiving'] = True
+					context['notifications_modified'] = True
+					context['currently_receiving'] = True
+				if 'stop_emails' in request.POST and viewer:
+					if meeting in viewer.receive_emails.all():
+						viewer.receive_emails.remove(meeting)
+						viewer.save()
+					context['notifications_modified'] = True
+					context['receiving'] = False
+					context['currently_receiving'] = False
+
+				if 'send_pending' in request.POST and viewer:
+					if viewer == meeting.hosts.all()[0]:
+						recipients = []
+						emails = meeting.pending.split(',')
+						for e in emails:
+							if '@' in e:
+								recipients.append(e)
+						if recipients:
+							send_email_invite(meeting, viewer.user, recipients)
+						meeting.pending = ''
+						meeting.save()
+						context['just_sent'] = True
+
+				if request.POST.get('addr_contacts') and viewer:
+					added = request.POST.get('addr_contacts')
+					recipients = handle_addr_book(viewer, meeting, added, False)
+
+					if recipients:
+						send_email_invite(meeting, viewer.user, recipients)
+
+		context['m'] = meeting
+		context['user'] = request.user
+		context['host'] = host
+
+		request.session['meeting_no'] = path
+		request.session.modified = True
+
+		return render_to_response('interactive_page.html', context)
 	else:
 		if request.method=='POST':
 			# if context['access'] == False:
