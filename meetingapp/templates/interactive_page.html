@@ -273,11 +273,17 @@ $(document).ready(function() {
 	});
 
 	$('#submitmsg').click(function() {
+		{% if closed_error %}
+		$('#myModal').modal("show");
+		{% else %}
 		var clientmsg = $('#usermsg').val();
 		$.post("/intersub/", {'text': clientmsg, 'meeting': {{m.id}}});
 		$('#usermsg').val('');
+		{% endif %}
 	});
 
+	{% if closed_error %}
+	{% else %}
 	function loadLog() {
 		var oldscrollHeight = $('#chatbox').prop('scrollHeight') - 20;
 		$.ajax({
@@ -296,6 +302,7 @@ $(document).ready(function() {
 	}
 
 	setInterval (loadLog, 1500);
+	{% endif %}
 
 });
 

@@ -27,8 +27,7 @@ SIGNATURE = '\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
 UTC = pytz.utc
 ZONE = timezone('America/Chicago')
 
-EMAILS_ENABLED = False
-# this really impacts the verification process m
+EMAILS_ENABLED = True
 
 #------------------- HELPER FUNCTIONS ----------------------------------------#
 
@@ -264,7 +263,7 @@ def setchat(request):
 
 			m.save()
 
-			return HttpResponseRedirect('../attachorg', context)
+			return HttpResponseRedirect('../attachorg')
 		else:
 			errors = {}
 			context['errors'] = errors
@@ -272,6 +271,46 @@ def setchat(request):
 	context['form'] = form
 
 	return render_to_response('setchat.html', context)
+
+def setnormal(request):
+	context = {}
+	context.update(csrf(request))
+	context['user'] = request.user
+
+	if not request.user.is_authenticated() and not 'account' in request.session:
+		request.session['fromcreate'] = True
+		request.session.modified = True
+		return HttpResponseRedirect('../signup/')
+
+	if not 'account' in request.session:
+		context['user'] = request.user
+		a = Account.objects.get(user=request.user)
+	else:
+		a = request.session['account']
+
+	m = Meeting.objects.filter(meeting_id__exact=request.session['meeting_created'])
+	if m:
+		m = m[0]
+	else:
+		return HttpResponseRedirect('/')
+
+	if request.method=='POST':
+		counter = 1
+		item_name = 'agenda_item_'+str(counter)
+		while request.POST.get(item_name):
+			agendaitem = request.POST.get(item_name)
+			if agendaitem:
+				i = AgendaItem(name=agendaitem, desc='', number=counter)
+				i.save()
+				m.agenda_items.add(i)
+				m.save()
+			counter += 1
+			item_name = 'agenda_item_'+str(counter)
+
+		return HttpResponseRedirect('../attachorg/')
+
+	return render_to_response('setnormal.html', context)
+
 
 def create(request):
 	context = {}
@@ -345,18 +384,6 @@ def create(request):
 				m.hosts.add(a)
 				m.members.add(a)
 				m.save()
-
-				counter = 1
-				item_name = 'agenda_item_'+str(counter)
-				while request.POST.get(item_name):
-					agendaitem = request.POST.get(item_name)
-					if agendaitem:
-						i = AgendaItem(name=agendaitem, desc='', number=counter)
-						i.save()
-						m.agenda_items.add(i)
-						m.save()
-					counter += 1
-					item_name = 'agenda_item_'+str(counter)
 
 				a.meetings_created.add(m)
 				a.meetings_in.add(m)

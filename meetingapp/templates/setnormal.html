@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+	<form class="form-horizontal" style="display:inline-block;" method="post">
+		{% csrf_token %}
+		<input type="hidden" name="submit_request" value="submit_request">
+		<div class="control-group">
+			<div class="controls">
+				<h3>Set Agenda Items</h3>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Agenda Items</label>
+			<div class="controls">
+				<div id="agenda_controls">
+					<div id="div1">
+						<input type="text" name="agenda_item_1"><p></p>
+					</div>
+				</div>
+				<a class="btn" id="additem" href="#">Add item</a>
+				<a class="btn" id="removeitem" style="margin-left: 5px;" href="#">Remove item</a>
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn btn-primary">Set</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+<script>
+
+
+$(document).ready(function() {
+	var counter = 2;
+
+	$('#removeitem').hide();
+
+	$('#additem').click(function() {
+		if (counter == 2) {
+			$('#removeitem').show();
+		}
+		if (counter == 10) {
+			$('#additem').hide();
+		}
+		$("#agenda_controls").append('<div id="div'+counter+'"><input type="text" name="agenda_item_' + counter +'"><p></p></div>');
+		counter++;
+	});
+
+	$('#removeitem').click(function() {
+		counter--;
+		if (counter == 10) {
+			$('#additem').show();
+		}
+		if (counter == 2) {
+			$('#removeitem').hide();
+		}
+		$("#div"+counter+"").remove();
+	});
+});
+
+
+</script>
+
+{% endblock %}
