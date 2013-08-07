@@ -291,11 +291,16 @@ $(document).ready(function() {
 			cache: false,
 			data: {'meeting': {{m.id}}},
 			success: function(html) {
-				$('#chatbox').html(html);
+				if (html=='closed') {
+					$('#myModal').modal("show");
+				}
+				else {
+					$('#chatbox').html(html);
 
-				var newscrollHeight = $('#chatbox').prop('scrollHeight') - 20;
-				if (newscrollHeight > oldscrollHeight) {
-					$('#chatbox').animate({ scrollTop: newscrollHeight}, 'normal');
+					var newscrollHeight = $('#chatbox').prop('scrollHeight') - 20;
+					if (newscrollHeight > oldscrollHeight) {
+						$('#chatbox').animate({ scrollTop: newscrollHeight}, 'normal');
+					}
 				}
 			},
 		});

@@ -871,9 +871,7 @@ def intersub(request):
 			return HttpResponseRedirect('/')
 
 		if (not meeting.started or meeting.ended) and account != meeting.hosts.all()[0]:
-			context['closed_error'] = True
-			return HttpResponse()
-
+			return HttpResponse('closed')
 
 		if account in meeting.chat.banlist.all():
 			return HttpResponseRedirect('/')
