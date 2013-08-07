@@ -13,8 +13,8 @@ div {
     float:right;
 }
 
-.nobullet li {
-    display: none !important;
+.nobullet ul {
+    list-style: none !important;
 }
 
 img.addrbook {
