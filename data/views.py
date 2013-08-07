@@ -870,9 +870,12 @@ def intersub(request):
 		else:
 			return HttpResponseRedirect('/')
 
+		if (not meeting.started or meeting.ended) and account != meeting.hosts.all()[0]:
+			context['closed_error'] = True
+			return HttpResponse()
+
+
 		if account in meeting.chat.banlist.all():
-			return HttpResponseRedirect('/')
-		if meeting.ended:
 			return HttpResponseRedirect('/')
 
 		chat = meeting.chat
@@ -997,7 +1000,7 @@ def meeting(request):
 
 				context['asked'] = False
 				for q in meeting.questions.all():
-					if viewer in q.asker.all():
+					if viewer==q.user:
 						context['asked'] = True
 						context['question'] = q
 						question = q
@@ -1117,7 +1120,7 @@ def meeting(request):
 						q.save()
 						meeting.questions.add(q)
 						meeting.save()
-						return HttpResponseRedirect('../meeting/'+meeting.meeting_id)
+						context['asked'] = True
 					elif 'q_edited' in request.POST:
 						if question:
 							question.title = request.POST['title']
