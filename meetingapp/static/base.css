@@ -13,6 +13,10 @@ div {
     float:right;
 }
 
+.nobullet li {
+    display: none !important;
+}
+
 img.addrbook {
     width: 25px;
     height: auto;

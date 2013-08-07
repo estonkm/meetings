@@ -13,9 +13,8 @@
 		</div>
 		<div class="control-group">
 			<label class="control-label" for="">What Kind of Meeting?</label>
-			<div class="controls">
-				<span style="list-style-type: none !important;">
-				{{ form.interview }}</span> {% if form.interview.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="controls nobullet">
+				{{ form.interview }} {% if form.interview.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
 			</div>
 		</div>
 		<div class="control-group">
@@ -72,7 +71,7 @@
 		</div>
 		<div class="control-group">
 			<label class="control-label" for="">Meeting Privacy</label>
-			<div class="controls">
+			<div class="controls nobullet">
 				{{ form.status }} {% if form.status.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
 			</div>
 		</div>
