@@ -397,7 +397,7 @@ def create(request):
 				elif m.m_type == 'Chat':
 					return HttpResponseRedirect('../setchat/')
 				else:
-					return HttpResponseRedirect('../attachorg/')
+					return HttpResponseRedirect('../setnormal/')
 			else:
 				errors = {}
 				context['errors'] = errors
