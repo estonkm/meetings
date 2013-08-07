@@ -117,7 +117,7 @@
 				<div id="chatbox">{{chatlog}}</div>
 
 				<form name="message" action="">
-					<input name="usermsg" type="text" id="usermsg" size="63" />
+					<input name="usermsg" type="text" id="usermsg" maxlength="200" size="63" />
 					<input name="submitmsg" class="btn" type="button" id="submitmsg" value="Send" />
 				</form>
 			</div>
@@ -275,11 +275,11 @@ $(document).ready(function() {
 	$('#submitmsg').click(function() {
 		var clientmsg = $('#usermsg').val();
 		$.post("/intersub/", {'text': clientmsg, 'meeting': {{m.id}}});
-		$('#usermsg').attr('value', '');
+		$('#usermsg').val('');
 	});
 
 	function loadLog() {
-		var oldscrollHeight = $('#chatbox').attr('scrollHeight') - 20;
+		var oldscrollHeight = $('#chatbox').prop('scrollHeight') - 20;
 		$.ajax({
 			url: '/intersub/',
 			cache: false,
@@ -287,15 +287,15 @@ $(document).ready(function() {
 			success: function(html) {
 				$('#chatbox').html(html);
 
-				var newscrollHeight = $('#chatbox').attr('scrollHeight') - 20;
+				var newscrollHeight = $('#chatbox').prop('scrollHeight') - 20;
 				if (newscrollHeight > oldscrollHeight) {
-					$('chatbox').animate({ scrollTop: newscrollHeight}, 'normal');
+					$('#chatbox').animate({ scrollTop: newscrollHeight}, 'normal');
 				}
 			},
 		});
 	}
 
-	setInterval (loadLog, 2500);
+	setInterval (loadLog, 1500);
 
 });
 
