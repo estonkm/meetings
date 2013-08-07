@@ -853,9 +853,19 @@ def intersub(request):
 		if chat.chatlog is None:
 			chat.chatlog = ''
 
+		dtnow = (ZONE.localize(datetime.now())).astimezone(meeting.meetingtz)
+		time = dtnow.strftime("%H:%M:%S")
+
+		if account.user.email == meeting.invitee:
+			name = '<text style="color: red; font-weight: bold;">'+account.user.first_name+' '+account.user.last_name+'</text>'
+		elif account in meeting.hosts.all():
+			name = '<text style="color: blue; font-weight: bold;">'+account.user.first_name+' '+account.user.last_name+'</text>'
+		else:
+			name = '<b>'+account.user.first_name+' '+account.user.last_name+"</b>"
+
+		cleanedtext = re.sub('[<>]', '', request.POST['text'])
 		# NOT SAFE XSS - fix later
-		chat.chatlog += ("<div class='msgln'>("+str(datetime.now())+") <b>"+account.user.first_name+' '+account.user.last_name+"</b>: "+
-				request.POST['text']+"<br></div>")
+		chat.chatlog += "<div class='msgln'>("+time+") "+name+": "+cleanedtext+"<br></div>"
 
 		chat.save()
 

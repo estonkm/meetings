@@ -9,7 +9,8 @@
 	/*width:440px;*/
 	width:inherit;
 	border:1px solid #ccc;
-	overflow:auto;
+	overflow:none;
+
 }
 
 #usermsg {
