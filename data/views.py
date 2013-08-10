@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login, logout as auth_logout
 import random
 from django.core.urlresolvers import resolve
+from django.core import serializers
 from django.utils import simplejson
 import re, os
 from django.core.mail import send_mail
@@ -443,32 +444,26 @@ def invite(request):
 		if "invite_later" in request.POST:
 			invite_later = True
 
-		added = request.POST.get('added')
+		added = request.POST.get('from_contacts')
 		entered = request.POST.get('entered')
 
 		recipients = []
 
 		if added:
-			added = added.split(',')
-			for entry in added:
-				if '@' not in entry:
-					continue
-				e = entry.split('<')
-				e = e[1].split('>')[0]
-
-				meeting.invited += e + ',' #csv
-				meeting.save()
-
-				c = Contact.objects.filter(email=e)
-				if c:
-					c = c[0]
-					if c.account:
-						account = c.account
-						meeting.members.add(account)
-						account.meetings_in.add(meeting)
-						account.save()
+			added = added.split(' ')
+			for c_id in added:
+				if c_id != '':
+					contact = a.contacts.filter(id__exact=c_id)
+					if contact:
+						contact = contact[0]
+						meeting.invited += contact.email + ','
 						meeting.save()
-					recipients.append(e)
+						if contact.account:
+							meeting.members.add(contact.account)
+							contact.account.meetings_in.add(meeting)
+							contact.account.save()
+							meeting.save()
+						recipients.append(contact.email)
 
 
 		if request.POST.get('entered'):
@@ -599,6 +594,8 @@ def signup(request):
 				context['errors'] = errors
 
 	context['form'] = form
+	if 'fromcreate' in request.session:
+		context['fromcreate'] = True
 
 	return render_to_response('signup.html', context)
 
@@ -871,7 +868,7 @@ def intersub(request):
 			return HttpResponseRedirect('/')
 
 		if (not meeting.started or meeting.ended) and account != meeting.hosts.all()[0]:
-			return HttpResponse('closed')
+			return HttpResponse()\
 
 		if account in meeting.chat.banlist.all():
 			return HttpResponseRedirect('/')
@@ -910,6 +907,89 @@ def intersub(request):
 		else:
 			return HttpResponseRedirect('/')
 		return HttpResponse(meeting.chat.chatlog)
+
+def chatonline(request):
+	account = None
+	if request.method=='POST':
+		user = User.objects.filter(id__exact=request.POST['user'])
+		if user:
+			account = Account.objects.filter(user=user)
+			if account:
+				account = account[0]
+		meeting = Meeting.objects.filter(id__exact=request.POST['meeting'])
+		if meeting and account:
+			meeting = meeting[0]
+			meeting.chat.online.remove(account)
+			meeting.chat.save()
+	else:
+		user = User.objects.filter(id__exact=request.GET['user'])
+		if user:
+			account = Account.objects.filter(user=user)
+		meeting = Meeting.objects.filter(id__exact=request.GET['meeting'])
+		if meeting:
+			meeting = meeting[0]
+			memset = []
+			length = len(meeting.chat.online.all())
+			for member in meeting.chat.online.all():
+				memset.append(member)
+			data = '['+str(length)+', "<div class=\'innerCheckbox\'>'
+
+			for member in memset:
+				data += '<div class=\'cboxContact\' style=\'height: 55px; line-height: 55px;\'>'
+				if member.prof_pic != False and member.prof_pic.url != '../media/False':
+					data += '<img src=\''+member.prof_pic.url+'\' style=\'width: 50px; height: auto;\'>'
+				data += '<span style=\'margin-left: 10px;\'>'
+				ln = member.user.last_name
+				fn = member.user.first_name
+				em = member.user.email
+				if ln and fn:
+					data += ''+ln+', '+fn+''+' <<em>'+em+'</em>>'
+				elif ln:
+					data += ''+ln+' <<em>'+em+'</em>>'
+				elif fn:
+					data += ''+fn+' <<em>'+em+'</em>>'
+				else:
+					data += ''+em+''
+				data += '</span></div>'
+
+			data += '</div>"]'
+			return HttpResponse(data, content_type="application/json")
+
+def chatbanlist(request):
+	if request.method=='GET':
+		if request.user.is_authenticated():
+			account = Account.objects.filter(user=request.user)
+			if account:
+				account = account[0]
+				meeting = Meeting.objects.filter(id__exact=request.GET['meeting'])
+				if meeting:
+					meeting = meeting[0]
+					if account in meeting.moderators.all() or account==meeting.hosts.all()[0]:
+						data = '["<div class=\'innerCheckbox\'>'
+						for member in meeting.members.all():
+							if (member not in meeting.moderators.all() and member!=meeting.hosts.all()[0]) and member.user.email != meeting.invitee:
+								data += '<div class=\'cboxContact\'>'
+								if member in meeting.chat.banlist.all():
+									data += '<input type=\'checkbox\' name=\'unban_select[]\' value=\''+str(member.id)+'\'><text style=\'color:blue;\'> Un-ban</text></input><span style=\'margin-left: 10px;\'>'
+								else:
+									data += '<input type=\'checkbox\' name=\'ban_select[]\' value=\''+str(member.id)+'\'><text style=\'color:red;\'> Ban</text></input><span style=\'margin-left: 10px;\'>'
+								data += '<span style=\'margin-left: 10px;\'>'
+								ln = member.user.last_name
+								fn = member.user.first_name
+								em = member.user.email
+								if ln and fn:
+									data += ''+ln+', '+fn+''+' <<em>'+em+'</em>>'
+								elif ln:
+									data += ''+ln+' <<em>'+em+'</em>>'
+								elif fn:
+									data += ''+fn+' <<em>'+em+'</em>>'
+								else:
+									data += ''+em+''
+								data += '</span></div>'
+
+						data += '</div>"]'
+						return HttpResponse(data, content_type="application/json")
+	return HttpResponse()
 
 def meeting(request):
 	context = {}
@@ -1171,6 +1251,18 @@ def meeting(request):
 		return render_to_response('interview_page.html', context)
 
 	elif meeting.m_type == 'Chat':
+		closed = (not meeting.started or meeting.ended) and (request.user != meeting.hosts.all()[0].user)
+		context['closed'] = closed
+
+		if viewer and viewer not in meeting.chat.online.all():
+			meeting.chat.online.add(viewer)
+			meeting.chat.save()
+
+		online = meeting.chat.online.all()
+
+		context['online'] = online
+		context['num_online'] = len(online)
+
 		if meeting.chat.chatlog != '':
 			context['chatlog'] = meeting.chat.chatlog
 		if request.method=='POST':
@@ -1193,7 +1285,7 @@ def meeting(request):
 							else:
 								context['access'] = True
 								context['not_authenticated'] = False
-			elif (not meeting.started or meeting.ended) and (request.user != meeting.hosts.all()[0].user):
+			elif closed:
 				context['closed_error'] = True
 			else:
 				if 'get_emails' in request.POST and viewer:
@@ -1229,6 +1321,21 @@ def meeting(request):
 
 					if recipients:
 						send_email_invite(meeting, viewer.user, recipients)
+
+				if 'close_bans' in request.POST:
+					if viewer in meeting.moderators.all() or viewer is host:
+						bans = request.POST.get('ban_select')
+						unbans = request.POST.get('unban_select')
+						for member in bans:
+							if member != host and member.user.email != meeting.invitee:
+								if member not in meeting.chat.banlist.all():
+									meeting.chat.banlist.add(member)
+									meeting.chat.save()
+						for member in unbans:
+							if member in meeting.chat.banlist.all():
+								meeting.chat.banlist.remove(member)
+								meeting.chat.save()
+
 
 		context['m'] = meeting
 		context['user'] = request.user
@@ -1523,66 +1630,47 @@ def managemembers(request):
 	recipients = []
 
 	if request.POST:
-		added1 = request.POST.get('added1')
-		added2 = request.POST.get('added2')
-		added3 = request.POST.get('added3')
+		add_from_c = request.POST.get('from_contacts')
+		remove = request.POST.get('remove_contacts')
+		promote = request.POST.get('promote_members')
 
-		if added1:
-			added1 = added1.split(',')
-			for entry in added1:
-				if '@' not in entry:
-					continue
-				e = entry.split('<')
-				e = e[1].split('>')[0]
-
-				meeting.invited += e + ','
-				meeting.save()
-
-				c = Contact.objects.filter(email=e)
-				if c:
-					c = c[0]
-					if c.account:
-						account = c.account
-						meeting.members.add(account)
-						account.meetings_in.add(meeting)
-						account.save()
+		if add_from_c:
+			added = add_from_c.split(' ')
+			for c_id in added:
+				if c_id != '':
+					contact = a.contacts.filter(id__exact=c_id)
+					if contact:
+						contact = contact[0]
+						meeting.invited += contact.email + ','
 						meeting.save()
-				recipients.append(e)
-		if added2:
-			added2 = added2.split(',')
+						if contact.account:
+							meeting.members.add(contact.account)
+							contact.account.meetings_in.add(meeting)
+							contact.account.save()
+							meeting.save()
+						recipients.append(contact.email)
 
-			for entry in added2:
-				if '@' not in entry:
-					continue
-				e = entry.split('<')
-				e = e[1].split('>')[0]
-				u = User.objects.filter(email=e)
-				if u:
-					account = Account.objects.get(user=u[0])
-					meeting.members.remove(account)
-					account.meetings_in.remove(meeting)
-					account.save()
-					meeting.save()
+		if remove:
+			remove = remove.split(' ')
+			for m_id in added:
+				if m_id != '':
+					mem = meeting.members.filter(id__exact=m_id)
+					if mem:
+						mem = mem[0]
+						meeting.members.remove(mem)
+						meeting.save()
+						mem.meetings_in.remove()
+						mem.save()
 
-		if added3:
-			added3 = added3.split(',')
-
-			for entry in added3:
-				if '@' not in entry:
-					continue
-				e = entry.split('<')
-				e = e[1].split('>')[0]
-
-				# TEST THIS
-				# meeting.invited = re.sub(e+',', '', meeting.invited)
-				# meeting.save()
-
-
-				u = User.objects.filter(email=e)
-				if u:
-					account = Account.objects.get(user=u[0])
-					meeting.moderators.add(account)
-					meeting.save()
+		if promote:
+			promote = promote.split(' ')
+			for m_id in promote:
+				if m_id != '':
+					mod = meeting.moderators.filter(id__exact=m_id)
+					if mod:
+						mod = mod[0]
+						meeting.moderators.remove(mod)
+						meeting.save()
 
 		if request.POST.get('entered'):
 			entered = request.POST.get('entered')
@@ -1654,7 +1742,7 @@ def attachorg(request):
 	else:
 		return HttpResponseRedirect('/')
 
-	if request.POST:
+	if request.method=='POST':
 		if 'later' in request.POST:
 			return HttpResponseRedirect('../invite/')
 		form = MeetingOrgForm(request.POST, request.FILES)
@@ -1663,12 +1751,13 @@ def attachorg(request):
 			userinput = ((cd['name'] != '' or cd['contact'] != '') or cd['desc'] != '') or cd['image'] is not None
 			formerror = ((cd['name'] == '' or cd['contact'] == '') or cd['desc'] == '')
 			if userinput and formerror:
+				context['input_error'] = True
 				if cd['name'] == '':
-					context['form.name.errors'] = True
+					context['name_error'] = True
 				if cd['desc'] == '':
-					context['form.desc.errors'] = True
+					context['desc_error'] = True
 				if cd['contact'] == '':
-					context['form.contact.errors'] = True
+					context['contact_error'] = True
 			elif userinput:
 				random.seed()
 
@@ -1709,7 +1798,7 @@ def attachorg(request):
 
 		else:
 			errors = {}
-			context['errors'] = 'errors'
+			context['errors'] = errors
 
 	context['form'] = form
 	return render_to_response('attachorg.html', context)

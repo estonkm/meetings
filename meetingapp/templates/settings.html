@@ -60,14 +60,14 @@
 				<tr>
 					<td>Meeting Type</td>
 					<td>{% if meeting.private == False %}Public{% else %}Private{% endif %}</td>
-					<td>
+					<td class="nobullet">
 						{{form.status}}
 					</td>
 				</tr>
 				<tr>
 					<td>Allow members to invite others?</td>
 					<td>{% if meeting.friend_invites %}Yes{% else %}No{% endif %}</td>
-					<td> 
+					<td class="nobullet"> 
 						{{form.fi}}
 					</td>
 				<tr>

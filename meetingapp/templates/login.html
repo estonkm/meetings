@@ -1,50 +1,59 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-	<form class="form-horizontal centered" style="display:inline-block;" method="post">
-		{% csrf_token %}
-		<div class="control-group">
-			<div class="controls">
-				<h3>Log In</h3>
+{% load static %}
+
+<link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
+
+<div class="center_block container">
+	<div class="form_block">
+		<form class="form-horizontal" style="" method="post">
+			{% csrf_token %}
+			<div class="control-group">
+				<div class="controls">
+					<h3>Log In</h3>
+				</div>
 			</div>
-		</div>
-		{% if errors %}
-		<div class="control-group">
-			<div class="controls">
-				<h5 style="color: red;">Invalid login credentials.</h5>
+			{% if errors %}
+			<div class="control-group">
+				<div class="controls">
+					<h5 style="color: red;">Invalid login credentials.</h5>
+				</div>
 			</div>
-		</div>
-		{% endif %}
-		{% if not_verified %}
-		<div class="control-group">
-			<div class="controls">
-				<h5 style="color: red;">This account has not yet been verified.</h5>
+			{% endif %}
+			{% if not_verified %}
+			<div class="control-group">
+				<div class="controls">
+					<h5 style="color: red;">This account has not yet been verified.</h5>
+				</div>
 			</div>
-		</div>
-		{% endif %}
-		<input type="hidden" name="submit_request" value="submit_request">
-		<div class="control-group">
-			<label class="control-label" for="inputEmail">Email</label>
-			<div class="controls">
-	            <input type="text" name="username" class="login" placeholder="email" autocomplete="off">
+			{% endif %}
+			<input type="hidden" name="submit_request" value="submit_request">
+			<div class="control-group">
+				<label class="control-label" for="inputEmail">Email</label>
+				<div class="controls">
+		            <input type="text" name="username" class="login" placeholder="email" autocomplete="off">
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputPassword">Password</label>
-			<div class="controls">
-	            <input type="password" name="password" class="login" placeholder="password" autocomplete="off">
+			<div class="control-group">
+				<label class="control-label" for="inputPassword">Password</label>
+				<div class="controls">
+		            <input type="password" name="password" class="login" placeholder="password" autocomplete="off">
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<div class="controls">
-				<label class="checkbox">
-					<input type="checkbox"> Remember me
-				</label>
-				<button type="submit" class="btn btn-primary">Login</button>
+			<div class="control-group">
+				<div class="controls">
+					<label class="checkbox">
+						<input type="checkbox"> Remember me
+					</label>
+					<button type="submit" class="btn btn-primary">Login</button>
+				</div>
 			</div>
-		</div>
-	</form>
+		</form>
+	</div>
+<!-- 	<div class="blurb_block" style="font-size: 14px; margin-top: 75px; vertical-align: middle;">
+		<h4 style="text-align: center;">Forgot your password?</h4><br>
+	</div> -->
 </div>
 
 {% endblock %}

@@ -281,7 +281,7 @@
                 <text class="lead" style="font-size: 15px !important;">Members ({{m.members.all.count}}):</text><br>
                 {% for member in m.members.all %}
                 <text>
-                    <a href="#" style="color: black !important;" data-toggle="tooltip" data-trigger="hover focus" name="usertip" title="{{member.user.last_name}}, {{member.user.first_name}}" data-html="true" data-content="<a href='/profile/{{member.page_id}}'>Go to profile page</a>">
+                    <a href="/profile/{{member.page_id}}">
                     {{member.user.last_name}}, {{member.user.first_name}}</a> <<em>{{member.user.email}}</em>>
                 </text><br>
                 {% endfor %}

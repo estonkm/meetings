@@ -4,11 +4,9 @@
 
 {% load static %}
 
-<style>
+<link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
 
-.form-horizontal {
-/*	margin-left: 5% !important;
-*/}
+<style>
 
 .form-horizontal .control-label {
 	width: 185px !important;
@@ -19,109 +17,111 @@
 	padding-left: 30px !important;
 }
 
-label {
-	cursor: hand !important;
-}
-
 </style>
 
-<div class="container">
-	<form class="form-horizontal" style="display:inline-block;" method="post">
-		{% csrf_token %}
-		<input type="hidden" name="submit_request" value="submit_request">
-		<div class="control-group">
-			<div class="controls">
-				<h3>Invite Members</h3>
+<div class="center_block container" style="width: 80%;">
+	<div class="form_block" style="width: 60%;">
+		<form class="form-horizontal" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="submit_request" value="submit_request">
+			<div class="control-group">
+				<div class="controls">
+					<h3>Invite Members</h3>
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Invite from contacts: </label>
-			<div class="controls">
-				<section class="container" style="margin-left: 0px !important; padding-left: 0px !important;">
-				    <div>
-				        <select id="leftValues" name="added" size="5" style="" multiple>
-				        </select>
-				    </div>
-				    <div>
-				        <input type="button" id="btnLeft" value="&lt;&lt;" style="margin-bottom: 5px !important; margin-top: 10px;"/>
-				        <input type="button" id="btnRight" value="&gt;&gt;" />
-				    </div>
-				    <div>
-				        <select id="rightValues" size="4" multiple>
-				        	{% for contact in account.contacts.all %}
-				            <option>{% if contact.last_name %}{{contact.last_name}}{% endif %}{% if contact.last_name %}{% if contact.first_name %}, {% endif %}{% endif %}{% if contact.first_name %}{{contact.first_name}} {% endif %}<<em>{{contact.email}}</em>></option>
-				            {% endfor %}
-				        </select>
-				        <div>
-				            <input type="text" id="txtRight" style="width:220px; box-sizing: border-box;" />
-				        </div>
-				    </div>
-				</section>
+			<div class="control-group">
+				<label class="control-label">Write out addresses:</label>
+				<div class="controls">
+					<textarea name="entered" style="width:300px;height:82px;" wrap="off" placeholder="One email per line."></textarea>
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Or send email invites:</label>
-			<div class="controls">
-				<textarea name="entered" style="width:450px;height:82px" placeholder="One email per line"></textarea>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">
-				<a class="cs_import btn" style="padding: 10px !important;">Invite from Address Book</a><br>
-				<img src="{% static "google.png" %}" class="addrbook">
-				<img src="{% static "apple.png" %}" class="addrbook">
-				<img src="{% static "yahoo.png" %}" class="addrbook">
-				<img src="{% static "aol.png" %}" class="addrbook">
-				<img src="{% static "msn.png" %}" class="addrbook">
-			</label>
-			<div class="controls">
-				<textarea name="addr_contacts" style="width:450px;height:82px" id="contact_list"></textarea>
-			</div>
-		</div>
-		<div class="control-group">
-			<div class="controls">
-				<label class="checkbox">
-					<input type="checkbox" name="remember"> Save invited contacts</input>
+			<div class="control-group">
+				<label class="control-label">
+					<a class="cs_import btn" style="padding: 5px !important;">Invite from Address Book</a><br>
+					<img src="{% static "google.png" %}" class="addrbook">
+					<img src="{% static "apple.png" %}" class="addrbook">
+					<img src="{% static "yahoo.png" %}" class="addrbook">
+					<img src="{% static "aol.png" %}" class="addrbook">
+					<img src="{% static "msn.png" %}" class="addrbook">
 				</label>
-				{% if meeting.private %}
-				<label class="checkbox">
-					<input type="checkbox" name="allow_fi"> Allow meeting members to invite others to this meeting</input>
-				</label>
-				{% endif %}
-				<br>
-				<button type="submit" class="btn btn-primary">Invite to meeting</button>
-				<button type="submit" name="invite_later" class="btn btn-warning">Save and invite later</button>
-				<button type="submit" name="later" class="btn btn-primary">Skip this step</button>
+				<div class="controls">
+					<textarea name="addr_contacts" style="width:300px;height:82px;" id="contact_list"></textarea>
+				</div>
 			</div>
-		</div>
-	</form>
+			<div class="control-group">
+				<label class="control-label">
+					<a class="btn" data-toggle="modal" role="button" href="#inviteModal" style="padding: 5px !important;">Invite from contacts </a></label>
+					<input type="hidden" id="from_contacts" name="from_contacts" />
+				<div class="controls" id="acknowledge">
+					<text style="line-height: 45px;">No contacts selected.</text>
+				</div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+					<label class="checkbox">
+						<input type="checkbox" name="remember"> Save invited contacts</input>
+					</label>
+					{% if meeting.private %}
+					<label class="checkbox">
+						<input type="checkbox" name="allow_fi"> Allow meeting members to invite others to this meeting</input>
+					</label>
+					{% endif %}
+				</div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+					<button type="submit" class="btn btn-primary">Invite Now</button>
+					<button type="submit" name="invite_later" class="btn btn-primary">Invite Later</button>
+					<button type="submit" name="later" class="btn btn-primary">Skip</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="blurb_block" style="width: 30%; margin-top: 75px;">
+		<h4 style="text-align: center;">Info</h4><br>
+		<text>"Invite Now" will send out invites to this meeting instantly.</text><br><br>
+		<text>"Invite Later" will save these invites, but not send them out. You will be able to send them out later on the meeting page, without any need to re-invite.</text><br><br>
+		<text>Click "Skip" to not invite anyone to the meeting (you can send out invites later).</text><br><br>
+	</div>
+</div>
+
+<div id="inviteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Invite From Contacts</h3>
+  </div>
+  <div class="modal-body">
+    <div class="innerCheckbox">
+    	{% for contact in account.contacts.all %}
+	    	<div class="cboxContact">
+		    	<input type="checkbox" name="c_select" value="{{contact.id}}"></input><span style="margin-left: 10px;">
+		    	{% if contact.last_name %}{{contact.last_name}}{% endif %}
+		    	{% if contact.last_name %}{% if contact.first_name %}, {% endif %}{% endif %}
+		    	{% if contact.first_name %}{{contact.first_name}} {% endif %}
+		    	{% if contact.last_name %}<<em>{{contact.email}}</em>>{% endif %}
+			    {% if contact.first_name %}<<em>{{contact.email}}</em>{% endif %}
+				{% if contact.last_name %}{% else %}{% if contact.last_name %}{% else %}{{contact.email}}{% endif %}{% endif %}</span>
+		    </div>
+    	{% endfor %}
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" id="confirm_contacts" class="btn btn-primary">Ok</button>
+  </div>
 </div>
 
 <script>
 $(function() {
-	$("#btnLeft").click(function () {
-	    var selectedItem = $("#rightValues option:selected");
-	    $("#leftValues").append(selectedItem);
+
+	$('#confirm_contacts').click(function() {
+		added = '';
+		$('input[name=c_select]:checked').each(function() {
+			added += $(this).val() + ' ';
+		});
+		$('#from_contacts').val(added);
+		$('#acknowledge').html('<text style="line-height: 45px; color:#08c;">Contacts added successfully.</text>');
 	});
 
-	$("#btnRight").click(function () {
-	    var selectedItem = $("#leftValues option:selected");
-	    $("#rightValues").append(selectedItem);
-	});
-
-	$("#rightValues").change(function () {
-	    var selectedItem = $("#rightValues option:selected");
-	    $("#txtRight").val(selectedItem.text());
-	});
-
-	$("form").submit(function() {
-		var len = $("#leftValues option").length;
-		var fields = "";
-		for (var i = 0; i < len; i++) {
-			fields += $("#leftValues option:eq("+i+")").val() + ",";
-		}
-		$("#leftValues option").val(fields);
-	});
 });
 
 </script>

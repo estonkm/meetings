@@ -2,67 +2,77 @@
 
 {% block content %}
 
-<div class="container">
-	<form class="form-horizontal" style="display:inline-block;" method="post">
-		{% csrf_token %}
-		<input type="hidden" name="submit_request" value="submit_request">
-		<div class="control-group">
-			<div class="controls">
-				<h3>Set Interview</h3>
+{% load static %}
+
+<link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
+
+<div class="center_block container">
+	<div class="form_block">
+		<form class="form-horizontal" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="submit_request" value="submit_request">
+			<div class="control-group">
+				<div class="controls">
+					<h3>Set Interview</h3>
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Invitee</label>
-			<div class="controls">
-				{{ form.email }} 
-				{% if form.email.errors %}
-				<text style="color: red; padding-left: 5px;">Required</text>
-				{% endif %}
+			<div class="control-group">
+				<label class="control-label">Invitee</label>
+				<div class="controls">
+					{{ form.email }}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Has he/she already agreed to come?</label>
-			<div class="controls nobullet">
-				{{ form.agreed}} {% if form.agreed.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label">Has he/she already agreed to come?</label>
+				<div class="controls nobullet">
+					{{ form.agreed}}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputDate">Question Period: Start Date</label>
-			<div class="controls">
-				<input type="text" name="startdate" id="id_startdate"> {% if form.startdate.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputDate">Question Period: Start Date</label>
+				<div class="controls">
+					<input type="text" name="startdate" id="id_startdate">
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputTime">Start Time</label>
-			<div class="controls">
-				{{ form.starttime }} {% if form.starttime.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputTime">Start Time</label>
+				<div class="controls">
+					{{ form.starttime }}
+				</div>
 			</div>
-		</div>
-		{% if time_mismatch %}
-		<div class="control-group">
-			<div class="controls">
-				<h5 style="color: red;">Date/time error: the question period ends before it starts!</h5>
+			{% if time_mismatch %}
+			<div class="control-group">
+				<div class="controls">
+					<h5 style="color: red;">Date/time error: the question period ends before it starts!</h5>
+				</div>
 			</div>
-		</div>
-		{% endif %}
-		<div class="control-group">
-			<label class="control-label" for="inputDate">End Date</label>
-			<div class="controls">
-				<input type="text" name="enddate" id="id_enddate"> {% if form.enddate.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputDate">End Date</label>
+				<div class="controls">
+					<input type="text" name="enddate" id="id_enddate">
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputTime">End Time</label>
-			<div class="controls">
-				{{ form.endtime }} {% if form.endtime.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputTime">End Time</label>
+				<div class="controls">
+					{{ form.endtime }}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<div class="controls">
-				<button type="submit" class="btn btn-primary">Set</button>
+			<div class="control-group">
+				<div class="controls">
+					<button type="submit" class="btn btn-primary">Set</button>
+				</div>
 			</div>
-		</div>
-	</form>
+		</form>
+	</div>
+	<div class="blurb_block" style="font-size: 14px; margin-top: 15px; vertical-align: middle;">
+		<h4 style="text-align: center;">Info</h4><br>
+		<text>For the interview, you (the host) invite, by email, a person to be interviewed. This person can be yourself.</text><br><br>
+		<text>If the invitee has already agreed to come, the interview will proceed as normal. While the question period is active, members will be able to ask you questions.</text><br><br>
+		<text>If the invitee has not yet agreed to come, the interview will be in an inactive state until he visits the interview page (sent to him in an email), logs in, and either agrees or disagrees to be interview.</text>
+		<text>When the meeting starts, you will be able to view these questions and send them out one-by-one for everyone to see. The invitee will then be able to answer the questions.</text><br><br>
+	</div>
 </div>
 
 <script>
@@ -72,6 +82,29 @@ $(document).ready(function() {
         $( "#id_startdate" ).datepicker();
         $( "#id_enddate").datepicker();
     });
+
+    {% if form.errors %}
+        html = '<h4 style="text-align: center;">Errors</h4><br><text style="color: red;">';
+        {% if form.email.errors %}
+        html += 'Interviews are required to have an invitee.<br><br>';
+        {% endif %}
+        {% if form.agreed.errors %}
+        html += 'Please specify whether the invitee has or has not agreed to come.<br><br>';
+        {% endif %}
+        {% if form.startdate.errors %}
+        html += 'Start date required.<br><br>'
+        {% endif %}
+        {% if form.starttime.errors %}
+        html += 'Start time required.<br><br>'
+        {% endif %}
+        {% if form.enddate.errors %}
+        html += 'End date required.<br><br>'
+        {% endif %}
+        {% if form.endtime.errors %}
+        html += 'End time required.<br><br>'
+        {% endif %}
+        $('.blurb_block').html(html);
+    {% endif %}
 });
 </script>
 

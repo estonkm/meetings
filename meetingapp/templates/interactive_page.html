@@ -110,11 +110,16 @@
 
             <div class="row">
 				<div id="menu">
-					<p class="welcome">Welcome, <b>{{user.first_name}} {{user.last_name}}</b></p>
+					<p class="welcome">Welcome, <b>{{user.first_name}} {{user.last_name}}</b>
+						{% if closed %}. Chat is currently closed.{% endif %}</p>
+					{% if not closed %}
+						<a data-toggle="modal" role="button" id="see_online_mems" href="#mems_online" style="float:right;">Members online: <span id="n_o">{{num_online}}</span></a>
+						{% if canmod %}<a data-toggle="modal" role="button" id="see_bans" href="#bans" style="float:right; margin-right: 15px;">Ban/Un-ban Members</a>{% endif %}
+					{% endif %}
 					<div style="clear:both"></div>
 				</div>
 
-				<div id="chatbox">{{chatlog}}</div>
+				<div id="chatbox">{% autoescape off %}{{chatlog}}{% endautoescape %}</div>
 
 				<form name="message" action="">
 					<input name="usermsg" type="text" id="usermsg" maxlength="200" size="63" />
@@ -143,7 +148,7 @@
                 <text class="lead" style="font-size: 15px !important;">Members ({{m.members.all.count}}):</text><br>
                 {% for member in m.members.all %}
                 <text>
-                    <a href="#" style="color: black !important;" data-toggle="tooltip" data-trigger="hover focus" name="usertip" title="{{member.user.last_name}}, {{member.user.first_name}}" data-html="true" data-content="<a href='/profile/{{member.page_id}}'>Go to profile page</a>">
+                    <a href="/profile/{{member.page_id}}">
                     {{member.user.last_name}}, {{member.user.first_name}}</a> <<em>{{member.user.email}}</em>>
                 </text><br>
                 {% endfor %}
@@ -164,6 +169,38 @@
     <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
   </div>
 </div>
+
+<div id="mems_online" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="vModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" id="close_online_mems2" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="vModalLabel">Online Members</h3>
+  </div>
+  <div class="modal-body" id="mems_online_body">
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" id="close_online_mems" class="btn btn-primary">Ok</button>
+  </div>
+</div>
+
+{% if canmod %}
+
+<div id="bans" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="vModalLabel" aria-hidden="true">
+	<form method="post">
+	  <div class="modal-header">
+	    <button type="button" class="close" id="close_bans2" data-dismiss="modal" aria-hidden="true">×</button>
+	    <h3 id="vModalLabel">Ban/Un-ban Members</h3>
+	  </div>
+	  <div class="modal-body" id="bans_body">
+
+	  </div>
+	  <div class="modal-footer">
+	    <button type="submit" data-dismiss="modal" name="close_bans" id="close_bans" class="btn btn-primary">Ok</button>
+	  </div>
+	</form>
+</div>
+
+{% endif %}
 
 <div class="container">
     <div id="signinModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -222,22 +259,6 @@
 </div>
 
 <script>
-	var csPageOptions = {
-	  domain_key:"RZ7M43JLPAH6JHE45ATN", 
-	  textarea_id:"contact_list",
-	  ignoreMultipleEmails:true,
-	  afterSubmitContacts:function(contacts, source, owner) {
-	  		// var oForm = document.getElementById('add_addr_book');
-	  		// oForm.submit();
-	  		$('#collapse1').collapse('show');
-	  }
-	};
-</script>
-
-<script type="text/javascript" src="https://api.cloudsponge.com/address_books.js"></script>
-
-
-<script>
 $(function() {
     $(document).ready(function(){ 
 
@@ -257,8 +278,6 @@ $(function() {
         $('#signinModal').modal("show");
         {% endif %}
 
-        $('[name=usertip]').popover({'delay': {show: 0, hide: 1000}});
-
     });
 });
 
@@ -272,8 +291,12 @@ $(document).ready(function() {
 	  data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
 	});
 
+	var load = true;
+
+	loadOnline();
+
 	$('#submitmsg').click(function() {
-		{% if closed_error %}
+		{% if closed %}
 		$('#myModal').modal("show");
 		{% else %}
 		var clientmsg = $('#usermsg').val();
@@ -282,7 +305,7 @@ $(document).ready(function() {
 		{% endif %}
 	});
 
-	{% if closed_error %}
+	{% if closed %}
 	{% else %}
 	function loadLog() {
 		var oldscrollHeight = $('#chatbox').prop('scrollHeight') - 20;
@@ -291,26 +314,96 @@ $(document).ready(function() {
 			cache: false,
 			data: {'meeting': {{m.id}}},
 			success: function(html) {
-				if (html=='closed') {
-					$('#myModal').modal("show");
-				}
-				else {
-					$('#chatbox').html(html);
+				$('#chatbox').html(html);
 
-					var newscrollHeight = $('#chatbox').prop('scrollHeight') - 20;
-					if (newscrollHeight > oldscrollHeight) {
-						$('#chatbox').animate({ scrollTop: newscrollHeight}, 'normal');
-					}
+				var newscrollHeight = $('#chatbox').prop('scrollHeight') - 20;
+				if (newscrollHeight > oldscrollHeight) {
+					$('#chatbox').animate({ scrollTop: newscrollHeight}, 'normal');
 				}
 			},
 		});
 	}
 
 	setInterval (loadLog, 1500);
+
+	function loadOnline() {
+		if (load) {
+			$.getJSON('/chatonline/', {'meeting': {{m.id}}, 'user': {{user.id}}}).done(function(n) {
+					$('#n_o').html(n[0]);
+					$('#mems_online_body').html(n[1]);
+			});
+		}
+	}
+
+	{% if canmod %}
+
+	function loadBanlist() {
+		if (load) {
+			$.getJSON('/chatbanlist/', {'meeting': {{m.id}}, 'user': {{user.id}}}).done(function(n) {
+					$('#bans_body').html(n[0]);
+			});
+		}
+	}
+
+	setInterval (loadBanlist, 1600);
+
+	$('#see_bans').click(function() {
+		load = false;
+	});
+
+	$('#close_bans').click(function() {
+		load = true;
+	});
+
+	$('#close_bans2').click(function() {
+		load = true;
+	});
+
+	{% endif %}
+
+	$('#see_online_mems').click(function() {
+		load = false;
+	});
+
+	$('#close_online_mems').click(function() {
+		load = true;
+	});
+
+	$('#close_online_mems2').click(function() {
+		load = true;
+	});
+
+	setInterval (loadOnline, 1500);
+
+	$(window).bind('beforeunload', function() {
+		$.ajax({
+			type: "POST",
+			async: false,
+			url: "/chatonline/",
+			data: {'meeting': {{m.id}}, 'user': {{user.id}}}
+		});
+	});
+
+
 	{% endif %}
 
 });
 
+</script>
+
+<script type="text/javascript" src="https://api.cloudsponge.com/address_books.js"></script>
+
+<script>
+	var csPageOptions = {
+	  domain_key:"RZ7M43JLPAH6JHE45ATN", 
+	  textarea_id:"contact_list",
+	  ignoreMultipleEmails:true,
+	  afterSubmitContacts:function(contacts, source, owner) {
+	  		// var oForm = document.getElementById('add_addr_book');
+	  		// oForm.submit();
+	  		$('#collapse1').collapse('show');
+	  }
+	};
 </script>
 
 {% else %}

@@ -2,85 +2,132 @@
 
 {% block content %}
 
-<div class="container">
-	<form class="form-horizontal" style="display:inline-block;" method="post">
-		{% csrf_token %}
-		<input type="hidden" name="submit_request" value="submit_request">
-		<div class="control-group">
-			<div class="controls">
-				<h3>Create Meeting</h3>
+{% load static %}
+
+<link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
+
+<div class="center_block container">
+	<div class="form_block">
+		<form class="form-horizontal" style="" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="submit_request" value="submit_request">
+			<div class="control-group">
+				<div class="controls">
+					<h3>Create Meeting</h3>
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="">What Kind of Meeting?</label>
-			<div class="controls nobullet">
-				{{ form.interview }} {% if form.interview.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="">Meeting Format<br><a style="font-size: 12px;" id="kind_info">What's this?</a></label>
+				<div class="controls nobullet">
+					{{ form.interview }}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Meeting Name</label>
-			<div class="controls">
-				{{ form.title }} 
-				{% if form.title.errors %}
-				<text style="color: red; padding-left: 5px;">Required</text>
-				{% endif %}
+			<div class="control-group">
+				<label class="control-label">Meeting Name</label>
+				<div class="controls">
+					{{ form.title }}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Description</label>
-			<div class="controls">
-				{{ form.desc }} {% if form.desc.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label">Description</label>
+				<div class="controls">
+					{{ form.desc }}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputDate">Time Zone</label>
-			<div class="controls">
-				{{ form.timezone }} {% if form.timezone.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputDate">Time Zone</label>
+				<div class="controls">
+					{{ form.timezone }}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputDate">Start Date</label>
-			<div class="controls">
-				<input type="text" name="startdate" id="id_startdate"> {% if form.startdate.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputDate">Start Date</label>
+				<div class="controls">
+					<input type="text" name="startdate" id="id_startdate">
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputTime">Start Time</label>
-			<div class="controls">
-				{{ form.starttime }} {% if form.starttime.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputTime">Start Time</label>
+				<div class="controls">
+					{{ form.starttime }}
+				</div>
 			</div>
-		</div>
-		{% if time_mismatch %}
-		<div class="control-group">
-			<div class="controls">
-				<h5 style="color: red;">Date/time error: the meeting ends before it starts!</h5>
+			{% if time_mismatch %}
+			<div class="control-group">
+				<div class="controls">
+					<h5 style="color: red;">Date/time error: the meeting ends before it starts!</h5>
+				</div>
 			</div>
-		</div>
-		{% endif %}
-		<div class="control-group">
-			<label class="control-label" for="inputDate">End Date</label>
-			<div class="controls">
-				<input type="text" name="enddate" id="id_enddate"> {% if form.enddate.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputDate">End Date</label>
+				<div class="controls">
+					<input type="text" name="enddate" id="id_enddate">
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputTime">End Time</label>
-			<div class="controls">
-				{{ form.endtime }} {% if form.endtime.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputTime">End Time</label>
+				<div class="controls">
+					{{ form.endtime }}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="">Meeting Privacy</label>
-			<div class="controls nobullet">
-				{{ form.status }} {% if form.status.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="">Meeting Privacy<br><a style="font-size: 12px;" id="priv_info">What's this?</a></label>
+				<div class="controls nobullet">
+					{{ form.status }}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<div class="controls">
-				<button type="submit" class="btn btn-primary">Create Meeting</button>
+			<div class="control-group">
+				<div class="controls">
+					<button type="submit" class="btn btn-primary">Create Meeting</button>
+				</div>
 			</div>
-		</div>
-	</form>
+		</form>
+	</div>
+	<div class="blurb_block" style="font-size: 14px; margin-top: 150px; vertical-align: middle;">
+		<h4 style="text-align: center;">Info</h4><br>
+		<text>Click on any element labeled "What's this?" to learn more about its accompanying form field.</text><br><br>
+		<text>Except for meeting format and time zone, all fields can be changed after the meeting is created.</text><br><br>
+	</div>
+</div>
+
+<div id="normalMeeting" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Normal Meeting</h3>
+  </div>
+  <div class="modal-body">
+    
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
+  </div>
+</div>
+
+<div id="interview" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Interview</h3>
+  </div>
+  <div class="modal-body">
+    
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
+  </div>
+</div>
+
+<div id="interactive" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Interactive</h3>
+  </div>
+  <div class="modal-body">
+    
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
+  </div>
 </div>
 
 <script>
@@ -89,6 +136,52 @@ $(document).ready(function() {
     $(function() {
         $( "#id_startdate" ).datepicker();
         $( "#id_enddate").datepicker();
+
+        $('#kind_info').click(function() {
+        	html = '<h4 style="text-align: center;">Meeting Formats</h4><br><text>We offer three types of meetings. Please click on any of the following to learn more about each type:</text><br><br>';
+        	html += '<a data-toggle="modal" role="button" href="#normalMeeting">Normal Meeting</a><br><br>';
+        	html += '<a data-toggle="modal" role="button" href="#interview">Interview</a><br><br>';
+        	html += '<a data-toggle="modal" role="button" href="#interactive">Interactive Chat</a><br><br>';
+        	// modal data toggle goes here
+        	$('.blurb_block').html(html);
+        });
+
+        {% if form.errors %}
+	        html = '<h4 style="text-align: center;">Errors</h4><br><text style="color: red;">';
+	        {% if form.interview.errors %}
+	        html += 'Meeting format required.<br><br>'
+	        {% endif %}
+	        {% if form.title.errors %}
+	        html += 'Meeting name required.<br><br>'
+	        {% endif %}
+	        {% if form.desc.errors %}
+	        html += 'Description required.<br><br>'
+	        {% endif %}
+	        {% if form.timezone.errors %}
+	        html += 'Timezone required.<br><br>'
+	        {% endif %}
+	        {% if form.startdate.errors %}
+	        html += 'Start date required.<br><br>'
+	        {% endif %}
+	        {% if form.starttime.errors %}
+	        html += 'Start time required.<br><br>'
+	        {% endif %}
+	        {% if form.enddate.errors %}
+	        html += 'End date required.<br><br>'
+	        {% endif %}
+	        {% if form.endtime.errors %}
+	        html += 'End time required.<br><br>'
+	        {% endif %}
+	        {% if form.status.errors %}
+	        html += 'Please specify privacy settings for this meeting.<br><br>'
+	        {% endif %}
+	        $('.blurb_block').html(html);
+        {% endif %}
+
+        $('#priv_info').click(function() {
+        	html = '<h4 style="text-align: center;">Privacy</h4><br><text>"Public" allows anyone to view the meeting page, and any registered member to participate in the meeting.</text><br><br><text>"Private" allows only those invited by you (you\'ll send out invites later) to view or participate in the meeting.</text><br><br>';
+        	$('.blurb_block').html(html);
+        });
     });
 });
 

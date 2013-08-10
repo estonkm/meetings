@@ -3,84 +3,90 @@
 {% block content %}
 
 <!-- TODO: forgot your password? -->
-<div class="container">
-	<form class="form-horizontal" style="display:inline-block;" method="post">
-		{% csrf_token %}
-		<input type="hidden" name="submit_request" value="submit_request">
-		<div class="control-group">
-			<div class="controls">
-				<h3>Sign Up</h3>
+
+{% load static %}
+
+<link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
+
+<div class="center_block container">
+	<div class="form_block">
+		<form class="form-horizontal" style="" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="submit_request" value="submit_request">
+			<div class="control-group">
+				<div class="controls">
+					<h3>Sign Up</h3>
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputEmail">First name</label>
-			<div class="controls">
-				{{ form.first_name }}
-				{% if form.first_name.errors %}
-				<text style="color: red; padding-left: 5px;">Required</text>
-				{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputEmail">First name</label>
+				<div class="controls">
+					{{ form.first_name }}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputEmail">Last name</label>
-			<div class="controls">
-				{{ form.last_name }}
-				{% if form.last_name.errors %}
-				<text style="color: red; padding-left: 5px;">Required</text>
-				{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputEmail">Last name</label>
+				<div class="controls">
+					{{ form.last_name }}
+				</div>
 			</div>
-		</div>
-		{% if email_taken %}
-		<div class="control-group">
-			<div class="controls">
-				<h5 style="color: red;">This email is already in use.</h5>
+			{% if email_taken %}
+			<div class="control-group">
+				<div class="controls">
+					<h5 style="color: red;">This email is already in use.</h5>
+				</div>
 			</div>
-		</div>
+			{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputEmail">Email</label>
+				<div class="controls">
+					{{ form.email }}
+				</div>
+			</div>
+			{% if retype_failed %}
+			<div class="control-group">
+				<div class="controls">
+					<h5 style="color: red;">Passwords do not match.</h5>
+				</div>
+			</div>
+			{% endif %}
+			{% if too_short %}
+			<div class="control-group">
+				<div class="controls">
+					<h5 style="color: red;">Passwords must be at least 8 characters long.</h5>
+				</div>
+			</div>
+			{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputPassword">Password</label>
+				<div class="controls">
+					{{ form.password }}
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputPassword">Retype Password:</label>
+				<div class="controls">
+					{{ form.retype }}
+				</div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+					<label class="checkbox">
+						<input type="checkbox"> Remember me
+					</label>
+					<button type="submit" class="btn btn-primary">Sign Up</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="blurb_block" style="font-size: 14px; margin-top: 75px; vertical-align: middle;">
+		<h4 style="text-align: center;">Info</h4><br>
+		<text>After signing up, you'll be asked to verify your email before your account becomes active.</text><br><br>
+		{% if fromcreate %}
+		<text>We ask that users sign up before creating a meeting so that we can link the meeting to your account. This way, no one else can claim to be the host!<br><br> Don't worry--you'll be able to create your meeting right away, before authenticating your account.</text>
 		{% endif %}
-		<div class="control-group">
-			<label class="control-label" for="inputEmail">Email</label>
-			<div class="controls">
-				{{ form.email }}
-				{% if form.email.errors %}
-				<text style="color: red; padding-left: 5px;">Required</text>
-				{% endif %}
-			</div>
-		</div>
-		{% if retype_failed %}
-		<div class="control-group">
-			<div class="controls">
-				<h5 style="color: red;">Passwords do not match.</h5>
-			</div>
-		</div>
-		{% endif %}
-		{% if too_short %}
-		<div class="control-group">
-			<div class="controls">
-				<h5 style="color: red;">Passwords must be at least 8 characters long.</h5>
-			</div>
-		</div>
-		{% endif %}
-		<div class="control-group">
-			<label class="control-label" for="inputPassword">Password</label>
-			<div class="controls">
-				{{ form.password }}
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputPassword">Retype Password:</label>
-			<div class="controls">
-				{{ form.retype }}
-			</div>
-		</div>
-		<div class="control-group">
-			<div class="controls">
-				<label class="checkbox">
-					<input type="checkbox"> Remember me
-				</label>
-				<button type="submit" class="btn btn-primary">Sign Up</button>
-			</div>
-		</div>
-	</form>
+		<text>We'll never share your information with any third party.</text><br><br>
+	</div>
 </div>
 
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -96,20 +102,38 @@
   </div>
 </div>
 
-{% if success %}
 <script>
 
 $(document).ready(function() {
+
+	{% if success %}
 
 	$('#myModal').modal("show");
 
 	$("#myModal :button").click(function(e) {
 		window.location.replace('{{destination}}');
 	});
+
+	{% endif %}
+
+    {% if form.errors %}
+        html = '<h4 style="text-align: center;">Errors</h4><br><text style="color: red;">';
+        {% if form.interview.errors %}
+        html += 'Meeting format required.<br><br>';
+        {% endif %}
+        {% if form.first_name.errors %}
+        html += 'First name required.<br><br>';
+        {% endif %}
+        {% if form.last_name.errors %}
+        html += 'Last name required.<br><br>';
+        {% endif %}
+        {% if form.email.errors %}
+        html += 'Email required.<br><br>';
+        {% endif %}
+        $('.blurb_block').html(html);
+    {% endif %}
 });
 
 </script>
-
-{% endif %}
 
 {% endblock %}

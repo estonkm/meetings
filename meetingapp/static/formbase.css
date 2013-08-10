@@ -1,0 +1,31 @@
+body {
+	background-color: white !important;
+}
+
+.blurb_block {
+	float: left;
+	margin-top: 75px;
+	margin-left: 2.5%;
+	margin-right: 2.5%;
+	width: 35%;
+	border: 1px dotted grey;
+	border-radius: 0px;
+	padding: 10px;
+}
+
+.form_block {
+	float:left;
+	width: 55%;
+}
+
+.title_block {
+	height: 75px;
+	text-align:center;
+}
+
+.center_block {
+	width: 65%;
+	margin: 0 auto;
+	border: 1px solid lightgrey;
+	background-color: white;
+}

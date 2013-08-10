@@ -1,68 +1,106 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-	<form class="form-horizontal" enctype="multipart/form-data" style="display:inline-block;" method="post">
-		{% csrf_token %}
-		<input type="hidden" name="attach" value="submit_request">
-		<div class="control-group">
-			<div class="controls">
-				<h3>What organization runs or sponsors this meeting?</h3>
+{% load static %}
+
+<link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
+
+<div class="center_block container">
+	<div class="form_block">
+		<form class="form-horizontal" enctype="multipart/form-data" style="" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="attach" value="submit_request">
+			<div class="control-group">
+				<div class="controls">
+					<h3>Organization?</h3>
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Add from organizations: </label>
-			<div class="controls">
-				<select name="selectorg">
-					{% for o in orgs %}
-					<option value="{{o.id}}">{{o.name}}</option>
-					{% endfor %}
-					<option name="None\n"></option>
-				</select>
+			<div class="control-group">
+				<label class="control-label">Add from organizations: </label>
+				<div class="controls">
+					<select name="selectorg">
+						{% for o in orgs %}
+						<option value="{{o.id}}">{{o.name}}</option>
+						{% endfor %}
+						<option name="None\n"></option>
+					</select>
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<div class="controls">
-				<h4>Or create a new organization:</h4>
+			<div class="control-group">
+				<div class="controls">
+					<h4>Or create a new organization:</h4>
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputEmail">Name</label>
-			<div class="controls">
-	            {{form.name}} {% if form.name.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputEmail">Name</label>
+				<div class="controls">
+		            {{form.name}}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputdesc">Description</label>
-			<div class="controls">
-				{{form.desc}} {% if form.desc.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputdesc">Description</label>
+				<div class="controls">
+					{{form.desc}} {% if form.desc.errors %}Hi{%endif%}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputcontact">Contact Email</label>
-			<div class="controls">
-				{{form.contact}} {% if form.contact.errors %}<text style="color: red; padding-left: 5px;">Invalid Input</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputcontact">Contact Email</label>
+				<div class="controls">
+					{{form.contact}}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputws">Website</label>
-			<div class="controls">
-				{{form.website}}
+			<div class="control-group">
+				<label class="control-label" for="inputws">Website</label>
+				<div class="controls">
+					{{form.website}}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="inputPassword">Image</label>
-			<div class="controls">
-				{{form.image}}{% if form.image.errors %}<h5 style="color: red;">Image is too large.</h5>{% endif %}
+			<div class="control-group">
+				<label class="control-label" for="inputPassword">Image</label>
+				<div class="controls">
+					{{form.image}}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<div class="controls">
-				<button type="submit" class="btn btn-primary">Add to Meeting</button>
-				<button type="submit" name="later" class="btn btn-primary">Skip this Step</button>
+			<div class="control-group">
+				<div class="controls">
+					<button type="submit" class="btn btn-primary">Add to Meeting</button>
+					<button type="submit" name="later" class="btn btn-primary">Skip</button>
+				</div>
 			</div>
-		</div>
-	</form>
+		</form>
+	</div>
+	<div class="blurb_block" style="font-size: 14px; margin-top: 75px; vertical-align: middle;">
+		<h4 style="text-align: center;">Info</h4><br>
+		<text>What organization runs or sponsors this meeting?</text><br><br>
+		<text>If you don't want this meeting to have an affiliated organization, click the "Skip" button.</text><br><br>
+		<text>Accepted formats for organization image are: jpg, png.</text><br><br>
+		<text>Any organization you create here will be added to your profile, and you can select it for other meetings, too!</text><br><br>
+	</div>
 </div>
+
+
+<script>
+
+$(document).ready(function() {
+    {% if input_error or form.errors %}
+        html = '<h4 style="text-align: center;">Errors</h4><br><text style="color: red;">';
+        {% if name_error %}
+        html += 'Organization name also required.<br><br>';
+        {% endif %}
+        {% if desc_error %}
+        html += 'Organization description also required.<br><br>';
+        {% endif %}
+        {% if contact_error %}
+        html += 'Invalid contact email.<br><br>';
+        {% endif %}
+        {% if form.image.errors %}
+        html += 'Problem processing your image. Image might be too large or in a non-accepted format (choose jpg or png).<br><br>';
+        {% endif %}
+        $('.blurb_block').html(html);
+    {% endif %}
+});
+
+
+</script>
 
 {% endblock %}

@@ -29,6 +29,8 @@ urlpatterns = patterns('',
     (r'^setchat/$', views.setchat),
     (r'^setnormal/$', views.setnormal),
     (r'^intersub/$', views.intersub),
+    (r'^chatonline/$', views.chatonline),
+    (r'^chatbanlist/$', views.chatbanlist),
     (r'^static/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.STATIC_ROOT}),
     (r'^media/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.MEDIA_ROOT}),
 

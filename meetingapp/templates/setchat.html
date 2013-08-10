@@ -2,36 +2,60 @@
 
 {% block content %}
 
-<div class="container">
-	<form class="form-horizontal" style="display:inline-block;" method="post">
-		{% csrf_token %}
-		<input type="hidden" name="submit_request" value="submit_request">
-		<div class="control-group">
-			<div class="controls">
-				<h3>Set Interactive Chat</h3>
+{% load static %}
+
+<link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
+
+<div class="center_block container">
+	<div class="form_block">
+		<form class="form-horizontal" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="submit_request" value="submit_request">
+			<div class="control-group">
+				<div class="controls">
+					<h3>Set Interactive Chat</h3>
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Invitee</label>
-			<div class="controls">
-				{{ form.email }} 
-				{% if form.email.errors %}
-				<text style="color: red; padding-left: 5px;">Required</text>
-				{% endif %}
+			<div class="control-group">
+				<label class="control-label">Invitee</label>
+				<div class="controls">
+					{{ form.email }}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Has he/she already agreed to come?</label>
-			<div class="controls nobullet">
-				{{ form.agreed}} {% if form.agreed.errors %}<text style="color: red; padding-left: 5px;">Required</text>{% endif %}
+			<div class="control-group">
+				<label class="control-label">Has he/she already agreed to come?</label>
+				<div class="controls nobullet">
+					{{ form.agreed}}
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<div class="controls">
-				<button type="submit" class="btn btn-primary">Set</button>
+			<div class="control-group">
+				<div class="controls">
+					<button type="submit" class="btn btn-primary">Set</button>
+				</div>
 			</div>
-		</div>
-	</form>
+		</form>
+	</div>
+	<div class="blurb_block" style="font-size: 14px; margin-top: 15px; vertical-align: middle;">
+		<h4 style="text-align: center;">Info</h4><br>
+		<text>For the interactive chat, you (the host) invite, by email, a person to be interviewed. This person can be yourself.</text><br><br>
+		<text>The chat will open and close at the times you just specified in the "Create Meeting" section.</text><br><br>
+	</div>
 </div>
+
+<script>
+
+$(document).ready(function() {
+    {% if form.errors %}
+        html = '<h4 style="text-align: center;">Errors</h4><br><text style="color: red;">';
+        {% if form.email.errors %}
+        html += 'Interviews are required to have an invitee.<br><br>';
+        {% endif %}
+        {% if form.agreed.errors %}
+        html += 'Please specify whether the invitee has or has not agreed to come.<br><br>';
+        {% endif %}
+        $('.blurb_block').html(html);
+    {% endif %}
+});
+</script>
 
 {% endblock %}

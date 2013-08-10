@@ -2,42 +2,57 @@
 
 {% block content %}
 
-<div class="container">
-	<form class="form-horizontal" style="display:inline-block;" method="post">
-		{% csrf_token %}
-		<input type="hidden" name="submit_request" value="submit_request">
-		<div class="control-group">
-			<div class="controls">
-				<h3>Set Agenda Items</h3>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Agenda Items</label>
-			<div class="controls">
-				<div id="agenda_controls">
-					<div id="div1">
-						<input type="text" name="agenda_item_1"><p></p>
-					</div>
+{% load static %}
+
+<link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
+
+<div class="center_block container">
+	<div class="form_block">
+		<form class="form-horizontal" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="submit_request" value="submit_request">
+			<div class="control-group">
+				<div class="controls">
+					<h3>Set Agenda Items</h3>
 				</div>
-				<a class="btn" id="additem" href="#">Add item</a>
-				<a class="btn" id="removeitem" style="margin-left: 5px;" href="#">Remove item</a>
 			</div>
-		</div>
-		<div class="control-group">
-			<div class="controls">
-				<button type="submit" class="btn btn-primary">Set</button>
+			<div class="control-group">
+				<label class="control-label">Agenda Items</label>
+				<div class="controls">
+					<div id="agenda_controls">
+						<div id="div1">
+							<input type="text" name="agenda_item_1"><p></p>
+						</div>
+						<div id="div2">
+							<input type="text" name="agenda_item_2"><p></p>
+						</div>
+						<div id="div3">
+							<input type="text" name="agenda_item_3"><p></p>
+						</div>
+					</div>
+					<a class="btn" id="additem" href="#">Add item</a>
+					<a class="btn" id="removeitem" style="margin-left: 5px;" href="#">Remove item</a>
+				</div>
 			</div>
-		</div>
-	</form>
+			<div class="control-group">
+				<div class="controls">
+					<button type="submit" class="btn btn-primary">Set</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="blurb_block" style="font-size: 14px; margin-top: 25px; vertical-align: middle;">
+		<h4 style="text-align: center;">Info</h4><br>
+		<text>Agenda Items are the main points of discussion in a meeting--only the host can set them.</text><br><br>
+		<text>For now, there is a limit of 10 Agenda Items; however, you can add or remove created Agenda Items at any point after creating the meeting.</text><br><br>
+	</div>
 </div>
 
 <script>
 
 
 $(document).ready(function() {
-	var counter = 2;
-
-	$('#removeitem').hide();
+	var counter = 4;
 
 	$('#additem').click(function() {
 		if (counter == 2) {

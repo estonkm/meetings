@@ -98,8 +98,9 @@ class Chat(models.Model):
 	chatlog = models.TextField(null=True, blank=True)
 	messages = models.ManyToManyField('ChatMessage', null=True, blank=True)
 	banlist = models.ManyToManyField('Account', null=True, blank=True)
+	online = models.ManyToManyField('Account', related_name='online', null=True, blank=True)
 
-# ditto
+# ditto - except not used
 class ChatMessage(models.Model):
 	poster = models.ForeignKey('Account', null=True, blank=True)
 	message = models.CharField(max_length=200, null=True, blank=True)
