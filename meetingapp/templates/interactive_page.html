@@ -186,16 +186,18 @@
 {% if canmod %}
 
 <div id="bans" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="vModalLabel" aria-hidden="true">
-	<form method="post">
+	<form method="post" id="banform">{% csrf_token %}
 	  <div class="modal-header">
 	    <button type="button" class="close" id="close_bans2" data-dismiss="modal" aria-hidden="true">×</button>
 	    <h3 id="vModalLabel">Ban/Un-ban Members</h3>
 	  </div>
+	  <input type="hidden" id="ban_list" name="ban_list" />
+	  <input type="hidden" id="unban_list" name="unban_list" />
 	  <div class="modal-body" id="bans_body">
 
 	  </div>
 	  <div class="modal-footer">
-	    <button type="submit" data-dismiss="modal" name="close_bans" id="close_bans" class="btn btn-primary">Ok</button>
+	    <button type="submit" name="close_bans" id="close_bans" class="btn btn-primary">Ok</button>
 	  </div>
 	</form>
 </div>
@@ -322,9 +324,10 @@ $(document).ready(function() {
 				}
 			},
 		});
+
 	}
 
-	setInterval (loadLog, 1500);
+	setInterval(loadLog, 1500);
 
 	function loadOnline() {
 		if (load) {
@@ -345,7 +348,9 @@ $(document).ready(function() {
 		}
 	}
 
-	setInterval (loadBanlist, 1600);
+	loadBanlist();
+
+	setInterval(loadBanlist, 1600);
 
 	$('#see_bans').click(function() {
 		load = false;
@@ -373,7 +378,8 @@ $(document).ready(function() {
 		load = true;
 	});
 
-	setInterval (loadOnline, 1500);
+	loadOnline();
+	setInterval(loadOnline, 1500);
 
 	$(window).bind('beforeunload', function() {
 		$.ajax({
@@ -381,6 +387,15 @@ $(document).ready(function() {
 			async: false,
 			url: "/chatonline/",
 			data: {'meeting': {{m.id}}, 'user': {{user.id}}}
+		});
+	});
+
+	$('#banform').submit(function() {
+		$('input:checkbox[name=ban_select]:checked').each(function() {
+			$('#ban_list').val($('#ban_list').val()+' '+$(this).val());
+		});
+		$('input:checkbox[name=unban_select]:checked').each(function() {
+			$('#unban_list').val($('#unban_list').val()+' '+$(this).val());
 		});
 	});
 

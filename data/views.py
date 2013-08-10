@@ -970,9 +970,9 @@ def chatbanlist(request):
 							if (member not in meeting.moderators.all() and member!=meeting.hosts.all()[0]) and member.user.email != meeting.invitee:
 								data += '<div class=\'cboxContact\'>'
 								if member in meeting.chat.banlist.all():
-									data += '<input type=\'checkbox\' name=\'unban_select[]\' value=\''+str(member.id)+'\'><text style=\'color:blue;\'> Un-ban</text></input><span style=\'margin-left: 10px;\'>'
+									data += '<input type=\'checkbox\' name=\'unban_select\' value=\''+str(member.id)+'\'><text style=\'color:blue;\'> Un-ban</text></input><span style=\'margin-left: 10px;\'>'
 								else:
-									data += '<input type=\'checkbox\' name=\'ban_select[]\' value=\''+str(member.id)+'\'><text style=\'color:red;\'> Ban</text></input><span style=\'margin-left: 10px;\'>'
+									data += '<input type=\'checkbox\' name=\'ban_select\' value=\''+str(member.id)+'\'><text style=\'color:red;\'> Ban</text></input><span style=\'margin-left: 10px;\'>'
 								data += '<span style=\'margin-left: 10px;\'>'
 								ln = member.user.last_name
 								fn = member.user.first_name
@@ -1218,6 +1218,7 @@ def meeting(request):
 
 				if 'members' in request.POST:
 					return HttpResponseRedirect('../managemembers/')
+
 				if 'qgroup' in request.POST:
 					q = Question.objects.get(id__exact=request.POST.get('qgroup'))
 					q.selected = True
@@ -1323,18 +1324,42 @@ def meeting(request):
 						send_email_invite(meeting, viewer.user, recipients)
 
 				if 'close_bans' in request.POST:
-					if viewer in meeting.moderators.all() or viewer is host:
-						bans = request.POST.get('ban_select')
-						unbans = request.POST.get('unban_select')
-						for member in bans:
-							if member != host and member.user.email != meeting.invitee:
-								if member not in meeting.chat.banlist.all():
-									meeting.chat.banlist.add(member)
-									meeting.chat.save()
-						for member in unbans:
-							if member in meeting.chat.banlist.all():
-								meeting.chat.banlist.remove(member)
-								meeting.chat.save()
+					if viewer in meeting.moderators.all() or viewer==host:
+						dtnow = (ZONE.localize(datetime.now())).astimezone(meetingtz)
+						time = dtnow.strftime("%H:%M:%S")
+						bans = request.POST.get('ban_list')
+						unbans = request.POST.get('unban_list')
+						if bans:
+							bans = bans.split(' ')
+							for m_id in bans:
+								if m_id == '':
+									continue
+								member = meeting.members.filter(id__exact=m_id)
+								if member:
+									member = member[0]
+									if member != host and member.user.email != meeting.invitee:
+										if member not in meeting.chat.banlist.all():
+											meeting.chat.banlist.add(member)
+											meeting.chat.chatlog += "<div class='msgln'><text style='color:red; font-style: italic;'>("+time+") "+ viewer.user.first_name+" "+viewer.user.last_name+" has banned "+member.user.first_name+" "+member.user.last_name+" from this chat.</text><br></div>"
+											meeting.chat.save()
+						if unbans:
+							unbans = unbans.split(' ')
+							for m_id in unbans:
+								if m_id == '':
+									continue
+								member = meeting.members.filter(id__exact=m_id)
+								if member:
+									member = member[0]
+									if member in meeting.chat.banlist.all():
+										meeting.chat.banlist.remove(member)
+										meeting.chat.chatlog += "<div class='msgln'><text style='color:blue; font-style: italic;'>("+time+") "+ viewer.user.first_name+" "+viewer.user.last_name+" has unbanned "+member.user.first_name+" "+member.user.last_name+" from this chat.</text><br></div>"
+										meeting.chat.save()
+
+				if 'settings' in request.POST:
+					return HttpResponseRedirect('../settings/')
+
+				if 'members' in request.POST:
+					return HttpResponseRedirect('../managemembers/')
 
 
 		context['m'] = meeting
