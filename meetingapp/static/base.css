@@ -38,6 +38,7 @@ img.addrbook {
     height: 25px;
     border-bottom: 1px solid #ccc; 
     padding: 10px;
+    overflow: auto;
 }
 
 .scrollbox {
