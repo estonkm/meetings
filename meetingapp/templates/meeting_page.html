@@ -147,7 +147,9 @@
                             <div class="row collapse indented out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
                                 {% for comment in motion.comments.all %}
                                     <div class="row comment">
-                                        <em>{{comment.text}}</em>
+                                        {% if comment.modded %}<em>{{comment.text}}</em>{% else %}
+                                        {{comment.text}}
+                                        {% endif %}
                                     </div>
                                     <div class="row comment">
                                         <text style="color: #999; font-size: 12px; float:left;">posted by {{comment.user.user.first_name}} {{comment.user.user.last_name}} on {{comment.timestamp}}</text>
@@ -157,7 +159,6 @@
                                                     {% if comment.user.user == user %}
                                                     <button class="btn btn-mini" name="editcomment" id="{{comment.id}}" style="float:left; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
                                                     {% endif %}
-                                                    <span id="mo_comment">{{comment.text}}</span>
                                                     <button class="btn btn-mini btn-danger" type="submit" style="float:left;" name="remove_comment" value="{{comment.id}} {{motion.id}}">Remove</button>
 
                                                 </form>
@@ -216,7 +217,8 @@
                                 <div class="row collapse indented out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
                                     {% for comment in motion.comments.all %}
                                         <div class="row comment">
-                                             <em>{{comment.text}}</em>
+                                             {% if comment.modded %}<em>{{comment.text}}</em>
+                                             {% else %}{{comment.text}}{% endif %}
                                         </div>
                                         <div class="row comment">
                                             <text style="color: #999; font-size: 12px; float:left;">posted by {{comment.user.user.first_name}} {{comment.user.user.last_name}} on {{comment.timestamp}}</text>
@@ -226,7 +228,6 @@
                                                         {% if comment.user.user == user %}
                                                         <button class="btn btn-mini" name="editcomment" id="{{comment.id}}" style="float:left; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
                                                         {% endif %}
-                                                        <span id="mo_comment">{{comment.text}}</span>
                                                         <button class="btn btn-mini btn-danger" type="submit" style="float:left;" name="remove_comment" value="{{comment.id}} {{motion.id}}">Remove</button>
                                                     </form>
                                                 {% endif %}
