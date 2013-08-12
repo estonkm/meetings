@@ -1067,10 +1067,10 @@ def meeting(request):
 
 	if request.user.is_authenticated():
 		viewer = Account.objects.get(user=request.user)
-		if viewer.user.email in meeting.invited:
-			if viewer in meeting.members.all():
+		if viewer in meeting.members.all():
 				context['joined'] = True
 		if viewer == host:
+			context['joined'] = True
 			context['canmod'] = True
 			if meeting.pending:
 				context['pending'] = True

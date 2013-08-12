@@ -83,9 +83,11 @@
             {% endif %}
 
             {% else %}
-            <br>
-            <a href="#signinModal" data-toggle="modal" class="btn btn-primary">Invited to be interviewed? Click here to log in or sign up.</a>
-            <br><br>
+	            {% if not user.is_authenticated %}
+	            <br>
+	            <a href="#signinModal" data-toggle="modal" class="btn btn-primary">Invited to be interviewed? Click here to log in or sign up.</a>
+	            <br><br>
+	            {% endif %}
 			{% endif %}
             {% if is_invitee %}
                 {% if show_response_options %}
@@ -117,7 +119,7 @@
 
             <div class="row">
 				<div id="menu">
-					<p class="welcome">Welcome {% if joined %}, <b>{{user.first_name}} {{user.last_name}}</b>{% endif %}
+					<p class="welcome">Welcome{% if joined %}, <b>{{user.first_name}} {{user.last_name}}</b>{% endif %}
 						{% if closed %}. Chat is currently closed.{% endif %}</p>
 					{% if not closed %}
 						<a data-toggle="modal" class="checkjoined" role="button" id="see_online_mems" href="#mems_online" style="float:right;">Members online: <span id="n_o">{{num_online}}</span></a>
