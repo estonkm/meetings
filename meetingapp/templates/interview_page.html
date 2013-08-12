@@ -11,10 +11,16 @@
         <div class="span8">
             <div class="meetingHead">
                 <h2 style="margin-bottom:20px !important;">{{m.title}}</h2>
+                {% if not joined and user.email != m.invitee %}
+                <form method="post">{% csrf_token %}
+                    <button type="submit" class="btn btn-primary" id="join_meeting" name="join_meeting">Join Meeting</button>
+                </form>
+                {% endif %}
                 <div class="desc">
                     {{m.desc}}
                 </div>
                 <div class="info">
+                    {% if m.uses_dt %}
                     <text style="font-weight: bold !important;">Start: </text>
                     <text style="margin-left: 5px;">{{m.starttime}} {{m.startdate}}</text><br>
                     <text style="font-weight: bold !important;">End: </text>
@@ -23,6 +29,7 @@
                     <text style="margin-left: 5px;">{{m.q_start}}</text><br>
                     <text style="font-weight: bold !important;">Question Period End: </text>
                     <text style="margin-left: 5px;">{{m.q_end}}</text><br>
+                    {% endif %}
                     <text style="font-weight: bold !important;">Timezone: </text>
 		    <text style="margin-left: 5px;">{{m.timezone}}</text><br> 
 		    {% if user == host.user %}
@@ -36,7 +43,7 @@
 			{% else %}	
 			{% if m.friend_invites %}
 				<br>
-				<a class="cs_import btn" style="margin-top: 2px !important;">Invite friends from Address Book</a>
+				<a class="cs_import btn checkjoined" style="margin-top: 2px !important;">Invite friends from Address Book</a>
 				<img src="{% static "google.png" %}" class="addrbook">
 				<img src="{% static "apple.png" %}" class="addrbook">
 				<img src="{% static "yahoo.png" %}" class="addrbook">
@@ -56,11 +63,11 @@
                         {% if asked %}
                         <a data-toggle="modal" href="#editQ" class="btn btn-warning">Edit Your Question</a>
                         {% else %}
-                        <a data-toggle="modal" href="#askQ" class="btn btn-warning">Ask a Question</a>
+                        <a data-toggle="modal" href="#askQ" class="btn btn-warning checkjoined">Ask a Question</a>
                         {% endif %}
                 {% endif %}
             {% endif %}
-			{% if user.is_authenticated %}
+			{% if joined %}
 			<form method="post" style="margin-top: 20px !important;">{% csrf_token %}
                 <i class="icon-envelope"></i>
 				{% if currently_receiving %} You are currently receiving email notifications from this meeting. <br> Stop receiving notifications? 
@@ -90,7 +97,8 @@
                 {% endif %}
             {% endif %}
 
-            {% else %}
+            {% endif %}
+            {% if not user.is_authenticated %}
             <br>
             <a href="#signinModal" data-toggle="modal" class="btn btn-primary">Invited to be interviewed? Click here to log in or sign up.</a>
             <br><br>
@@ -98,7 +106,7 @@
             {% if is_invitee %}
                 {% if show_response_options %}
                     <form method="post" style="margin-top: 20px !important;">{% csrf_token %}
-                        <h4 style="color: red;">You haven't yet responsed to this interview's invitation. Please choose an option:</h4>
+                        <h4 style="color: red;">You haven't yet responded to your invitation to this interview! Please choose an option:</h4>
                         <button class="btn btn-primary" name="accept">Accept</button>
                         <button class="btn btn-danger" name="decline">Decline</button>
                     </form>
@@ -220,15 +228,16 @@
         <h3 id="myModalLabel">Send a Question</h3>
       </div>
       <div class="modal-body">
-        <div class="scrollbox">
+        <div class="innerCheckbox">
             {% for q in q_unsent %}
-            <div class="row" style="border-bottom: 1px solid #FFF; margin-left: 0px !important;">
-                <div style="float: left; width: 300px; margin-left: 0px !important;">
-                    {{q.title}} 
-                </div>
-                <div style="float:right; width: 50px;">
+            <div class="cboxContact" style="border-bottom: 1px solid #FFF; margin-left: 0px !important;">
+                <div style="float:left; width: 50px;">
                     <input type="radio" name="qgroup" value="{{q.id}}">
                 </div>
+                <div style="float: left; margin-left: 5px !important;">
+                    {{q.title}} 
+                </div>
+
             </div>
             {% endfor %}
         </div>
@@ -241,14 +250,15 @@
 </div>
 
 <div id="askQ" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
     <form method="post">{% csrf_token %}
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="myModalLabel">Ask a Question</h3>
       </div>
       <div class="modal-body">
-        <input type="text" style="width: 450px;" name="title" placeholder="Your question here"></input><br>
-        <textarea rows='4' style="width: 450px;" name="body" placeholder="Description, if necessary"></textarea>
+        <input type="text" style="width: 500px;" name="title" placeholder="Your question here"></input><br>
+        <textarea rows='4' style="width: 500px;" name="body" placeholder="Description, if necessary"></textarea>
       </div>
       <div class="modal-footer">
         <button type="submit" name="q_asked" class="btn btn-primary">Ask</button>
@@ -313,6 +323,19 @@
     </div>
 </div>
 
+<div id="joinModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Please Join to Perform This Action.</h3>
+  </div>
+  <div class="modal-body"><br>
+    <p>In order to participate, you must first join the meeting. Please click the "Join" button, underneath the meeting title.</p><br>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
+  </div>
+</div>
+
 <script>
 	var csPageOptions = {
 	  domain_key:"RZ7M43JLPAH6JHE45ATN", 
@@ -333,11 +356,28 @@
 $(function() {
     $(document).ready(function(){ 
 
+        {% if not user.is_authenticated %}
+        $('#join_meeting').click(function(e) {
+            e.preventDefault();
+            $('#signinModal').modal('show');
+        });
+
+        {% endif %}
+
         {% if closed_error %}
         $('#myModal').modal("show");
         {% endif %}
 
-        {% if not user.is_authenticated %}
+        {% if not joined %}
+        $('.checkjoined').click(function(e) {
+            e.preventDefault();
+            {% if user.is_authenticated %}
+                $('#joinModal').modal('show');
+            {% else %}
+                $('#signinModal').modal('show');
+            {% endif %}
+            return false;
+        });
 
         {% endif %}
 

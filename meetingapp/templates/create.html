@@ -13,7 +13,7 @@
 			<input type="hidden" name="submit_request" value="submit_request">
 			<div class="control-group">
 				<div class="controls">
-					<h3>Create Meeting</h3>
+					<h3>Create a Meeting</h3>
 				</div>
 			</div>
 			<div class="control-group">
@@ -41,34 +41,42 @@
 				</div>
 			</div>
 			<div class="control-group">
-				<label class="control-label" for="inputDate">Start Date</label>
-				<div class="controls">
-					<input type="text" name="startdate" id="id_startdate">
+				<label class="control-label">Fix a start and end point?</label>
+				<div class="controls nobullet">
+					{{ form.use_dt }}
 				</div>
 			</div>
-			<div class="control-group">
-				<label class="control-label" for="inputTime">Start Time</label>
-				<div class="controls">
-					{{ form.starttime }}
+			<div class="collapse out" id="dt_info">
+				<div class="control-group">
+					<label class="control-label" for="inputDate">Start Date</label>
+					<div class="controls">
+						<input type="text" name="startdate" id="id_startdate">
+					</div>
 				</div>
-			</div>
-			{% if time_mismatch %}
-			<div class="control-group">
-				<div class="controls">
-					<h5 style="color: red;">Date/time error: the meeting ends before it starts!</h5>
+				<div class="control-group">
+					<label class="control-label" for="inputTime">Start Time</label>
+					<div class="controls">
+						{{ form.starttime }}
+					</div>
 				</div>
-			</div>
-			{% endif %}
-			<div class="control-group">
-				<label class="control-label" for="inputDate">End Date</label>
-				<div class="controls">
-					<input type="text" name="enddate" id="id_enddate">
+				{% if time_mismatch %}
+				<div class="control-group">
+					<div class="controls">
+						<h5 style="color: red;">Date/time error: the meeting ends before it starts!</h5>
+					</div>
 				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="inputTime">End Time</label>
-				<div class="controls">
-					{{ form.endtime }}
+				{% endif %}
+				<div class="control-group">
+					<label class="control-label" for="inputDate">End Date</label>
+					<div class="controls">
+						<input type="text" name="enddate" id="id_enddate">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="inputTime">End Time</label>
+					<div class="controls">
+						{{ form.endtime }}
+					</div>
 				</div>
 			</div>
 			<div class="control-group">
@@ -137,6 +145,16 @@ $(document).ready(function() {
         $( "#id_startdate" ).datepicker();
         $( "#id_enddate").datepicker();
 
+        $('#id_use_dt_0').click(function() {
+        	$('#dt_info').collapse('show');
+        });
+
+        $('#id_use_dt_1').click(function() {
+        	if ($('#dt_info').hasClass('in')) {
+	        	$('#dt_info').collapse('hide');
+	        }
+        });
+
         $('#kind_info').click(function() {
         	html = '<h4 style="text-align: center;">Meeting Formats</h4><br><text>We offer three types of meetings. Please click on any of the following to learn more about each type:</text><br><br>';
         	html += '<a data-toggle="modal" role="button" href="#normalMeeting">Normal Meeting</a><br><br>';
@@ -146,7 +164,7 @@ $(document).ready(function() {
         	$('.blurb_block').html(html);
         });
 
-        {% if form.errors %}
+        {% if form.errors or dterrors %}
 	        html = '<h4 style="text-align: center;">Errors</h4><br><text style="color: red;">';
 	        {% if form.interview.errors %}
 	        html += 'Meeting format required.<br><br>'
@@ -160,23 +178,28 @@ $(document).ready(function() {
 	        {% if form.timezone.errors %}
 	        html += 'Timezone required.<br><br>'
 	        {% endif %}
-	        {% if form.startdate.errors %}
+	        {% if form.use_dt.errors %}
+	        html += 'Please specify whether the meeting has a start/end time.<br>,br>'
+	        {% endif %}
+	        {% if nostartdate %}
 	        html += 'Start date required.<br><br>'
 	        {% endif %}
-	        {% if form.starttime.errors %}
+	        {% if nostarttime %}
 	        html += 'Start time required.<br><br>'
 	        {% endif %}
-	        {% if form.enddate.errors %}
+	        {% if noenddate %}
 	        html += 'End date required.<br><br>'
 	        {% endif %}
-	        {% if form.endtime.errors %}
+	        {% if noendtime %}
 	        html += 'End time required.<br><br>'
 	        {% endif %}
+
 	        {% if form.status.errors %}
 	        html += 'Please specify privacy settings for this meeting.<br><br>'
 	        {% endif %}
 	        $('.blurb_block').html(html);
         {% endif %}
+
 
         $('#priv_info').click(function() {
         	html = '<h4 style="text-align: center;">Privacy</h4><br><text>"Public" allows anyone to view the meeting page, and any registered member to participate in the meeting.</text><br><br><text>"Private" allows only those invited by you (you\'ll send out invites later) to view or participate in the meeting.</text><br><br>';

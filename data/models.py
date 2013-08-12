@@ -60,10 +60,11 @@ class Meeting(models.Model):
 	members = models.ManyToManyField('Account', related_name="members_set", null=True, blank=True)
 	moderators = models.ManyToManyField('Account', related_name="mods_set", null=True, blank=True)
 	hosts = models.ManyToManyField('Account', related_name="host")
-	startdate = models.DateField()
-	starttime = models.TimeField()
-	enddate = models.DateField()
-	endtime = models.TimeField()
+	startdate = models.DateField(null=True)
+	starttime = models.TimeField(null=True)
+	enddate = models.DateField(null=True)
+	endtime = models.TimeField(null=True)
+	uses_dt = models.NullBooleanField(null=True, default=True)
 	timezone = models.CharField(max_length=20)
 	title = models.CharField(max_length=1000) # these are arbitrary
 	desc = models.CharField(max_length=10000)
@@ -92,6 +93,7 @@ class Meeting(models.Model):
 	q_ended = models.NullBooleanField(null=True)
 	# created for interactive chat meetings
 	chat = models.ForeignKey('Chat', null=True, blank=True)
+
 
 # class added for interactive chat meetings
 class Chat(models.Model):

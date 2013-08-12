@@ -11,14 +11,21 @@
         <div class="span8">
             <div class="meetingHead">
                 <h2 style="margin-bottom:20px !important;">{{m.title}}</h2>
+                {% if not joined %}
+                <form method="post">{% csrf_token %}
+                    <button type="submit" class="btn btn-primary" id="join_meeting" name="join_meeting">Join Meeting</button>
+                </form>
+                {% endif %}
                 <div class="desc">
                     {{m.desc}}
                 </div>
                 <div class="info">
+                    {% if m.uses_dt %}
                     <text style="font-weight: bold !important;">Start: </text>
                     <text style="margin-left: 5px;">{{m.starttime}} {{m.startdate}}</text><br>
                     <text style="font-weight: bold !important;">End: </text>
                     <text style="margin-left: 5px;">{{m.endtime}} {{m.enddate}}</text><br>
+                    {% endif %}
                     <text style="font-weight: bold !important;">Timezone: </text>
 		    <text style="margin-left: 5px;">{{m.timezone}}</text><br> 
 		    {% if user == host.user %}
@@ -29,7 +36,7 @@
 			{% else %}	
 			{% if m.friend_invites %}
 				<br>
-				<a class="cs_import btn" style="margin-top: 2px !important;">Invite friends from Address Book</a>
+				<a class="cs_import btn checkjoined" style="margin-top: 2px !important;">Invite friends from Address Book</a>
 				<img src="{% static "google.png" %}" class="addrbook">
 				<img src="{% static "apple.png" %}" class="addrbook">
 				<img src="{% static "yahoo.png" %}" class="addrbook">
@@ -43,7 +50,7 @@
 				</div>
 				{% endif %}
 			{% endif %}
-			{% if user.is_authenticated %}
+			{% if joined %}
 			<form method="post" style="margin-top: 20px !important;">{% csrf_token %}
                 <i class="icon-envelope"></i>
 				{% if currently_receiving %} You are currently receiving email notifications from this meeting. <br> Stop receiving notifications? 
@@ -96,7 +103,7 @@
                     <button class="btn btn-mini" name="editai" style="margin-top: -5px !important;" id="{{ai.id}}"><i class="icon-pencil"></i> edit</button>
                     {% endif %}
                     <button class="btn hoverblack alter" data-toggle="collapse" style="margin-top: -5px !important;" id="showmotions_{{ai.id}}" data-target=".ai_{{ai.id}}">show all motions ({{ai.motions.all.count}})</button>
-                    <button class="btn hoverblack alter" style="margin-top: -5px !important;" data-toggle="collapse" name="addmotion" data-target="#addmotion_{{ai.id}}">add a motion</a>
+                    <button class="btn hoverblack alter checkjoined" style="margin-top: -5px !important;" data-toggle="collapse" name="addmotion" data-target="#addmotion_{{ai.id}}">add a motion</a>
                 </div>
                 <div class="row" style="margin-bottom: 20px !important">
                     {% for motion in ai.motions.all %}
@@ -126,15 +133,15 @@
                             <div class="row motioninfo">
                                 <text style="color: #999; font-size: 12px; float:left;">posted by {{motion.user.user.first_name}} {{motion.user.user.last_name}} on {{motion.timestamp}}</text>
                                 <div style="float:right">
-                                    <i class="icon-thumbs-up" style="cursor:hand; cursor:pointer;" id="like_{{ motion.id }}" value="{{motion.likes}}"></i>
+                                    <i class="icon-thumbs-up checkjoined" style="cursor:hand; cursor:pointer;" id="like_{{ motion.id }}" value="{{motion.likes}}"></i>
                                     <text style="padding-right: 5px; color: #000066;"> <span id="span_like_{{ motion.id}}">{{motion.likes}}</span></text>
 
-                                    <i class="icon-thumbs-down" style="cursor:hand; cursor:pointer;" id="dislike_{{ motion.id}}" value="{{motion.dislikes}}"></i>
+                                    <i class="icon-thumbs-down checkjoined" style="cursor:hand; cursor:pointer;" id="dislike_{{ motion.id}}" value="{{motion.dislikes}}"></i>
                                     <text style="padding-right: 5px; color: #990033;"><span id="span_dislike_{{ motion.id}}">{{motion.dislikes}}</span></text>
 
                                     <button class="btn hoverblack alter" data-toggle="collapse" data-target="#motion_{{motion.id}}">show comments ({{motion.comments.all.count}})</button>
 
-                                    <button class="btn hoverblack alter" data-toggle="collapse" name="addcomment" data-target="#addcomment_{{motion.id}}">add comment</button>
+                                    <button class="btn hoverblack alter checkjoined" data-toggle="collapse" name="addcomment" data-target="#addcomment_{{motion.id}}">add comment</button>
                                 </div>
                             </div>
                             <div class="row collapse indented out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
@@ -161,7 +168,7 @@
                                     </div>
                                 {% endfor %}
                             </div>
-                            {% if user.is_authenticated %}
+                            {% if joined %}
                             <div class="row comment collapse indented out" id="addcomment_{{motion.id}}">
                                 <form class="mod" method="post">{% csrf_token %}
                                     <textarea rows="4" name="comment" style="width: 90%; margin-bottom: 5px !important;" placeholder="Write comment here"></textarea>
@@ -197,15 +204,15 @@
                                 <div class="row motioninfo">
                                     <text style="color: #999; font-size: 12px; float:left;">posted by {{motion.user.user.first_name}} {{motion.user.user.last_name}} on {{motion.timestamp}}</text>
                                     <div style="float:right">
-                                        <i class="icon-thumbs-up" style="cursor:hand; cursor:pointer;" id="like_{{ motion.id }}" value="{{motion.likes}}"></i>
+                                        <i class="icon-thumbs-up checkjoined" style="cursor:hand; cursor:pointer;" id="like_{{ motion.id }}" value="{{motion.likes}}"></i>
                                             <text style="padding-right: 5px; color: #000066;"> <span id="span_like_{{ motion.id}}">{{motion.likes}}</span></text>
 
-                                            <i class="icon-thumbs-down" style="cursor:hand; cursor:pointer;" id="dislike_{{ motion.id}}" value="{{motion.dislikes}}"></i>
+                                            <i class="icon-thumbs-down checkjoined" style="cursor:hand; cursor:pointer;" id="dislike_{{ motion.id}}" value="{{motion.dislikes}}"></i>
                                             <text style="padding-right: 5px; color: #990033;"><span id="span_dislike_{{ motion.id}}">{{motion.dislikes}}</span></text>
 
                                             <button class="btn hoverblack alter" data-toggle="collapse" data-target="#motion_{{motion.id}}">show comments ({{motion.comments.all.count}})</a>
 
-                                            <button class="btn hoverblack alter" data-toggle="collapse" name="addcomment" data-target="#addcomment_{{motion.id}}">add comment</a>
+                                            <button class="btn hoverblack alter checkjoined" data-toggle="collapse" name="addcomment" data-target="#addcomment_{{motion.id}}">add comment</a>
                                     </div>
                                 </div>
                                 <div class="row collapse indented out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
@@ -232,7 +239,7 @@
                                         </div>
                                     {% endfor %}
                                 </div>
-                                {% if user.is_authenticated %}
+                                {% if joined %}
                                 <div class="row comment collapse indented out" id="addcomment_{{motion.id}}">
                                     <form class="mod" method="post">{% csrf_token %}
                                         <textarea rows="4" name="comment" style="width: 90%; margin-bottom: 5px !important;" placeholder="Write comment here"></textarea>
@@ -249,7 +256,7 @@
                     </div>
                     {% endfor %}
                     <div class="row motion collapse indented out" style="border-bottom: none !important;" id="addmotion_{{ai.id}}">
-                        {% if user.is_authenticated %}<form class="mod" method="post">{% csrf_token %}
+                        {% if joined %}<form class="mod" method="post">{% csrf_token %}
                             <input type="text" name="motionname" placeholder="Write the motion name here." style="width: 90%; margin-bottom: 5px !important;"></input>
                             <textarea rows="4" name="motiontext" style="width: 90%; margin-bottom: 5px !important;" placeholder="Write the motion description here."></textarea>
                             <input type="hidden" name="agendaid" value="{{ai.id}}">
@@ -371,6 +378,19 @@
     </div>
 </div>
 
+<div id="joinModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Please Join to Perform This Action.</h3>
+  </div>
+  <div class="modal-body"><br>
+    <p>In order to participate, you must first join the meeting. Please click the "Join" button, underneath the meeting title.</p><br>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
+  </div>
+</div>
+
 
 <script>
 	var csPageOptions = {
@@ -397,22 +417,23 @@ $(function() {
         {% endif %}
 
         {% if not user.is_authenticated %}
-        $('.icon-thumbs-up').click(function(e) {
+        $('#join_meeting').click(function(e) {
             e.preventDefault();
-            $('#signinModal').modal("show");
+            $('#signinModal').modal('show');
         });
-        $('.icon-thumbs-down').click(function(e) {
+        {% endif %}
+
+        {% if not joined %}
+        $('.checkjoined').click(function(e) {
             e.preventDefault();
-            $('#signinModal').modal("show");
+            {% if user.is_authenticated %}
+                $('#joinModal').modal('show');
+            {% else %}
+                $('#signinModal').modal('show');
+            {% endif %}
+            return false;
         });
-        $('[name=addmotion]').click(function(e) {
-            e.preventDefault();
-            $('#signinModal').modal("show");
-        });
-        $('[name=addcomment]').click(function(e) {
-            e.preventDefault();
-            $('#signinModal').modal("show");
-        });
+
         {% endif %}
 
         {% if login_errors %}

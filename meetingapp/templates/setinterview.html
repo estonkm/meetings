@@ -28,6 +28,7 @@
 					{{ form.agreed}}
 				</div>
 			</div>
+			{% if uses_dt %}
 			<div class="control-group">
 				<label class="control-label" for="inputDate">Question Period: Start Date</label>
 				<div class="controls">
@@ -59,6 +60,7 @@
 					{{ form.endtime }}
 				</div>
 			</div>
+			{% endif %}
 			<div class="control-group">
 				<div class="controls">
 					<button type="submit" class="btn btn-primary">Set</button>
@@ -83,7 +85,7 @@ $(document).ready(function() {
         $( "#id_enddate").datepicker();
     });
 
-    {% if form.errors %}
+    {% if form.errors or dterrors %}
         html = '<h4 style="text-align: center;">Errors</h4><br><text style="color: red;">';
         {% if form.email.errors %}
         html += 'Interviews are required to have an invitee.<br><br>';

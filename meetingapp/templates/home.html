@@ -37,7 +37,7 @@
 								{% endif %}
 								{% endfor %}
 								</text>
-								<text style="float:right; color: #999; font-size: 12px;"><text style="color:black;">{{m.starttime}}</text>, {{m.startdate}} <span style="padding-left: 10px; padding-right: 13px;">--</span><text style="color:black;">{{m.endtime}}</text>, {{m.enddate}}</text>
+								{% if m.uses_dt %}<text style="float:right; color: #999; font-size: 12px;"><text style="color:black;">{{m.starttime}}</text>, {{m.startdate}} <span style="padding-left: 10px; padding-right: 13px;">--</span><text style="color:black;">{{m.endtime}}</text>, {{m.enddate}}</text>{% endif %}
 						</div>
 						{% endfor %}
 					</div>
@@ -47,7 +47,7 @@
 								<a href="../meeting/{{ m.meeting_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{m.title}}</a>
 								{% if m.desc %}<br><text>{{ m.desc}}</text>{% endif %}<br>
 								<text style="color: #999; font-size: 12px;">created by you</text>
-								<text style="float:right; color: #999; font-size: 12px;"><text style="color:black;">{{m.starttime}}</text>, {{m.startdate}} <span style="padding-left: 10px; padding-right: 13px;">--</span><text style="color:black;">{{m.endtime}}</text>, {{m.enddate}}</text>
+								{% if m.uses_dt %}<text style="float:right; color: #999; font-size: 12px;"><text style="color:black;">{{m.starttime}}</text>, {{m.startdate}} <span style="padding-left: 10px; padding-right: 13px;">--</span><text style="color:black;">{{m.endtime}}</text>, {{m.enddate}}</text>{% endif %}
 						</div>
 						{% endfor %}
 					</div>
@@ -66,7 +66,7 @@
 								{% endif %}
 								{% endfor %}
 								</text>
-								<text style="float:right; color: #999; font-size: 12px;"><text style="color:black;">{{m.starttime}}</text>, {{m.startdate}} <span style="padding-left: 10px; padding-right: 13px;">--</span><text style="color:black;">{{m.endtime}}</text>, {{m.enddate}}</text>
+								{% if m.uses_dt %}<text style="float:right; color: #999; font-size: 12px;"><text style="color:black;">{{m.starttime}}</text>, {{m.startdate}} <span style="padding-left: 10px; padding-right: 13px;">--</span><text style="color:black;">{{m.endtime}}</text>, {{m.enddate}}</text>{% endif %}
 						</div>
 						{% endfor %}
 					</div>

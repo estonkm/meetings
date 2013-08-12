@@ -13,14 +13,21 @@
         <div class="span8">
             <div class="meetingHead">
                 <h2 style="margin-bottom:20px !important;">{{m.title}}</h2>
+                {% if not joined %}
+                <form method="post">{% csrf_token %}
+                    <button type="submit" class="btn btn-primary" id="join_meeting" name="join_meeting">Join Meeting</button>
+                </form>
+                {% endif %}
                 <div class="desc">
                     {{m.desc}}
                 </div>
                 <div class="info">
+                	{% if m.uses_dt %}
                     <text style="font-weight: bold !important;">Start: </text>
                     <text style="margin-left: 5px;">{{m.starttime}} {{m.startdate}}</text><br>
                     <text style="font-weight: bold !important;">End: </text>
                     <text style="margin-left: 5px;">{{m.endtime}} {{m.enddate}}</text><br>
+                    {% endif %}
                     <text style="font-weight: bold !important;">Timezone: </text>
 		    <text style="margin-left: 5px;">{{m.timezone}}</text><br> 
 		    {% if user == host.user %}
@@ -31,7 +38,7 @@
 			{% else %}	
 			{% if m.friend_invites %}
 				<br>
-				<a class="cs_import btn" style="margin-top: 2px !important;">Invite friends from Address Book</a>
+				<a class="cs_import btn checkjoined" style="margin-top: 2px !important;">Invite friends from Address Book</a>
 				<img src="{% static "google.png" %}" class="addrbook">
 				<img src="{% static "apple.png" %}" class="addrbook">
 				<img src="{% static "yahoo.png" %}" class="addrbook">
@@ -45,7 +52,7 @@
 				</div>
 				{% endif %}
 			{% endif %}
-			{% if user.is_authenticated %}
+			{% if joined %}
 			<form method="post" style="margin-top: 20px !important;">{% csrf_token %}
                 <i class="icon-envelope"></i>
 				{% if currently_receiving %} You are currently receiving email notifications from this meeting. <br> Stop receiving notifications? 
@@ -83,7 +90,7 @@
             {% if is_invitee %}
                 {% if show_response_options %}
                     <form method="post" style="margin-top: 20px !important;">{% csrf_token %}
-                        <h4 style="color: red;">You haven't yet responsed to this interview's invitation. Please choose an option:</h4>
+                        <h4 style="color: red;">You haven't yet responded to your invitation! Please choose an option:</h4>
                         <button class="btn btn-primary" name="accept">Accept</button>
                         <button class="btn btn-danger" name="decline">Decline</button>
                     </form>
@@ -110,10 +117,10 @@
 
             <div class="row">
 				<div id="menu">
-					<p class="welcome">Welcome, <b>{{user.first_name}} {{user.last_name}}</b>
+					<p class="welcome">Welcome {% if joined %}, <b>{{user.first_name}} {{user.last_name}}</b>{% endif %}
 						{% if closed %}. Chat is currently closed.{% endif %}</p>
 					{% if not closed %}
-						<a data-toggle="modal" role="button" id="see_online_mems" href="#mems_online" style="float:right;">Members online: <span id="n_o">{{num_online}}</span></a>
+						<a data-toggle="modal" class="checkjoined" role="button" id="see_online_mems" href="#mems_online" style="float:right;">Members online: <span id="n_o">{{num_online}}</span></a>
 						{% if canmod %}<a data-toggle="modal" role="button" id="see_bans" href="#bans" style="float:right; margin-right: 15px;">Ban/Un-ban Members</a>{% endif %}
 					{% endif %}
 					<div style="clear:both"></div>
@@ -123,7 +130,7 @@
 
 				<form name="message" action="">
 					<input name="usermsg" type="text" id="usermsg" maxlength="200" size="63" />
-					<input name="submitmsg" class="btn" type="button" id="submitmsg" value="Send" />
+					<input name="submitmsg" class="btn checkjoined" type="button" id="submitmsg" value="Send" />
 				</form>
 			</div>
         </div>
@@ -260,15 +267,45 @@
     </div>
 </div>
 
+<div id="joinModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Please Join to Perform This Action.</h3>
+  </div>
+  <div class="modal-body"><br>
+    <p>In order to participate, you must first join the meeting. Please click the "Join" button, underneath the meeting title.</p><br>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
+  </div>
+</div>
+
 <script>
 $(function() {
     $(document).ready(function(){ 
+
+        {% if not user.is_authenticated %}
+        $('#join_meeting').click(function(e) {
+            e.preventDefault();
+            $('#signinModal').modal('show');
+        });
+
+        {% endif %}
 
         {% if closed_error %}
         $('#myModal').modal("show");
         {% endif %}
 
-        {% if not user.is_authenticated %}
+        {% if not joined %}
+        $('.checkjoined').click(function(e) {
+            e.preventDefault();
+            {% if user.is_authenticated %}
+                $('#joinModal').modal('show');
+            {% else %}
+                $('#signinModal').modal('show');
+            {% endif %}
+            return false;
+        });
 
         {% endif %}
 
