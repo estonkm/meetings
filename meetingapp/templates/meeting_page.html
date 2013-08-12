@@ -147,24 +147,22 @@
                             <div class="row collapse indented out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
                                 {% for comment in motion.comments.all %}
                                     <div class="row comment">
-                                        {% if comment.modded %}
-                                            <em>{{comment.text}}</em>
-                                        {% else %}
-                                            {% if user.username == host.user.username or comment.user.user == user %}
-                                                <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
-                                                    <span id="mo_comment">{{comment.text}}</span>
-                                                    <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_comment" value="{{comment.id}} {{motion.id}}">Remove</button>
-                                                    {% if comment.user.user == user %}
-                                                    <button class="btn btn-mini" name="editcomment" id="{{comment.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
-                                                    {% endif %}
-                                                </form>
-                                            {% else %}
-                                                {{comment.text}}
-                                            {% endif %}
-                                        {% endif %}
+                                        <em>{{comment.text}}</em>
                                     </div>
                                     <div class="row comment">
                                         <text style="color: #999; font-size: 12px; float:left;">posted by {{comment.user.user.first_name}} {{comment.user.user.last_name}} on {{comment.timestamp}}</text>
+                                            {% if user == host.user or comment.user.user == user %}
+                                            {% if not comment.modded %}
+                                                <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
+                                                    {% if comment.user.user == user %}
+                                                    <button class="btn btn-mini" name="editcomment" id="{{comment.id}}" style="float:left; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
+                                                    {% endif %}
+                                                    <span id="mo_comment">{{comment.text}}</span>
+                                                    <button class="btn btn-mini btn-danger" type="submit" style="float:left;" name="remove_comment" value="{{comment.id}} {{motion.id}}">Remove</button>
+
+                                                </form>
+                                            {% endif %}
+                                            {% endif %}
                                     </div>
                                 {% endfor %}
                             </div>
@@ -222,14 +220,16 @@
                                         </div>
                                         <div class="row comment">
                                             <text style="color: #999; font-size: 12px; float:left;">posted by {{comment.user.user.first_name}} {{comment.user.user.last_name}} on {{comment.timestamp}}</text>
-                                            {% if not comment.modded %}
-                                                <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
-                                                    {% if comment.user.user == user %}
-                                                    <button class="btn btn-mini" name="editcomment" id="{{comment.id}}" style="float:left; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
-                                                    {% endif %}
-                                                    <span id="mo_comment">{{comment.text}}</span>
-                                                    <button class="btn btn-mini btn-danger" type="submit" style="float:left;" name="remove_comment" value="{{comment.id}} {{motion.id}}">Remove</button>
-                                                </form>
+                                            {% if user == host.user or user==comment.user.user %}
+                                                {% if not comment.modded %}
+                                                    <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
+                                                        {% if comment.user.user == user %}
+                                                        <button class="btn btn-mini" name="editcomment" id="{{comment.id}}" style="float:left; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
+                                                        {% endif %}
+                                                        <span id="mo_comment">{{comment.text}}</span>
+                                                        <button class="btn btn-mini btn-danger" type="submit" style="float:left;" name="remove_comment" value="{{comment.id}} {{motion.id}}">Remove</button>
+                                                    </form>
+                                                {% endif %}
                                             {% endif %}
                                         </div>
                                     {% endfor %}
