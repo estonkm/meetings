@@ -220,7 +220,7 @@
                                         </div>
                                         <div class="row comment">
                                             <text style="color: #999; font-size: 12px; float:left;">posted by {{comment.user.user.first_name}} {{comment.user.user.last_name}} on {{comment.timestamp}}</text>
-                                            {% if user == host.user or user==comment.user.user %}
+                                            {% if user == host.user or user == comment.user.user %}
                                                 {% if not comment.modded %}
                                                     <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
                                                         {% if comment.user.user == user %}
