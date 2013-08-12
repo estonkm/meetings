@@ -146,7 +146,7 @@
                             </div>
                             <div class="row collapse indented out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
                                 {% for comment in motion.comments.all %}
-                                    <div class="row comment">
+                                    <div class="row comment" style="margin-top: 10px;">
                                         {% if comment.modded %}<em>{{comment.text}}</em>{% else %}
                                         {{comment.text}}
                                         {% endif %}
@@ -157,7 +157,7 @@
                                             {% if not comment.modded %}
                                                 <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
                                                     {% if comment.user.user == user %}
-                                                    <button class="btn btn-mini" name="editcomment" id="{{comment.id}}" style="float:left; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
+                                                    <button class="btn btn-mini" name="editcomment" id="{{comment.id}}" style="float:left; margin-left: 5px; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
                                                     {% endif %}
                                                     <button class="btn btn-mini btn-danger" type="submit" style="float:left;" name="remove_comment" value="{{comment.id}} {{motion.id}}">Remove</button>
 
@@ -216,7 +216,7 @@
                                 </div>
                                 <div class="row collapse indented out" style="margin-bottom:10px;"id="motion_{{motion.id}}">
                                     {% for comment in motion.comments.all %}
-                                        <div class="row comment">
+                                        <div class="row comment" style="margin-top: 10px;">
                                              {% if comment.modded %}<em>{{comment.text}}</em>
                                              {% else %}{{comment.text}}{% endif %}
                                         </div>
@@ -226,7 +226,7 @@
                                                 {% if not comment.modded %}
                                                     <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
                                                         {% if comment.user.user == user %}
-                                                        <button class="btn btn-mini" name="editcomment" id="{{comment.id}}" style="float:left; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
+                                                        <button class="btn btn-mini" name="editcomment" id="{{comment.id}}" style="float:left; margin-left: 5px; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
                                                         {% endif %}
                                                         <button class="btn btn-mini btn-danger" type="submit" style="float:left;" name="remove_comment" value="{{comment.id}} {{motion.id}}">Remove</button>
                                                     </form>
