@@ -355,16 +355,16 @@ def create(request):
 				dt_error = False
 
 				if use_dt:
-					if not startdate:
+					if not cd['startdate']:
 						context['nostartdate'] = True
 						dt_error = True
-					if not starttime:
+					if not cd['starttime']:
 						context['nostarttime'] = True
 						dt_error = True
-					if not enddate:
+					if not cd['enddate']:
 						context['noenddate'] = True
 						dt_error = True
-					if not endtime:
+					if not cd['endtime']:
 						context['noendtime'] = True
 						dt_error = True
 					if dt_error:

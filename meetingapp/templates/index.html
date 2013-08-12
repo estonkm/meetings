@@ -129,13 +129,48 @@ var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glc
     </div>
 
       <!-- FOOTER -->
-      <div class="container">
-        <footer>
-          <p>&copy; 2013 Vital Meeting, Inc. &middot; <a data-toggle="modal" role="button" href="#myModal">Privacy</a> &middot; <a data-toggle="modal" role="button" href="#myModal">Terms</a></p>
-        </footer>
+  <div class="container" style="">
+    <div class="row" style="text-align: center; margin-top: 0px;">
+      <h1>Three Ways to Move Forward:</h1>
+    </div>
+    <div class="row" style="margin-top: 30px; text-align: center;">
+      <div class="span4">
+        <h3 style="">Agenda Items</h3>
+        <p>Structure and focus your meetings. Move a motion, and leave comments on those of others. See what matters most. </p>
+        <p><a class="btn" href="#">See it in action &raquo;</a></p>
       </div>
-
-    </div><!-- /.container -->
+      <div class="span4">
+        <h3>Interviews</h3>
+        <p>Reach the hard-to-reach. A structured Q&A format, with total control over which questions are sent to your guest.  </p>
+        <p><a class="btn" href="#">See it in action &raquo;</a></p>
+     </div>
+      <div class="span4">
+        <h3>Interactive Chats</h3>
+        <p>An interview, but totally interactive. All members can chat with your guest about the important issues.</p>
+        <p><a class="btn" href="#">See it in action &raquo;</a></p>
+      </div>
+    </div>
+    <div class="row" style="text-align: center; margin-top: 50px;">
+      <h1>Have that Vital Meeting.</h1>
+    </div>
+    <div class="row" style="text-align: center; margin-top: 30px;">
+      <div class="span4">
+        <!-- <h2 style="">Achieve</h2> -->
+        <img src="{% static "achieve.png" %}" style="width: 230px; height: auto;">
+      </div>
+      <div class="span4">
+        <!-- <h2>Brainstorm</h2> -->
+        <img src="{% static "brainstorm.png" %}" style="width: 230px; height: auto;">
+      </div>
+      <div class="span4">
+        <!-- <h2>Lead</h2> -->
+        <img src="{% static "lead.png" %}" style="width: 230px; height: 155px;">
+      </div>
+    </div>
+    <footer style="margin-top: 50px;">
+      <p>&copy; 2013 Vital Meeting, Inc. &middot; <a data-toggle="modal" role="button" href="#myModal">Privacy</a> &middot; <a data-toggle="modal" role="button" href="#myModal">Terms</a></p>
+    </footer>
+  </div>
 
   <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">

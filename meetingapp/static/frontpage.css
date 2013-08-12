@@ -4,7 +4,7 @@
 
 body {
   padding-bottom: 40px;
-  color: #5a5a5a;
+/*  color: #5a5a5a;*/
   min-width: 800px;
   width: auto;
 }
@@ -16,9 +16,9 @@ body {
 }
 
 
-b {
+/*b {
   color:#ffffff;
-}
+}*/
 
 .login {
   width:150px;
