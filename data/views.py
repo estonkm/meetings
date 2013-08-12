@@ -203,6 +203,13 @@ def setinterview(request):
 			if cd['agreed'] == 'Yes':
 				m.accepted = True
 				m.agreed_yet = True
+				message = (host.user.first_name+' '+host.user.last_name+
+					' has listed you as the subject in the interview "'+m.title+'".\n\n'+
+					'The description is: '+m.desc+'\n\n'+
+					'Please go to http://vitalmeeting.com/meeting/'+m.meeting_id+' to see the details.'+SIGNATURE)
+				title = "Interview Invite: "+m.title
+				if EMAILS_ENABLED:
+					send_mail(title, message, SENDER, [m.invitee])
 			else:
 				m.agreed_yet = False
 				host = m.hosts.all()[0]

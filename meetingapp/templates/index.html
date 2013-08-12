@@ -157,17 +157,18 @@ var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glc
       <h1>Have that Vital Meeting.</h1>
     </div>
     <div class="row" style="text-align: center; margin-top: 30px;">
-      <div class="span4">
-        <!-- <h2 style="">Achieve</h2> -->
-        <img src="{% static "achieve.png" %}" style="width: 230px; height: auto;">
-      </div>
-      <div class="span4">
-        <!-- <h2>Brainstorm</h2> -->
-        <img src="{% static "brainstorm.png" %}" style="width: 230px; height: auto;">
-      </div>
-      <div class="span4">
-        <!-- <h2>Lead</h2> -->
-        <img src="{% static "lead.png" %}" style="width: 230px; height: 155px;">
+      <div class="flexslider">
+        <ul class="slides">
+          <li>
+            <img src="{% static "achieve.png" %}" />
+          </li>
+          <li>
+            <img src="{% static "brainstorm.png" %}" />
+          </li>
+          <li>
+            <img src="{% static "lead.png" %}" />
+          </li>
+        </ul>
       </div>
     </div>
     <footer style="margin-top: 50px;">
@@ -189,6 +190,14 @@ var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glc
   </div>
 
   </body>
+
+<script src="{% static "flexslider/flexslider.min.js" %}">
+
+$(document).ready(function() {
+  $('.flexslider').flexslider({ animation: "slide"});
+});
+
+</script>
 
 <script type="text/javascript">
 
