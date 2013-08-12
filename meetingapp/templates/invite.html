@@ -100,10 +100,10 @@
 		    	{% if contact.last_name %}{% if contact.first_name %}, {% endif %}{% endif %}
 		    	{% if contact.first_name %}{{contact.first_name}} {% endif %}
 		    	{% if contact.last_name %}
-			    	<<em>{{contact.email}}</em>
+			    	<<em>{{contact.email}}</em>>
 		    	{% else %}
 			    	{% if contact.first_name %}
-				    	<<em>{{contact.email}}</em>
+				    	<<em>{{contact.email}}</em>>
 				    {% else %}
 					    {{contact.email}}
 				    {% endif %}
