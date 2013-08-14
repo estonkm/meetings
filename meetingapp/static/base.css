@@ -59,6 +59,12 @@ img.addrbook {
     line-height: 30px;
 }
 
+.meetingEntry {
+    border-bottom: 1px solid #ccc; 
+    padding-top: 5px; 
+    white-space: normal !important;
+}
+
 /* remove row lines */
 /*.table th, .table td { 
      border-top: none; 

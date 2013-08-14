@@ -23,7 +23,7 @@
 				<div class="tab-pane active" id="tab1">
 					<div class="cboxContact" style="height: 350px;">
 						{% for m in meetingsin %}
-						<div style="border-bottom: 1px solid #ccc; padding-top: 5px; white-space: normal !important;">
+						<div class="meetingEntry">
 								<a href="../meeting/{{ m.meeting_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{m.title}}</a>
 								{% if m.desc %}<br><text>{{ m.desc}}</text>{% endif %}<br>
 								<text style="color: #999; font-size: 12px;">created by 
@@ -44,7 +44,7 @@
 				<div class="tab-pane" id="tab2">
 					<div class="cboxContact" style="height: 350px">
 						{% for m in meetingscreated %}
-						<div style="border-bottom: 1px solid #ccc; padding-top: 5px;">
+						<div class="meetingEntry">
 								<a href="../meeting/{{ m.meeting_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{m.title}}</a>
 								{% if m.desc %}<br><text>{{ m.desc}}</text>{% endif %}<br>
 								<text style="color: #999; font-size: 12px;">created by you</text>
@@ -56,7 +56,7 @@
 				<div class="tab-pane" id="tab3">
 					<div class="cboxContact" style="height: 350px">
 						{% for m in meetingspast %}
-						<div style="border-bottom: 1px solid #ccc; padding-top: 5px;">
+						<div class="meetingEntry">
 								<a href="../meeting/{{ m.meeting_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{m.title}}</a>
 								{% if m.desc %}<text> - {{ m.desc}}</text>{% endif %}<br>
 								<text style="color: #999; font-size: 12px;">created by 
@@ -77,7 +77,7 @@
 				<div class="tab-pane" id="tab4">
 					<div class="cboxContact" style="height: 350px">
 						{% for org in organizations %}
-						<div style="border-bottom: 1px solid #ccc; padding-top: 5px;">
+						<div class="meetingEntry">
 								<a href="../orgs/{{ org.page_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{org.name}}</a><text> - {{ org.desc}}</text><br>
 								<text style="color: #999; font-size: 12px;">contact: {{org.contact}}</text>
 						</div>
