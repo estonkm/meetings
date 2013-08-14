@@ -15,7 +15,7 @@
 		{% for contact in contacts %}
 			<div class="contactEntry">
 		        <form method="post" style="display: inline;">{% csrf_token %}
-                    <button class="btn btn-mini btn-danger" type="submit" name="remove_contact" value="{{c.id}}">Remove</button>
+                    <button class="btn btn-mini btn-danger" type="submit" name="remove_contact" value="{{contact.id}}">Remove</button>
                 </form>
 				<span style="margin-left: 10px;">
 				{% if contact.last_name %}{{contact.last_name}}{% endif %}{% if contact.last_name %}{% if contact.first_name %}, {% endif %}{% endif %}{% if contact.first_name %}{{contact.first_name}} {% endif %}
