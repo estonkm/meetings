@@ -23,7 +23,7 @@
 				<div class="tab-pane active" id="tab1">
 					<div class="cboxContact" style="height: 350px;">
 						{% for m in meetingsin %}
-						<div style="border-bottom: 1px solid #ccc; padding-top: 5px;">
+						<div style="border-bottom: 1px solid #ccc; padding-top: 5px; white-space: nowrap;">
 								<a href="../meeting/{{ m.meeting_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{m.title}}</a>
 								{% if m.desc %}<br><text>{{ m.desc}}</text>{% endif %}<br>
 								<text style="color: #999; font-size: 12px;">created by 
