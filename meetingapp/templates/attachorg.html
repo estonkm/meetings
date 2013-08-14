@@ -6,15 +6,14 @@
 <link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
 
 <div class="center_block container">
+	<div style="text-align: center;">
+		<h2>Organization?</h2>
+		<img src="{% static "flow3.jpg" %}">
+	</div>
 	<div class="form_block">
-		<form class="form-horizontal" enctype="multipart/form-data" style="" method="post">
+		<form class="form-horizontal" id="mform" style="margin-top: 25px;" enctype="multipart/form-data" style="" method="post">
 			{% csrf_token %}
 			<input type="hidden" name="attach" value="submit_request">
-			<div class="control-group">
-				<div class="controls">
-					<h3>Organization?</h3>
-				</div>
-			</div>
 			<div class="control-group">
 				<label class="control-label">Add from organizations: </label>
 				<div class="controls">
@@ -61,20 +60,19 @@
 					{{form.image}}
 				</div>
 			</div>
-			<div class="control-group">
-				<div class="controls">
-					<button type="submit" class="btn btn-primary">Add to Meeting</button>
-					<button type="submit" name="later" class="btn btn-primary">Skip</button>
-				</div>
-			</div>
+			<input type="hidden" id="specs" name="" />
 		</form>
 	</div>
-	<div class="blurb_block" style="font-size: 14px; margin-top: 75px; vertical-align: middle;">
+	<div class="blurb_block" style="font-size: 14px; margin-top: 25px; vertical-align: middle;">
 		<h4 style="text-align: center;">Info</h4><br>
 		<text>What organization runs or sponsors this meeting?</text><br><br>
 		<text>If you don't want this meeting to have an affiliated organization, click the "Skip" button.</text><br><br>
 		<text>Accepted formats for organization image are: jpg, png.</text><br><br>
 		<text>Any organization you create here will be added to your profile, and you can select it for other meetings, too!</text><br><br>
+	</div>
+	<div class="footer_block">
+		<button type="submit" id="sub" class="btn btn-primary">Add to Meeting</button>
+		<button type="submit" id="sublater" style="margin-left: 5px;" class="btn btn-primary">Skip</button>
 	</div>
 </div>
 
@@ -82,6 +80,14 @@
 <script>
 
 $(document).ready(function() {
+	$('#sub').click(function() {
+		$('#mform').submit();
+	});
+	$('#sublater').click(function() {
+		$('#specs').attr('name', 'later');
+		$('#mform').submit();
+	});
+
     {% if input_error or form.errors %}
         html = '<h4 style="text-align: center;">Errors</h4><br><text style="color: red;">';
         {% if name_error %}

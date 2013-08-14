@@ -2,115 +2,108 @@
 
 {% block content %}
 
-<div class="container">
+{% load static %}
+
+<link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
+
+<div class="center_block container">
 	<div class="row">
-		<table class="table" style="height: 100% !important;"> <!-- Needed to set this to 100% for bottom-positioning to work! -->
-            <tbody>
-                <tr>
-                    <td style="border-top: none !important;">
-                        <div style="position:relative; height:100%"><!--  And then do this -->
-                            {% if org.image %}
-                            <img src="{{org.image.url}}" /><br><br><br><br><br><br>
-                            {% endif %}
-                        </div>
-                    </td>
-                    <td style="border-top: none !important;">
-                        <div style="position:relative; height:100%">
-                            <h3>{{org.name}}</h3><br><br>
-                            {% if viewer == manager %}
-                                <form enctype="multipart/form-data" method='post' id='picform' style='margin: 0px; padding: 0px;'>{% csrf_token %}<br><br><br>
-                                    <span style="position:absolute !important; bottom: 5px !important;">
-                                        <i class="icon-camera"></i>
-                                        <text style="font-size: 14px; margin-right: 7px;"> {% if org.image != 'False' %} Change {% else %} Add {% endif %}Profile Picture:</text><br>
-                                        <span style="">{{form.image}}</span>{% if form.image.errors %}<h5 style="color: red;">Image is too large.</h5>{% endif %}<br>
-                                        <button type="submit" name="pic" class="btn btn-primary" style="margin-top: 3px !important;">{% if org.image != 'False' %} Change Picture {% else %} Add Picture {% endif %}</button>
-                                    </span>
-                                </form>
-                            {% endif %}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th style="vertical-align: middle;">About:</th>
-                    <td>
-                        <span id="oldval">{{org.desc}}</span>
-                        {% if viewer == manager %}
-                        <button class="btn btn-mini btn-primary" style="margin-left: 10px !important;" id="edit_desc">edit</button>
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Contact:</th>
-                    <td>
-                        <span id="oldval">{{org.contact}}</span>
-                        {% if viewer == manager %}
-                        <button class="btn btn-mini btn-primary" style="margin-left: 10px !important;" id="edit_contact">edit</button>
-                        {% endif %}
-                        {% if emailform.contact.errors %}
-                        <text style="color: red; padding-left: 5px;">Not a valid email.</text>
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th style="vertical-align: middle;">Website:</th>
-                    <td>
-                        <span id="oldval">{{org.website}}</span>
-                        {% if viewer == manager %}
-                        <button class="btn btn-mini btn-primary" style="margin-left: 10px !important;" id="edit_ws">edit</button>
-                        {% endif %}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-	</div>
+        <div class="container">
+            {% if org.image %}
+            <div class="span4">
+                <div style="text-align: center; margin-top: 10%; margin-bottom: 10%;">
+                    <img src="{{org.image.url}}" />
+                </div>
+            </div>
+            <div class="span5">
+            {% else %}
+            <div class="span5" style="margin-left: 5%">
+            {% endif %}
+                <br>
+                <h2>{{org.name}}</h2>
+                <div style="margin-top: 20px; margin-bottom: 10px;">
+                    <text style="font-weight: bold;">About:</text>
+                    <span style="margin-left: 10px;">
+                        {{org.desc}}
+                    </span>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <text style="font-weight: bold;">Contact:</text>
+                    <span style="margin-left: 10px;">
+                        {{org.contact}}
+                    </span>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <text style="font-weight: bold;">Website:</text>
+                    <span style="margin-left: 10px;">
+                        {{org.website}}
+                    </span>
+                </div>
+                {% if viewer == manager %}
+                     <a data-toggle="modal" style="margin-top: 10px; margin-bottom: 20px;" href="#editModal" class="btn btn-primary">Edit Information</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if viewer == manager %}
+
+<div id="editModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel" style="text-align: center;">Edit Information</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" style="margin-top: 20px;" id="editform" enctype="multipart/form-data" method="post">{% csrf_token %}
+            <div class="control-group">
+                <label class="control-label" for=""><text style="font-weight: bold;">Organization Name</text></label>
+                <div class="controls">
+                    <input type="text" name="name" value="{{org.name}}" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for=""><text style="font-weight: bold;">Description</text></label>
+                <div class="controls">
+                    <textarea rows='4' style="width: 250px;" name='desc'>{{org.desc}}</textarea>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for=""><text style="font-weight: bold;">Contact</text></label>
+                <div class="controls">
+                    <input type="text" name="contact" value="{{org.contact}}" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for=""><text style="font-weight: bold;">Website</text></label>
+                <div class="controls">
+                    <input type="text" name="website" value="{{org.website}}" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for=""><text style="font-weight: bold;">Image</text></label>
+                <div class="controls">
+                    {{form.image}} {% if form.image.errors %}<br><text style="color: red;">No image selected.</text>{% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer" style="text-align: center;">
+        <button type="submit" id="subedits" class="btn btn-primary">Submit Changes</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+    </div>
 </div>
 
 <script>
 
 $(document).ready(function() {
-    old_desc_html = '';
-    old_contact_html = '';
-    old_ws_html = '';
-    $('#edit_desc').click(function() {
-         parent = $(this).parent();
-         old_desc_html = parent.html();
-         oldval = parent.find('span[id="oldval"]').html();
-         newHTML = "<td><form method='post' style='margin: 0px; margin-top: 5px; margin-bottom: 5px; padding: 0px;'>{% csrf_token %}<textarea rows='4' name='desc' style='width: 70% !important; margin-top: 5px !important; margin-bottom: 5px !important;'>"+oldval+"</textarea><br><button type='submit' name='change_desc' class='btn btn-mini btn-primary' style='margin-left: 5px !important; margin-right: 5px !important;'>Change</button><button name='cancel' id='desc_cancel' class='btn btn-mini btn-danger'>Cancel</button></form></td>";
-         parent.replaceWith(newHTML);
-
-    });
-    $('#desc_cancel').click(function(e) {
-        parent = $(this).parent();
-        parent.replaceWith(old_desc_html);
-    });
-
-
-    $('#edit_contact').click(function() {
-         parent = $(this).parent();
-         old_contact_html = parent.html();
-         oldval = parent.find('span[id="oldval"]').html();
-         newHTML = "<td><form method='post' style='margin: 0px; margin-top: 5px; padding: 0px;'>{% csrf_token %}<input id='id_contact' name='contact' value='"+oldval+"' type='text' /><button type='submit' name='change_contact' class='btn btn-mini btn-primary' style='margin-left: 5px !important; margin-top: -10px !important; margin-right: 5px !important;'>Change</button><button name='cancel' id='contact_cancel' style='margin-top: -10px !important;' class='btn btn-mini btn-danger'>Cancel</button></form></td>";
-         parent.replaceWith(newHTML);
-    });
-    $('#contact_cancel').click(function(e) {
-        parent = $(this).parent();
-        parent.replaceWith(old_contact_html);
-    });
-    $('#edit_ws').click(function() {
-         parent = $(this).parent();
-         old_ws_html = parent.html();
-         oldval = parent.find('span[id="oldval"]').html();
-
-         newHTML = "<td><form method='post' style='margin: 0px; margin-top: 5px; padding: 0px;'>{% csrf_token %}<input type='text' name='ws' value='"+oldval+"'></input><button type='submit' name='change_ws' class='btn btn-mini btn-primary' style='margin-left: 5px !important; margin-top: -10px !important; margin-right: 5px !important;'>Change</button><button name='cancel' id='ws_cancel' style='margin-top: -10px !important;' class='btn btn-mini btn-danger'>Cancel</button></form></td>";
-         parent.replaceWith(newHTML);
-    });
-    $('#ws_cancel').click(function(e) {
-        parent = $(this).parent();
-        parent.replaceWith(old_ws_html);
-
+    $('#subedits').click(function() {
+        $('#editform').submit();
     });
 });
 
 </script>
+
+{% endif %}
 
 {% endblock %}

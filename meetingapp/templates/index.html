@@ -17,6 +17,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
 
+    <link href="{% static "flexslider/flexslider.css" %}" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -93,8 +94,8 @@ var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glc
             <a class="brand" href=>Vital Meeting</a>
             <div class="nav-collapse collapse">
               <ul class="nav">
-                <li class="active"><a data-toggle="modal" role="button" href="#myModal">Learn More</a></li>
-                <li><a data-toggle="modal" role="button" href="#myModal">Contact</a></li>
+                <li class="active"><a data-toggle="modal" role="button" href="#learnMore">Learn More</a></li>
+                <li><a data-toggle="modal" role="button" href="#contactInfo">Contact</a></li>
               </u1>
             </div>
 
@@ -121,7 +122,6 @@ var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glc
               <h1>Vital Meeting.</h1>
               <p class="lead">Connect with others. Solve problems.</p>
               <a class="btn btn-large btn-primary" href="../create/">Make It Happen</a>
-
             </div>
           </div>
         </div>
@@ -131,9 +131,9 @@ var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glc
       <!-- FOOTER -->
   <div class="container" style="">
     <div class="row" style="text-align: center; margin-top: 0px;">
-      <h1>Three Ways to Move Forward:</h1>
+      <h2>Three Ways to Move Forward:</h2>
     </div>
-    <div class="row" style="margin-top: 30px; text-align: center;">
+    <div class="row" style="margin-top: 0px; text-align: center;">
       <div class="span4">
         <h3 style="">Agenda Items</h3>
         <img src="{% static "portion.png" %}" style="width: 260px; height: 145px;"><br><br>
@@ -154,47 +154,88 @@ var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glc
       </div>
     </div>
     <div class="row" style="text-align: center; margin-top: 50px;">
-      <h1>Have that Vital Meeting.</h1>
-        <div style="margin: auto; width: 400px !important;">
-          <div class="flexslider">
-            <ul class="slides">
-              <li>
-                <img src="{% static "achieve.png" %}" style="width: 400px; height: 400px;">
-              </li>
-              <li>
-                <img src="{% static "brainstorm.png" %}" style="width: 400px; height: 400px;">
-              </li>
-              <li>
-                <img src="{% static "lead.png" %}" style="width: 400px; height: 400px;">
-              </li>
-            </ul>
-          </div>
-        </div>
-    </div>
-    <footer style="margin-top: 50px;">
+
+   </div>
+    <footer style="margin-top: 150px;">
       <p>&copy; 2013 Vital Meeting, Inc. &middot; <a data-toggle="modal" role="button" href="#myModal">Privacy</a> &middot; <a data-toggle="modal" role="button" href="#myModal">Terms</a></p>
     </footer>
   </div>
 
-  <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-      <h3 id="myModalLabel">Under Construction</h3>
-    </div>
-    <div class="modal-body">
-      <p>Please check back later!</p>
-    </div>
-    <div class="modal-footer">
-      <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
-    </div>
-  </div>
+</body>
 
-  </body>
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Under Construction</h3>
+  </div>
+  <div class="modal-body">
+    <p>Please check back later!</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
+  </div>
+</div>
+
+<div id="learnMore" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h2 style="text-align: center;" id="myModalLabel">Make It Happen.</h2>
+  </div>
+  <div class="modal-body">
+    <div style="margin: auto; width: 400px; height: 300px;">
+      <div class="flexslider">
+          <ul class="slides">
+            <li>
+              <img src="{% static "meeting_identify.jpg" %}" style="width: 400px; height: 300px;">
+            </li>
+            <li>
+              <img src="{% static "meeting_invite.jpg" %}" style="width: 400px; height: 300px;">
+            </li>
+            <li>
+              <img src="{% static "meeting_concoct.jpg" %}" style="width: 400px; height: 300px;">
+            </li>
+            <li>
+              <img src="{% static "meeting_achieve.jpg" %}" style="width: 400px; height: 300px;">
+            </li>
+          </ul>
+      </div>
+    </div>
+    <br><br><br>
+    <p>Is there something you wish would be done but no one seems to take on the problem?</p>
+    <p>Is there a project you'd like to accomplish and want support for?</p>
+    <p>Do you wish you could speak directly with the people in authority?</p><br>
+
+    <p>Stop wishing and take action:</p><br>
+
+    <p>1. Create an Interview and raise your issue with the person responsible.</p>
+    <p>2. Create an Online Project and Invite People to Brainstorm.</p>
+    <p>3. Create an Interactive Chat and Invite People for An Online Chat Session.</p><br>
+
+    <p>Vital Meeting - Make It Happen.</p>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary">Return to Home Page</button>
+  </div>
+</div>
+
+<div id="contactInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Contact Information</h3>
+  </div>
+  <div class="modal-body">
+    <p>info@vitalmeeting.com - don't hesitate to shoot us an email!</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary">Return to Home Page</button>
+  </div>
+</div>
 
 <script src="{% static "flexslider/jquery.flexslider-min.js" %}"></script>
 <script>
 
-$(document).ready(function() {
+$('#learnMore').on('shown', function() {
   $('.flexslider').flexslider({ animation: "slide"});
 });
 

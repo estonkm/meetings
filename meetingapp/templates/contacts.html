@@ -4,57 +4,54 @@
 
 {% load static %}
 
-<div class="container">
-	<div class="row">
-		<div class="span9">
-			<!-- Create a New Meeting button goes here -->
-			<div class="row" style="margin-left: 0px !important;">
-				<h3 style="margin: 5px !important;">Contacts</h3>	
-			</div>
-			<div class="row" style="margin-left: 0px !important;">
+<link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
 
-				<a href="#cModal" role="button" class="btn" data-toggle="modal">Add a New Contact</a>
-				<input type="text" name='search' style="width: 250px !important; float:right;" placeholder="Search existing contacts (OFF)" class="input-medium search-query"><br>
-				<a class="cs_import btn" style="margin-top: 5px !important;">Add from Address Book</a>
-				<img src="{% static "google.png" %}" class="addrbook">
-				<img src="{% static "apple.png" %}" class="addrbook">
-				<img src="{% static "yahoo.png" %}" class="addrbook">
-				<img src="{% static "aol.png" %}" class="addrbook">
-				<img src="{% static "msn.png" %}" class="addrbook">
-			</div><br><br>
-			<div class="row collapse out" id="collapse1" style="margin-left: 0px !important;">
-				<form method="post" id="add_addr_book" style="margin:5 px; padding: 0px;">{% csrf_token %}
-					<textarea name="addr_contacts" style="width:450px;height:82px" id="contact_list"></textarea><br>
-					<button type="submit" class="btn btn-mini btn-primary">Add to Contacts</button>
-				</form>
-			</div>
-			{% for c in contacts %}
-			<div class="row homemeetings profrow">
-					{% if c.last_name %}<h4>{{c.last_name}}{% if c.first_name %}, {{c.first_name}} {% endif %}</h4>{% endif %}
-                    <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
-	                    <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_contact" value="{{c.id}}">Remove</button>
-	                </form>
-					<text><em>Email: {{c.email}}</em></text><br>
-					{% if c.wphone %}<text><em>Phone: {{c.wphone}}</em></text>{% endif %}
-			</div>
-			{% endfor %}
-		</div>
-		<div class="span3">
-            <div class="userinfo sidebox" style="padding-top: 5px !important; padding-left: 10px !important;">
-	            <h4>{{ account.user.first_name }} {{ account.user.last_name }}</h4>
-            	{% if account.prof_pic != 'False' %}
-            	<img src="{{account.prof_pic.url}}" style="width: 70px; height: auto;"><br>{% endif %}
-	            {{ account.user.email }}<br>
-	            <a href="../profile/{{account.page_id}}">View public profile</a>
-            </div>
-            <div class="userinfo sidebox">
-                <text class="lead" style="font-weight: bold !important; font-size: 15px !important;">Meetings</text><br>
-                <ul class="sidebox" style="margin-left: 0px;">{% for meeting in meetings %}
-                <li>{{meeting.title}}</li>
-                {% endfor %}</ul>
-            </div>
-		</div>
+
+<div class="center_block container">
+	<div class="title">
+		<h2 style="text-align: center;">Contacts</h2>
 	</div>
+	<div class="cboxContact" style="height: 350px;">
+		{% for contact in contacts %}
+			<div class="contactEntry">
+		        <form method="post" style="display: inline;">{% csrf_token %}
+                    <button class="btn btn-mini btn-danger" type="submit" name="remove_contact" value="{{c.id}}">Remove</button>
+                </form>
+				<span style="margin-left: 10px;">
+				{% if contact.last_name %}{{contact.last_name}}{% endif %}
+		    	{% if contact.last_name %}{% if contact.first_name %}, {% endif %}{% endif %}
+		    	{% if contact.first_name %}{{contact.first_name}} {% endif %}
+		    	{% if contact.last_name %}
+			    	<<em>{{contact.email}}</em>>
+		    	{% else %}
+			    	{% if contact.first_name %}
+				    	<<em>{{contact.email}}</em>>
+				    {% else %}
+					    {{contact.email}}
+				    {% endif %}
+			    {% endif %}
+				</span>
+			</div>
+		{% endfor %}
+	</div>
+    <div class="options" style="padding: 10px; text-align: center;">
+    	<div class="buttons">
+			<a href="#cModal" role="button" class="btn btn-primary" data-toggle="modal">Add a New Contact</a><!-- 
+			<input type="text" name='search' style="width: 250px !important; float:right;" placeholder="Search existing contacts (OFF)" class="input-medium search-query"><br> -->
+			<a class="cs_import btn btn-primary" style="margin-left: 10px;">Add from Address Book</a>
+			<img src="{% static "google.png" %}" class="addrbook">
+			<img src="{% static "apple.png" %}" class="addrbook">
+			<img src="{% static "yahoo.png" %}" class="addrbook">
+			<img src="{% static "aol.png" %}" class="addrbook">
+			<img src="{% static "msn.png" %}" class="addrbook">
+		</div>
+		<div class="collapse out" id="collapse1" style="margin-left: 0px !important;">
+			<form method="post" id="add_addr_book" style="margin:5 px; padding: 0px;">{% csrf_token %}
+				<textarea name="addr_contacts" style="width:450px;height:82px" id="contact_list"></textarea><br>
+				<button type="submit" class="btn btn-mini btn-primary">Add to Contacts</button>
+			</form>
+		</div>
+    </div>
 </div>
 
 <div id="cModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

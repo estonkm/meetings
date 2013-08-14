@@ -20,15 +20,13 @@
 </style>
 
 <div class="center_block container" style="width: 80%;">
+	<div style="text-align: center;">
+		<h2>Invite Others</h2>
+		<img src="{% static "flow4.jpg" %}">
+	</div>
 	<div class="form_block" style="width: 60%;">
-		<form class="form-horizontal" method="post">
+		<form class="form-horizontal"  id="mform" style="margin-top: 25px;" method="post">
 			{% csrf_token %}
-			<input type="hidden" name="submit_request" value="submit_request">
-			<div class="control-group">
-				<div class="controls">
-					<h3>Invite Members</h3>
-				</div>
-			</div>
 			<div class="control-group">
 				<label class="control-label">Write out addresses:</label>
 				<div class="controls">
@@ -68,20 +66,19 @@
 					{% endif %}
 				</div>
 			</div>
-			<div class="control-group">
-				<div class="controls">
-					<button type="submit" class="btn btn-primary">Invite Now</button>
-					<button type="submit" name="invite_later" class="btn btn-primary">Invite Later</button>
-					<button type="submit" name="later" class="btn btn-primary">Skip</button>
-				</div>
-			</div>
+			<input type="hidden" id="specs" name="" />
 		</form>
 	</div>
-	<div class="blurb_block" style="width: 30%; margin-top: 75px;">
+	<div class="blurb_block" style="width: 30%; margin-top: 25px;">
 		<h4 style="text-align: center;">Info</h4><br>
 		<text>"Invite Now" will send out invites to this meeting instantly.</text><br><br>
 		<text>"Invite Later" will save these invites, but not send them out. You will be able to send them out later on the meeting page, without any need to re-invite.</text><br><br>
 		<text>Click "Skip" to not invite anyone to the meeting (you can send out invites later).</text><br><br>
+	</div>
+	<div class="footer_block">
+		<button id="subnow" class="btn btn-primary">Invite Now</button>
+		<button id="sublater" class="btn btn-primary" style="margin-left: 5px;">Invite Later</button>
+		<button id="subskip" class="btn btn-primary" style="margin-left: 5px;">Skip</button>
 	</div>
 </div>
 
@@ -120,6 +117,19 @@
 
 <script>
 $(function() {
+
+	$('#subnow').click(function() {
+		$('#specs').attr('name', 'invite_now');
+		$('#mform').submit();
+	});
+	$('#sublater').click(function() {
+		$('#specs').attr('name', 'invite_later');
+		$('#mform').submit();
+	});
+	$('#subskip').click(function() {
+		$('#specs').attr('name', 'later');
+		$('#mform').submit();
+	});
 
 	$('#confirm_contacts').click(function() {
 		added = '';

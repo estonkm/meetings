@@ -37,6 +37,7 @@
 						<a class="btn" id="removeitem" style="margin-left: 5px;" href="#">Remove item</a>
 					</td><input type="hidden" name="removed" id="removed" value="">
 				</tr>
+				{% if meeting.uses_dt %}
 				<tr>
 					<td>Start Date</td>
 					<td>{{meeting.startdate}}</td>
@@ -57,6 +58,7 @@
 					<td>{{meeting.endtime}}</td>
 					<td>{{form.endtime}} {% if form.endtime.errors %}<text style="color: red; padding-left: 5px;">Accepted Format: <em>3:00PM</em></text> {% endif %}</td>
 				</tr>
+				{% endif %}
 				<tr>
 					<td>Meeting Type</td>
 					<td>{% if meeting.private == False %}Public{% else %}Private{% endif %}</td>

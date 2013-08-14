@@ -7,15 +7,14 @@
 <link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
 
 <div class="center_block container">
+	<div style="text-align: center;">
+		<h2>Set Interactive Chat</h2>
+		<img src="{% static "flow2.jpg" %}">
+	</div>
 	<div class="form_block">
-		<form class="form-horizontal" method="post">
+		<form class="form-horizontal" style="margin-top: 25px;" id="mform" method="post">
 			{% csrf_token %}
 			<input type="hidden" name="submit_request" value="submit_request">
-			<div class="control-group">
-				<div class="controls">
-					<h3>Set Interactive Chat</h3>
-				</div>
-			</div>
 			<div class="control-group">
 				<label class="control-label">Invitee</label>
 				<div class="controls">
@@ -28,23 +27,24 @@
 					{{ form.agreed}}
 				</div>
 			</div>
-			<div class="control-group">
-				<div class="controls">
-					<button type="submit" class="btn btn-primary">Set</button>
-				</div>
-			</div>
 		</form>
 	</div>
-	<div class="blurb_block" style="font-size: 14px; margin-top: 15px; vertical-align: middle;">
+	<div class="blurb_block" style="font-size: 14px; margin-top: 25px; vertical-align: middle;">
 		<h4 style="text-align: center;">Info</h4><br>
 		<text>For the interactive chat, you (the host) invite, by email, a person to be interviewed. This person can be yourself.</text><br><br>
 		<text>The chat will open and close at the times you just specified in the "Create Meeting" section.</text><br><br>
+	</div>
+	<div class="footer_block">
+		<button type="submit" id="sub" class="btn btn-primary">Set</button>
 	</div>
 </div>
 
 <script>
 
 $(document).ready(function() {
+	$('#sub').click(function() {
+		$('#mform').submit();
+	});
     {% if form.errors %}
         html = '<h4 style="text-align: center;">Errors</h4><br><text style="color: red;">';
         {% if form.email.errors %}

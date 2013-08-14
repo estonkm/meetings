@@ -1,5 +1,6 @@
 body {
 	background-color: white !important;
+	/*background-image: url('darker.jpg');*/
 }
 
 .blurb_block {
@@ -28,4 +29,11 @@ body {
 	margin: 0 auto;
 	border: 1px solid lightgrey;
 	background-color: white;
+}
+
+.footer_block {
+	text-align: center; 
+	float: left;
+	width: 100%; 
+	margin-bottom: 15px;
 }

@@ -7,15 +7,14 @@
 <link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
 
 <div class="center_block container">
+	<div style="text-align: center;">
+		<h2>Create Meeting</h2>
+		<img src="{% static "flow1.jpg" %}">
+	</div>
 	<div class="form_block">
-		<form class="form-horizontal" style="" method="post">
+		<form class="form-horizontal" id="createform" style="margin-top: 25px;" method="post">
 			{% csrf_token %}
 			<input type="hidden" name="submit_request" value="submit_request">
-			<div class="control-group">
-				<div class="controls">
-					<h3>Create a Meeting</h3>
-				</div>
-			</div>
 			<div class="control-group">
 				<label class="control-label" for="">Meeting Format<br><a style="font-size: 12px;" id="kind_info">What's this?</a></label>
 				<div class="controls nobullet">
@@ -85,17 +84,20 @@
 					{{ form.status }}
 				</div>
 			</div>
-			<div class="control-group">
+<!-- 			<div class="control-group">
 				<div class="controls">
 					<button type="submit" class="btn btn-primary">Create Meeting</button>
 				</div>
-			</div>
+			</div> -->
 		</form>
 	</div>
-	<div class="blurb_block" style="font-size: 14px; margin-top: 150px; vertical-align: middle;">
+	<div class="blurb_block" style="font-size: 14px; margin-top: 25px; vertical-align: middle;">
 		<h4 style="text-align: center;">Info</h4><br>
 		<text>Click on any element labeled "What's this?" to learn more about its accompanying form field.</text><br><br>
 		<text>Except for meeting format and time zone, all fields can be changed after the meeting is created.</text><br><br>
+	</div>
+	<div class="footer_block">
+		<button type="submit" id="subcreate" class="btn btn-primary">Create Meeting</button>
 	</div>
 </div>
 
@@ -142,6 +144,10 @@
 
 $(document).ready(function() {
     $(function() {
+
+    	$('#subcreate').click(function() {
+    		$('#createform').submit();
+    	});
         $( "#id_startdate" ).datepicker();
         $( "#id_enddate").datepicker();
 
@@ -179,7 +185,7 @@ $(document).ready(function() {
 	        html += 'Timezone required.<br><br>'
 	        {% endif %}
 	        {% if form.use_dt.errors %}
-	        html += 'Please specify whether the meeting has a start/end time.<br>,br>'
+	        html += 'Please specify whether the meeting has a start/end time.<br><br>'
 	        {% endif %}
 	        {% if nostartdate %}
 	        html += 'Start date required.<br><br>'

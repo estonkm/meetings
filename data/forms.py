@@ -101,5 +101,5 @@ class SettingsForm(forms.Form):
 	fi = forms.ChoiceField(choices=FI, widget=forms.RadioSelect(), required=False)
 
 class ImgForm(forms.Form):
-	image = forms.ImageField()
+	image = forms.ImageField(required=False)
 

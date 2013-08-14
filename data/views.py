@@ -168,6 +168,8 @@ def setinterview(request):
 	else:
 		return HttpResponseRedirect('/')
 
+	host = m.hosts.all()[0]
+
 	if m.uses_dt:
 		context['uses_dt'] = True
 		form = DTInterviewForm()
@@ -728,46 +730,17 @@ def profile(request):
 	form = ImgForm()
 	context['form'] = form
 
-	account = Account.objects.get(user=request.user)
-	context['account'] = account
+	viewer = None
 
-	if request.POST:
-		if 'pic' in request.POST:
-			form = ImgForm(request.POST, request.FILES)
-			if form.is_valid():
-				cd = form.cleaned_data
-				account.prof_pic = cd['image']
-				account.save()
+	if request.user.is_authenticated():
+		viewer = Account.objects.get(user=request.user)
+		context['viewer'] = viewer
 
-				if cd['image'] is not None:
-					path = os.path.join(dsettings.MEDIA_ROOT, account.prof_pic.url)
-					tn= Image.open(path)
-					tn.thumbnail((200, 200), Image.ANTIALIAS)
-					tn.save(path)
+	if viewer:
+		return HttpResponseRedirect('/profile/'+viewer.page_id)
 
-		if 'bio' in request.POST:
-			account.bio = request.POST.get('bio')
-			account.save()
-
-		if 'wphone' in request.POST:
-			wphone = request.POST.get('wphone')
-			wphone = re.sub('[- ()]', '', wphone)
-			if re.match("^\+?[0-9]*$", wphone):
-				account.wphone = wphone
-				account.save()
-			else:
-				context['wphone_errors'] = True
-
-		if 'hphone' in request.POST:
-			hphone = request.POST.get('hphone')
-			hphone = re.sub('[- ()]', '', hphone)
-			if re.match("^\+?[0-9]*$", hphone):
-				account.hphone = hphone
-				account.save()
-			else:
-				context['hphone_errors'] = True
-
-	return render_to_response('profile.html', context)
+	else:
+		return HttpResponseRedirect('/')
 
 def contacts(request):
 	context = {}
@@ -1049,6 +1022,10 @@ def meeting(request):
 	else:
 		return HttpResponseRedirect('/')
 
+	org = meeting.organizations.all()
+	if org:
+		context['org'] = org[0]
+
 	context['access'] = True # can the viewer view the page?
 	context['not_verified'] = False # is the viewer's account verified (separate login error)
 	context['login_errors'] = False # did the viewer try to log in with invalid credentials?
@@ -1183,6 +1160,12 @@ def meeting(request):
 		question_period = (meeting.q_started and not meeting.q_ended)
 		context['can_ask'] = False
 
+		invitee_u = User.objects.filter(email=meeting.invitee)
+		if invitee_u:
+			invitee_a = meeting.members.filter(user=invitee_u[0])
+			if invitee_a:
+				context['invitee'] = invitee_a
+
 		if question_period:
 			context['question_period'] = True
 			if request.user.is_authenticated():
@@ -1192,7 +1175,6 @@ def meeting(request):
 				if not meeting.accepted:
 					context['can_ask'] = False
 					context['question_period'] = False
-
 
 				context['asked'] = False
 				for q in meeting.questions.all():
@@ -1485,10 +1467,6 @@ def meeting(request):
 		context['m'] = meeting
 		context['host'] = host
 
-		org = meeting.organizations.all()
-		if org:
-			context['org'] = org[0]
-
 		agenda_items = meeting.agenda_items.all().order_by('id')
 		context['agenda_items'] = agenda_items
 		return render_to_response('meeting_page.html', context)
@@ -1761,8 +1739,8 @@ def orgpage(request):
 	context = {}
 	context.update(csrf(request))
 	context['user'] = request.user
-	emailform = OrgEmailForm()
 	form = ImgForm()
+	context['form'] = form
 
 	if request.user.is_authenticated():
 		viewer = Account.objects.get(user=request.user)
@@ -1783,10 +1761,10 @@ def orgpage(request):
 
 	if request.POST:
 		# check for the button; that way, cancel can be a submit too
-		if 'pic' in request.POST:
-			form = ImgForm(request.POST, request.FILES)
-			if form.is_valid():
-				cd = form.cleaned_data
+		form = ImgForm(request.POST, request.FILES)
+		if form.is_valid():
+			cd = form.cleaned_data
+			if cd['image']:
 				org.image = cd['image']
 				org.save()
 				if cd['image'] is not None:
@@ -1794,26 +1772,28 @@ def orgpage(request):
 					tn= Image.open(path)
 					tn.thumbnail((200, 200), Image.ANTIALIAS)
 					tn.save(path)
+		else:
+			errors = {}
+			context['errors'] = errors
+			context['form'] = form
 
-		if 'change_contact' in request.POST:
-			emailform = OrgEmailForm(request.POST)
-			if emailform.is_valid():
-				cd = emailform.cleaned_data;
-				org.contact = cd['contact']
-			else:
-				errors = {}
-				context['errors'] = errors
-		if 'change_desc' in request.POST:
+		if 'name' in request.POST:
+			name = request.POST.get('name')
+			if name != '':
+				org.name = name
+		if 'contact' in request.POST:
+			c = request.POST.get('contact')
+			if c != '':
+				org.contact = c
+		if 'desc' in request.POST:
 			desc = request.POST.get('desc')
-			if desc is not None:
+			if desc != '':
 				org.desc = desc
-		if 'change_ws' in request.POST:
-			ws = request.POST.get('ws')
-			org.website = ws
+		if 'website' in request.POST:
+			ws = request.POST.get('website')
+			if ws != '':
+				org.website = ws
 		org.save()
-
-	context['emailform'] = emailform
-	context['form'] = form
 
 	return render_to_response('orgpage.html', context)
 
@@ -1821,6 +1801,9 @@ def profpage(request):
 	context = {}
 	context.update(csrf(request))
 	context['user'] = request.user
+
+	form = ImgForm()
+	context['form'] = form
 
 	if request.user.is_authenticated():
 		viewer = Account.objects.get(user=request.user)
@@ -1835,8 +1818,48 @@ def profpage(request):
 		account = account[0]
 		context['account'] = account
 	else:
-		return render_to_response('error.html') # TODO
+		return HttpResponseRedirect('/')
+
+	if request.method=='POST':
+		if viewer == account:
+			form = ImgForm(request.POST, request.FILES)
+			if form.is_valid():
+				cd = form.cleaned_data
+				if cd['image']:
+					account.prof_pic = cd['image']
+					account.save()
+
+					if cd['image'] is not None:
+						path = os.path.join(dsettings.MEDIA_ROOT, account.prof_pic.url)
+						tn= Image.open(path)
+						tn.thumbnail((200, 200), Image.ANTIALIAS)
+						tn.save(path)
+			else:
+				errors = {}
+				context['errors'] = errors
+				context['form'] = form
+
+			if 'bio' in request.POST:
+				account.bio = request.POST.get('bio')
+				account.save()
+
+			# if 'wphone' in request.POST:
+			# 	wphone = request.POST.get('wphone')
+			# 	wphone = re.sub('[- ()]', '', wphone)
+			# 	if re.match("^\+?[0-9]*$", wphone):
+			# 		account.wphone = wphone
+			# 		account.save()
+			# 	else:
+			# 		context['wphone_errors'] = True
+
+			# if 'hphone' in request.POST:
+			# 	hphone = request.POST.get('hphone')
+			# 	hphone = re.sub('[- ()]', '', hphone)
+			# 	if re.match("^\+?[0-9]*$", hphone):
+			# 		account.hphone = hphone
+			# 		account.save()
+			# 	else:
+			# 		context['hphone_errors'] = True
 
 	return render_to_response('profpage.html', context)
-
 

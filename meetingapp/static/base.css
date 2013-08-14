@@ -50,6 +50,15 @@ img.addrbook {
     white-space: nowrap !important;
 }
 
+.contactEntry {
+    border-bottom: 1px solid #ccc; 
+    padding: 5px; 
+    height: 30px; 
+    white-space: nowrap; 
+    overflow: auto; 
+    line-height: 30px;
+}
+
 /* remove row lines */
 /*.table th, .table td { 
      border-top: none; 
@@ -71,7 +80,7 @@ div .info {
 input[type="file"] {
     line-height: 15px !important;
     height: 20px;
-    margin-top:5px;
+   /* margin-top:5px;*/
 }
 /* misalignment on file uploads is the result of some messy line-height stuff*/
 

@@ -4,27 +4,26 @@
 
 {% load static %}
 
-<div class="container">
-	<div class="row">
-		<div class="span9">
-			<!-- Create a New Meeting button goes here -->
-			<div class="tabbable">
-				<div class="row" style="margin-bottom: 20px !important; margin-left: 0px !important;">
-					<div style="">
-						<a href="../create/" class="btn" style="float: none !important; margin-right: 5px;">Create a New Meeting</a>
-						<a href="../addorganizer/" class="btn" style="float: none !important; margin-right: 5px;">Create a New Organization</a>
-					</div>
-				</div>
-				<ul class="nav nav-tabs">
-					<li class="active"><a href="#tab1" data-toggle="tab">meetings I'm in</a></li>
-					<li><a href="#tab2" data-toggle="tab">meetings I created</a></li>
-					<li><a href="#tab3" data-toggle="tab">past meetings</a></li>
-					<li><a href="#tab4" data-toggle="tab">organizations</a></li>
-				</ul>
-				<div class="tab-content">
-					<div class="tab-pane active" id="tab1">
+
+<link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
+
+
+<div class="center_block container">
+	<div class="title">
+		<h2 style="text-align: center;">My Meetings</h2>
+	</div>
+		<div class="tabbable">
+			<ul class="nav nav-tabs" style="margin-left: 5px;">
+				<li class="active"><a href="#tab1" data-toggle="tab">meetings I'm in</a></li>
+				<li><a href="#tab2" data-toggle="tab">meetings I created</a></li>
+				<li><a href="#tab3" data-toggle="tab">past meetings</a></li>
+				<li><a href="#tab4" data-toggle="tab">organizations</a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="tab1">
+					<div class="cboxContact" style="height: 350px;">
 						{% for m in meetingsin %}
-						<div class="row homemeetings profrow">
+						<div style="border-bottom: 1px solid #ccc; padding-top: 5px;">
 								<a href="../meeting/{{ m.meeting_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{m.title}}</a>
 								{% if m.desc %}<br><text>{{ m.desc}}</text>{% endif %}<br>
 								<text style="color: #999; font-size: 12px;">created by 
@@ -41,9 +40,11 @@
 						</div>
 						{% endfor %}
 					</div>
-					<div class="tab-pane" id="tab2">
+				</div>
+				<div class="tab-pane" id="tab2">
+					<div class="cboxContact" style="height: 350px">
 						{% for m in meetingscreated %}
-						<div class="row homemeetings profrow">
+						<div style="border-bottom: 1px solid #ccc; padding-top: 5px;">
 								<a href="../meeting/{{ m.meeting_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{m.title}}</a>
 								{% if m.desc %}<br><text>{{ m.desc}}</text>{% endif %}<br>
 								<text style="color: #999; font-size: 12px;">created by you</text>
@@ -51,9 +52,11 @@
 						</div>
 						{% endfor %}
 					</div>
-					<div class="tab-pane" id="tab3">
+				</div>
+				<div class="tab-pane" id="tab3">
+					<div class="cboxContact" style="height: 350px">
 						{% for m in meetingspast %}
-						<div class="row homemeetings profrow">
+						<div style="border-bottom: 1px solid #ccc; padding-top: 5px;">
 								<a href="../meeting/{{ m.meeting_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{m.title}}</a>
 								{% if m.desc %}<text> - {{ m.desc}}</text>{% endif %}<br>
 								<text style="color: #999; font-size: 12px;">created by 
@@ -70,9 +73,11 @@
 						</div>
 						{% endfor %}
 					</div>
-					<div class="tab-pane" id="tab4">
+				</div>
+				<div class="tab-pane" id="tab4">
+					<div class="cboxContact" style="height: 350px">
 						{% for org in organizations %}
-						<div class="row homemeetings profrow">
+						<div style="border-bottom: 1px solid #ccc; padding-top: 5px;">
 								<a href="../orgs/{{ org.page_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{org.name}}</a><text> - {{ org.desc}}</text><br>
 								<text style="color: #999; font-size: 12px;">contact: {{org.contact}}</text>
 						</div>
@@ -81,24 +86,12 @@
 				</div>
 			</div>
 		</div>
-		<div class="span3">
-            <div class="userinfo sidebox" style="padding-top: 5px !important; padding-left: 10px !important;">
-	            <h4>{{ account.user.first_name }} {{ account.user.last_name }}</h4>
-            	{% if account.prof_pic != 'False' %}
-            	<img src="{{account.prof_pic.url}}" style="width: 70px; height: auto;"><br>{% endif %}
-	            {{ account.user.email }}<br>
-	            <a href="../profile/{{account.page_id}}">View public profile</a>
-            </div>
-            <div class="userinfo sidebox">
-                <i class="icon-user"></i>
-                <text class="lead" style="font-weight: bold; font-size: 15px !important;">Contacts ({{account.contacts.all.count}}):</text><br><ul class="sidebox" style="margin-left: 0px !important;">
-                {% for contact in account.contacts.all %}
-                <li>{% if contact.last_name %}{{contact.last_name}}{% if contact.first_name %},{% endif %} {% endif %} {% if contact.first_name %}{{contact.first_name}}{% endif %} <<em>{{contact.email}}</em>></li>
-                {% endfor %}</ul>
-            </div>
-		</div>
-	</div>
+    <div class="options" style="padding: 10px; text-align: center;">
+    	<a class="btn btn-primary" href="../create/">Create a Meeting</a>
+    	<a class="btn btn-primary" style="margin-left: 10px;" href="../addorganizer/">Create an Organization</a>
+    </div>
 </div>
+
 
 <script>
 $(document).ready(function() {

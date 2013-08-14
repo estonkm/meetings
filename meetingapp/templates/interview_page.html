@@ -34,8 +34,8 @@
 		    <text style="margin-left: 5px;">{{m.timezone}}</text><br> 
 		    {% if user == host.user %}
 		    	<form method="post" style="margin-top: 20px !important;">{% csrf_token %}
-                            <button class="btn btn-primary alter" type="submit" name="settings" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Settings</button>
-                			<button class="btn alter" type="submit" name="members" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Manage Members</button>
+                    <button class="btn btn-primary alter" type="submit" name="settings" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Settings</button>
+        			<button class="btn alter" type="submit" name="members" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Manage Members</button>
     			</form>
                 {% if active_period %}
                     <a data-toggle="modal" href="#sendQModal" class="btn btn-warning">Send Out a New Question</a>
@@ -144,6 +144,7 @@
                     <div class="indented">
                         {% if q.answer %}
                             <text><span id="old_ans">{{q.answer}}</span></text>
+                            <!-- <text style="color: #999; font-size: 12px; float:left;">answered by {{invitee.user.first_name}} {{invitee.user.last_name}} on {{q.timestamp}}</text> -->
                             {% if is_invitee %}
                                 <button class="btn btn-mini" name="editanswer" id="{{q.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
                             {% endif %}
