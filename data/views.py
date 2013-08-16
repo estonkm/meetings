@@ -771,7 +771,7 @@ def contacts(request):
 					if u:
 						matching_account = Account.objects.get(user=u)
 					c = Contact(first_name=cd['first_name'], last_name=cd['last_name'],
-							email=cd['email'], address=cd['address'], wphone=cd['wphone'], hphone=cd['hphone'])
+							email=cd['email'])
 					if matching_account:
 						c.account = matching_account
 					c.save()
@@ -1034,6 +1034,8 @@ def meeting(request):
 	context['canmod'] = False # does the viewer have moderator permissions?
 	context['joined'] = False # is the viewer a member of the meeting? (permission to post/etc.)
 
+	context['status'] = "<text style='color:red;'>Closed</text>" # what's the meeting status the viewer sees?
+
 	host = meeting.hosts.all()[0]
 
 	try:
@@ -1102,20 +1104,6 @@ def meeting(request):
 		elif closed and request.user != host.user:
 			context['closed_error'] = True
 		else:
-			if 'get_emails' in request.POST and viewer:
-				viewer.receive_emails.add(meeting)
-				viewer.save()
-				context['receiving'] = True
-				context['notifications_modified'] = True
-				context['currently_receiving'] = True
-			if 'stop_emails' in request.POST and viewer:
-				if meeting in viewer.receive_emails.all():
-					viewer.receive_emails.remove(meeting)
-					viewer.save()
-				context['notifications_modified'] = True
-				context['receiving'] = False
-				context['currently_receiving'] = False
-
 			if 'send_pending' in request.POST and viewer:
 				if viewer == meeting.hosts.all()[0]:
 					recipients = []
@@ -1160,6 +1148,17 @@ def meeting(request):
 		question_period = (meeting.q_started and not meeting.q_ended)
 		context['can_ask'] = False
 
+		if meeting.accepted is not True and meeting.accepted is not False:
+			context['status'] = "<text style='color: red;'>Closed: Invitee has not yet responded</text>"
+		elif meeting.accepted is False:
+			context['status'] = "<text style='color: red;'>Closed: Invitee has declined invitation</text>"
+		elif question_period and not closed:
+			context['status'] = "<text style='color: green;'>Open; Questions accepted</text>"
+		elif question_period:
+			context['status'] = "<text style='color: green;'>Questions accepted</text>"
+		elif not closed:
+			context['status'] = "<text style='color: green;'>Open</text>"
+
 		invitee_u = User.objects.filter(email=meeting.invitee)
 		if invitee_u:
 			invitee_a = meeting.members.filter(user=invitee_u[0])
@@ -1173,8 +1172,9 @@ def meeting(request):
 				if (viewer.user.email == meeting.invitee) or (viewer == host):
 					context['can_ask'] = False
 				if not meeting.accepted:
-					context['can_ask'] = False
+					context['can_ask'] = False[[]]
 					context['question_period'] = False
+					context['not_accepted'] = True
 
 				context['asked'] = False
 				for q in meeting.questions.all():
@@ -1307,6 +1307,13 @@ def meeting(request):
 		context['online'] = online
 		context['num_online'] = len(online)
 
+		if meeting.accepted is not True and meeting.accepted is not False:
+			context['status'] = "<text style='color: red;'>Closed: Invitee has not yet responded</text>"
+		elif meeting.accepted is False:
+			context['status'] = "<text style='color: red;'>Closed: Invitee has declined invitation</text>"
+		elif not closed:
+			context['status'] = "<text style='color: green;'>Open</text>"
+
 		if meeting.chat.chatlog != '':
 			context['chatlog'] = meeting.chat.chatlog
 		if request.method=='POST' and not closed:
@@ -1352,7 +1359,24 @@ def meeting(request):
 
 		return render_to_response('interactive_page.html', context)
 	else:
+		if not closed:
+			context['status'] = "<text style='color: green;'>Open</text>"
+
 		if request.method=='POST':
+			if 'get_emails' in request.POST and viewer:
+				viewer.receive_emails.add(meeting)
+				viewer.save()
+				context['receiving'] = True
+				context['notifications_modified'] = True
+				context['currently_receiving'] = True
+			if 'stop_emails' in request.POST and viewer:
+				if meeting in viewer.receive_emails.all():
+					viewer.receive_emails.remove(meeting)
+					viewer.save()
+				context['notifications_modified'] = True
+				context['receiving'] = False
+				context['currently_receiving'] = False
+
 			if request.POST.get('motionname'):
 				motiontext = request.POST.get('motiontext')
 				motionname = request.POST.get('motionname')
@@ -1842,6 +1866,20 @@ def profpage(request):
 			if 'bio' in request.POST:
 				account.bio = request.POST.get('bio')
 				account.save()
+
+		elif viewer:
+			if 'addc' in request.POST:
+				matching_c = Contact.objects.filter(email=account.user.email)
+				if matching_c:
+					c = matching_c[0]
+					viewer.contacts.add(c)
+					viewer.save()
+					context['success'] = True
+				else:
+					c = Contact(email=account.user.email, first_name=account.user.first_name, last_name=account.user.last_name)
+					c.save()
+					viewer.contacts.add(c)
+					context['success'] = True
 
 			# if 'wphone' in request.POST:
 			# 	wphone = request.POST.get('wphone')

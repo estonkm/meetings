@@ -64,6 +64,7 @@ class MeetingForm(forms.Form):
 	startdate = forms.DateField(required=False)
 	starttime = forms.TimeField(widget=SelectTimeWidget(twelve_hr=True, use_seconds=False), required=False)
 	enddate = forms.DateField(required=False)
+	location = forms.CharField(required=False)
 	endtime = forms.TimeField(widget=SelectTimeWidget(twelve_hr=True, use_seconds=False), required=False)
 	timezone = forms.ChoiceField(choices=TIMEZONES, widget=forms.Select(attrs={'style':'height: 30px !important;'}))
 	status = forms.ChoiceField(choices=STATUS, widget=forms.RadioSelect())

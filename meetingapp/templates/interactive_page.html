@@ -8,8 +8,8 @@
 
 <link href="{% static "interactive.css" %}" rel="stylesheet" type="text/css">
 
-<div class="container">
-    <div class="row">
+<div class="container" style="min-width: 775px !important;">
+    <div class="row" style="min-width: 775px; width: auto;">
         <div class="span8">
             <div class="meetingHead">
                 <h2 style="margin-bottom:20px !important;">{{m.title}}</h2>
@@ -18,6 +18,7 @@
                     <button type="submit" class="btn btn-primary" id="join_meeting" name="join_meeting">Join Meeting</button>
                 </form>
                 {% endif %}
+                <p><text style="font-weight: bold;">Status:</text> {% autoescape off %}{{status}}{% endautoescape %}</p>
                 <div class="desc">
                     {{m.desc}}
                 </div>
@@ -53,22 +54,6 @@
 				{% endif %}
 			{% endif %}
 			{% if joined %}
-			<form method="post" style="margin-top: 20px !important;">{% csrf_token %}
-                <i class="icon-envelope"></i>
-				{% if currently_receiving %} You are currently receiving email notifications from this meeting. <br> Stop receiving notifications? 
-				<button class="btn btn-mini" name="stop_emails" id="stop_emails">Stop</button>
-				{% else %} You are currently not receiving email notifications from this meeting. <br> Start receiving notifications?
-				<button class="btn btn-mini" name="get_emails" id="get_emails">Start</button>
-				{% endif %}
-				{% if notifications_modified %}
-					<br><text style="font-style: italic;">
-					{% if receiving %}
-					Thanks! You will receive all notifications from this meeting.
-					{% else %}
-					Thanks! You won't receive any notifications from this meeting.
-					{% endif %}</text>
-				{% endif %}
-			</form>
             {% if user == host.user %}
                 {% if pending %}
                 <form method="post" style="margin-top: 20px !important;">{% csrf_token %}
@@ -113,7 +98,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row" style="min-width: 775px; width: auto;">
         <div class="span8">
             <p class="lead">Live Chat</p>
 

@@ -80,9 +80,11 @@ class Meeting(models.Model):
 	keywords = models.CharField(max_length=200, null=True, blank=True)
 	friend_invites = models.NullBooleanField(null=True)
 	pending = models.TextField(null=True, blank=True)
+	image = models.ImageField(upload_to='photos/meetings', blank=True, null=True)
 	# things below were added to accommodate interview-style meetings 
 	invitees = models.ManyToManyField('Account', related_name="a_invitees", null=True, blank=True)
 	invitee = models.EmailField(null=True, blank=True)
+	invitee_desc = models.CharField(max_length=100, null=True, blank=True)
 	accepted = models.NullBooleanField(null=True)
 	agreed_yet = models.NullBooleanField(null=True)
 	m_type = models.CharField(max_length=10, null=True, blank=True)
@@ -93,6 +95,7 @@ class Meeting(models.Model):
 	q_ended = models.NullBooleanField(null=True)
 	# created for interactive chat meetings
 	chat = models.ForeignKey('Chat', null=True, blank=True)
+
 
 
 # class added for interactive chat meetings

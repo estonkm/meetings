@@ -6,13 +6,16 @@ body {
   padding-bottom: 40px;
 /*  color: #5a5a5a;*/
   min-width: 800px;
-  width: auto;
 }
 
 .navbar .brand {
   color:#ffffff !important;
   text-shadow:none !important;
   
+}
+
+.container {
+  min-width: 800px;
 }
 
 
@@ -36,6 +39,7 @@ body {
   right: 0;
   z-index: 10;
   margin-top: 20px;
+  min-width: 800px;
   margin-bottom: -90px; /* Negative margin to pull up carousel. 90px is roughly margins and height of navbar. */
 
 }

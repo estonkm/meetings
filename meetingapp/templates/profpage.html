@@ -6,7 +6,7 @@
 
 <link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
 
-<div class="center_block container">
+<div class="center_block container" style="min-width: 600px;">
     <div class="row">
         <div class="container">
             {% if account.prof_pic != 'False' %}
@@ -41,6 +41,15 @@
                 </div>
                 {% if viewer == account %}
                 <a data-toggle="modal" style="margin-top: 10px; margin-bottom: 20px;" href="#editModal" class="btn btn-primary">Edit Information</a>
+                {% else %}
+                    {% if viewer %}
+                        <form method="post">{% csrf_token %}
+                            <button type="submit" name="addc" style="margin-top: 10px; margin-bottom: 20px;" class="btn btn-primary">Add as Contact</button>
+                            {% if success %}
+                            <text style="line-height: 45px; color:#08c;">Contact added successfully.</text>
+                            {% endif %}
+                        </form>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

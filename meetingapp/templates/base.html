@@ -12,7 +12,7 @@
     <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
     <link href="{% static "bootstrap/css/bootstrap-responsive.css" %}" rel="stylesheet">
     <link href="{% static "base.css" %}" rel="stylesheet" type="text/css">
-    <link href="{% static "jquery/base/jquery-ui.css" %}" rel="stylesheet" type="text/css">
+    <link href="{% static "jquery/base/jquery-ui.css" %}" rel=`"stylesheet" type="text/css">
     <link href="{% static "jquery/base/jquery.ui.datepicker.css" %}" rel="stylesheet" type="text/css">
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -44,11 +44,12 @@ var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glc
 
 <body>
 	<div class="navbar navbar-fixed-top">
-		<div class="navbar-inner">
-			<div class="container">
+
+    <div class="container">
+  <div class="navbar-inner">
 				<a class="brand" href="..">Vital Meeting</a>
 				<div class="nav-collapse collapse">
-					<c class="nav">
+					<ul class="nav">
 						<li class="">
 							<a data-toggle="modal" role="button" href="#learnMore">Learn More</a>
 						</li>
@@ -58,31 +59,36 @@ var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glc
 						<li class="">
 							<a href="/create/">Create a Meeting</a>
 						</li>
-					</c>
-					<c class="nav pull-right">
-						{% if user.is_authenticated %}
-						<li class="">
-							<a href="../home/">My Meetings</a>
-						</li>
-						<li class="">
-							<a href="../profile/">Profile</a>
-						</li>
-						<li class="">
-							<a href="../contacts/">Contacts</a>
-						<li>
-						<li class="">
-							<a href="../logout/">Logout</a>
-						</li>
-						{% else %}
-						<li class="">
-							<a href="../login/">Login</a>
-						</li>
-						<li class="">
-							<a href="../signup/">Sign Up</a>
-						</li>
-						{% endif %}
-					</c>						
-				</div>
+					</ul>
+        </div>
+        <ul class="nav pull-right">
+          {% if user.is_authenticated %}
+          <li class="">
+            <a href="../home/">My Meetings</a>
+          </li>
+          <li class="">
+            <a href="../profile/">Profile</a>
+          </li>
+          <li class="">
+            <a href="../contacts/">Contacts</a>
+          <li>
+          <li class="">
+            <a href="../logout/">Logout</a>
+          </li>
+          {% else %}
+          <li class="">
+            <a href="../login/">Login</a>
+          </li>
+          <li class="">
+            <a href="../signup/">Sign Up</a>
+          </li>
+          {% endif %}
+        </ul>
+        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
 			</div>
 		</div>
 	</div>
