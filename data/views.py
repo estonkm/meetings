@@ -885,16 +885,15 @@ def vote(request):
 	return HttpResponse('[]', content_type="application/json")
 
 def intersub(request):
-	if not request.user.is_authenticated():
-		return HttpResponseRedirect('/')
-	account = Account.objects.filter(user=request.user)
-	if account:
-		account = account[0]
-	else:
-		return HttpResponseRedirect('/')
-
 
 	if request.method=='POST':
+		if not request.user.is_authenticated():
+			return HttpResponse()
+		account = Account.objects.filter(user=request.user)
+		if account:
+			account = account[0]
+		else:
+			return HttpResponse()
 		meeting = Meeting.objects.filter(id__exact=request.POST['meeting'])
 		if meeting:
 			meeting = meeting[0]
@@ -939,7 +938,7 @@ def intersub(request):
 		if meeting:
 			meeting = meeting[0]
 		else:
-			return HttpResponseRedirect('/')
+			return HttpResponse()
 		return HttpResponse(meeting.chat.chatlog)
 
 def chatonline(request):
