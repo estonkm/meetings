@@ -13,7 +13,7 @@
         <div class="span8">
             <div class="meetingHead">
                 <h2 style="margin-bottom:20px !important;">{{m.title}}</h2>
-                {% if not joined %}
+                {% if not joined and user.is_authenticated %}
                 <form method="post">{% csrf_token %}
                     <button type="submit" class="btn btn-primary" id="join_meeting" name="join_meeting">Join Meeting</button>
                 </form>
