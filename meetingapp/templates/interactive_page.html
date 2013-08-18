@@ -363,14 +363,12 @@ $(document).ready(function() {
 	setInterval(loadLog, 1500);
 
 	function loadOnline() {
-        {% if joined %}
 		if (load) {
 			$.getJSON('/chatonline/', {'meeting': {{m.id}}, 'user': {{user.id}}}).done(function(n) {
 					$('#n_o').html(n[0]);
 					$('#mems_online_body').html(n[1]);
 			});
 		}
-        {% endif %}
 	}
 
 	{% if canmod %}
@@ -413,8 +411,10 @@ $(document).ready(function() {
 		load = true;
 	});
 
+    {% if joined %}
 	loadOnline();
 	setInterval(loadOnline, 1500);
+    {% endif %}
 
 	$(window).bind('beforeunload', function() {
 		$.ajax({
