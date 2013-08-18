@@ -29,6 +29,7 @@ UTC = pytz.utc
 ZONE = timezone('America/Chicago')
 
 EMAILS_ENABLED = True
+VALIDATION = False
 
 #------------------- HELPER FUNCTIONS ----------------------------------------#
 
@@ -188,6 +189,8 @@ def setinterview(request):
 			m.invitee = cd['email']
 			m.invited = cd['email'] + ','
 
+			m.invitee_desc = cd['desc']
+
 			meetingtz = timezone(m.timezone)
 
 			if m.uses_dt:
@@ -262,6 +265,8 @@ def setchat(request):
 
 			m.invitee = cd['email']
 			m.invited = cd['email'] + ','
+
+			m.desc = cd['desc']
 
 			if cd['agreed'] == 'Yes':
 				m.accepted = True
@@ -432,7 +437,8 @@ def create(request):
 					m = Meeting(startdate=cd['startdate'], starttime=cd['starttime'], enddate=cd['enddate'],
 						endtime=cd['endtime'], title=cd['title'], desc=cd['desc'], private=s, meeting_id=meeting_no, 
 						started=already_started, ended=already_ended, timezone=cd['timezone'], m_type=cd['interview'], 
-						q_started=q_status, q_ended=False, uses_dt=use_dt, friend_invites=fi)
+						q_started=q_status, q_ended=False, uses_dt=use_dt, friend_invites=fi, location=cd['location'],
+						image=cd['image'])
 					m.save()
 					m.hosts.add(a)
 					m.members.add(a)
@@ -444,6 +450,12 @@ def create(request):
 
 					request.session['meeting_created'] = meeting_no
 					request.session.modified=True
+
+					if m.image:
+						path = os.path.join(dsettings.MEDIA_ROOT, m.image.url)
+						tn= Image.open(path)
+						tn.thumbnail((200, 200), Image.ANTIALIAS)
+						tn.save(path)
 
 					if m.m_type == 'Interview':
 						return HttpResponseRedirect('../setinterview/')
@@ -616,10 +628,16 @@ def signup(request):
 							break
 
 					# TODO - use verification and don't log on just yet
-					recipient = [u.email]
-					message = 'Please go to http://vitalmeeting.com/verify/'+vkey+' to verify your account. Thanks!\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
-					if EMAILS_ENABLED:
-						send_mail('Account Verification', message, SENDER, recipient)
+					if VALIDATION:
+						recipient = [u.email]
+						message = 'Please go to http://vitalmeeting.com/verify/'+vkey+' to verify your account. Thanks!\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
+						if EMAILS_ENABLED:
+							send_mail('Account Verification', message, SENDER, recipient)
+					else:
+						a.is_verified = True
+						a.save()
+						authenticate(username=cd['email'], password=cd['password'])
+						auth_login(request, u)
 
 					#user = authenticate(username=cd['email'], password=cd['password'])
 					#auth_login(request, user)

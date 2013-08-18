@@ -22,6 +22,12 @@
 				</div>
 			</div>
 			<div class="control-group">
+				<label class="control-label">Who is this person or group?</label>
+				<div class="controls">
+					{{ form.desc }}
+				</div>
+			</div>
+			<div class="control-group">
 				<label class="control-label">Has he/she already agreed to come?</label>
 				<div class="controls nobullet">
 					{{ form.agreed}}
@@ -95,6 +101,9 @@ $(document).ready(function() {
         {% endif %}
         {% if form.agreed.errors %}
         html += 'Please specify whether the invitee has or has not agreed to come.<br><br>';
+        {% endif %}
+        {% if form.desc.errors %}
+        html += 'Please supply a description of the invitee.<br><br>'
         {% endif %}
         {% if form.startdate.errors %}
         html += 'Start date required.<br><br>'

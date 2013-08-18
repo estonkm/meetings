@@ -35,6 +35,7 @@ class UserForm(forms.Form):
 class ChatForm(forms.Form):
 	email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'email'}))
 	agreed = forms.ChoiceField(choices=FI, widget=forms.RadioSelect())
+	desc = forms.CharField()
 
 class DTInterviewForm(forms.Form):
 	email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'email'}))
@@ -43,10 +44,12 @@ class DTInterviewForm(forms.Form):
 	starttime = forms.TimeField(widget=SelectTimeWidget(twelve_hr=True, use_seconds=False))
 	enddate = forms.DateField()
 	endtime = forms.TimeField(widget=SelectTimeWidget(twelve_hr=True, use_seconds=False))
+	description = forms.CharField()
 
 class InterviewForm(forms.Form):
 	email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'email'}))
-	agreed = forms.ChoiceField(choices=FI, widget=forms.RadioSelect())	
+	agreed = forms.ChoiceField(choices=FI, widget=forms.RadioSelect())
+	desc = forms.CharField()
 
 class ContactForm(forms.Form):
 	title = forms.ChoiceField(choices=TITLES, widget=forms.Select(attrs={'style':'width: 70px !important;'}), required=False)
@@ -69,6 +72,7 @@ class MeetingForm(forms.Form):
 	timezone = forms.ChoiceField(choices=TIMEZONES, widget=forms.Select(attrs={'style':'height: 30px !important;'}))
 	status = forms.ChoiceField(choices=STATUS, widget=forms.RadioSelect())
 	interview = forms.ChoiceField(choices=TYPES, widget=forms.RadioSelect())
+	image = forms.ImageField(required=False)
 
 class LoginForm(forms.Form):
 	username = forms.CharField()
