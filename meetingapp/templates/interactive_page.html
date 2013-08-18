@@ -285,7 +285,6 @@ $(function() {
 
         {% if not joined %}
         $('.checkjoined').click(function(e) {
-            e.preventDefault();
             {% if user.is_authenticated %}
                 $('#joinModal').modal("show");
             {% else %}
