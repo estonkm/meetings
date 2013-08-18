@@ -34,7 +34,7 @@
 			<button class="btn alter" type="submit" name="members" style="padding: 4px !important; padding-left: 8px !important; padding-right: 8px !important;">Manage Members</button>
 			</form>
 			{% else %}	
-			{% if m.friend_invites %}
+			{% if m.friend_invites and joined %}
 				<br>
 				<a class="cs_import btn checkjoined" style="margin-top: 2px !important;">Invite friends from Address Book</a>
 				<img src="{% static "google.png" %}" class="addrbook">

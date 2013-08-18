@@ -41,7 +41,7 @@
                     <a data-toggle="modal" href="#sendQModal" class="btn btn-warning">Send Out a New Question</a>
                 {% endif %}
 			{% else %}	
-			{% if m.friend_invites %}
+			{% if m.friend_invites and joined %}
 				<br>
 				<a class="cs_import btn checkjoined" style="margin-top: 2px !important;">Invite friends from Address Book</a>
 				<img src="{% static "google.png" %}" class="addrbook">
