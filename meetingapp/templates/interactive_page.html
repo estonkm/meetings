@@ -284,13 +284,21 @@ $(function() {
         {% endif %}
 
         {% if not joined %}
-        $('.checkjoined').click(function() {
+        $('.checkjoined').click(function(e) {
+            e.preventDefault();
             {% if user.is_authenticated %}
                 $('#joinModal').modal("show");
             {% else %}
                 $('#signinModal').modal("show");
             {% endif %}
-            return false;
+        });
+
+        $('#submitmsg').click(function() {
+            {% if user.is_authenticated %}
+                $('#joinModal').modal("show");
+            {% else %}
+                $('#signinModal').modal("show");
+            {% endif %}
         });
 
         {% endif %}
@@ -320,6 +328,7 @@ $(document).ready(function() {
 
 	loadOnline();
 
+    {% if joined %}
 	$('#submitmsg').click(function() {
 		{% if closed %}
 		$('#myModal').modal("show");
@@ -329,6 +338,7 @@ $(document).ready(function() {
 		$('#usermsg').val('');
 		{% endif %}
 	});
+    {% endif %}
 
 	{% if closed %}
 	{% else %}
