@@ -636,8 +636,8 @@ def signup(request):
 					else:
 						a.is_verified = True
 						a.save()
-						#authenticate(username=cd['email'], password=cd['password'])
-						auth_login(request, u)
+						user = authenticate(username=cd['email'], password=cd['password'])
+						auth_login(request, user)
 
 					#user = authenticate(username=cd['email'], password=cd['password'])
 					#auth_login(request, user)
