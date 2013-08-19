@@ -96,8 +96,6 @@ class Meeting(models.Model):
 	# created for interactive chat meetings
 	chat = models.ForeignKey('Chat', null=True, blank=True)
 
-
-
 # class added for interactive chat meetings
 class Chat(models.Model):
 	chatlog = models.TextField(null=True, blank=True)

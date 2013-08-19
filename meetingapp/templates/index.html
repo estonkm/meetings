@@ -1,253 +1,126 @@
-
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Vital Meeting &middot; Make It Happen.</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<html>
+<head>
+<title> VitalMeeting - Make Things Happen </title>
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static "vitalmeeting.css" %}" />
+</head>
+<body>
+<div class="header">
 
-    {% load staticfiles %}
+<div id="box1">
+<table>
+<tr class="header">
+<td class="column1"> <a href=".."> <img src="{% static "images/logo.gif" %}" width="258" height="46" alt="Vital Meeting"> </a> </td>
+<td class="column2"> <a id="column2" href=""> What is Vital <br /> Meeting? </a> </td>
+<td class="column3"> <a href=""> <span> See </span> </a> people <br /> making it happen </td>
+<td class="column4"> <a href="../create/"> <span> Start </span> </a> <br /> your meeting </td>
+<td class="column5"> <a href=""> help </a> </td>
+<td class="column6"> <a href="../signup/"> signup </a> </td>
+<td class="column7"> <a href="../login/"> login </a> </td>
+</tr>
+</table>
+</div> <!-- end of box1 -->
 
-    <!-- Le styles -->
-    <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
-    <link href="{% static "bootstrap/css/bootstrap-responsive.css" %}" rel="stylesheet">
-
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
-
-    <link href="{% static "flexslider/flexslider.css" %}" rel="stylesheet">
-
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="../assets/js/html5shiv.js"></script>
-    <![endif]-->
-
-    <!-- Fav and touch icons -->
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
-      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
-                    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
-                                   <link rel="shortcut icon" href="../assets/ico/favicon.png">
-
-    <link href="{% static "frontpage.css" %}" rel="stylesheet">
-  </head>
-
-<!-- ClickDesk Live Chat Service for websites -->
-<script type='text/javascript'>
-var _glc =_glc || []; _glc.push('all_ag9zfmNsaWNrZGVza2NoYXRyDgsSBXVzZXJzGJn89g4M');
-var glcpath = (('https:' == document.location.protocol) ? 'https://my.clickdesk.com/clickdesk-ui/browser/' : 
-'http://my.clickdesk.com/clickdesk-ui/browser/');
-var glcp = (('https:' == document.location.protocol) ? 'https://' : 'http://');
-var glcspt = document.createElement('script'); glcspt.type = 'text/javascript'; 
-glcspt.async = true; glcspt.src = glcpath + 'livechat-new.js';
-var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glcspt, s);
-</script>
-
-  <body>
+<div id="box2">
+<table>
+<tr>
+<td> <span class="mainfeature"> make things happen </span> <br /> <a href=""> <img src="{% static "images/LearnMoreButton.jpg" %}" alt="Learn More" width="127" height="34"> </a> </td>
+<td> <img src="{% static "images/dirtybeach.jpg" %}" alt="A dirty beach" width="315" height="221"> </td>
+<td> <img src="{% static "images/forwardicon.jpg" %}" alt="Changes to" width="15" height="17" </td>
+<td> <img src="{% static "images/cleanbeach.jpg" %}" alt="A beautiful beach" width="330" height="219" </td>
+</tr>
+</table>
+</div> <!-- end of box2 -->
 
 
 
-    <!-- NAVBAR
-    ================================================== -->
-    <div class="navbar-wrapper">
-      <!-- Wrap the .navbar in .container to center it within the absolutely positioned parent. -->
-      <div class="container">
-        <div class="navbar navbar-inverse">
-          <div class="navbar-inner">
-            <!-- Responsive Navbar Part 1: Button for triggering responsive navbar (not covered in tutorial). Include responsive CSS to utilize. -->
+<table class="headings">
+<tr>
+<td> <h2> meetings in progress &#46;&#46;&#46; </h2> <td>
+<td> <h3> see more &#62; </h3>
+</tr>
+</table> <!-- headings table ends here -->
 
-            <a class="brand" href=>Vital Meeting</a>
-            <div class="nav-collapse collapse">
-              <ul class="nav">
-                <li class="active"><a data-toggle="modal" role="button" href="#learnMore">Learn More</a></li>
-                <li><a data-toggle="modal" role="button" href="#contactInfo">Contact</a></li>
-              </ul>
-            </div>
-            <div>
-                {% if user.is_authenticated %}
-                <ul class="nav pull-right">
-                  <li class="">
-                    <a href="../home/">Home</a>
-                  </li>
-                  <li class="">
-                    <a href="../profile/">Profile</a>
-                  </li>
-                  <li class="">
-                    <a href="../contacts/">Contacts</a>
-                  </li>
-                  <li class="">
-                    <a href="../logout/">Logout</a>
-                  </li>
-                </ul>
-                {% else %}
-                  <div class="nav pull-right" style="margin-left: 5px; margin-top: 2px;">
-                    <a href="../signup/" class="btn btn-small">Sign Up</a>
-                  </div>
-                  <form class="navbar-form pull-right" method="post">
-                  {% csrf_token %}
-                    <input type="text" name="username" class="login" placeholder="email" autocomplete="off">
-                    <input type="password" name="password" class="login" placeholder="password" autocomplete="off">
-                    <button type="submit" class="btn btn-primary">Log In</button>
-                  </form>
-                {% endif %}
-            </div>
-            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
+<table class="features">
+<tr>
+<td class="feature1">
+<table class="mini">
+<tr>
+<td colspan="3">
+<img src="{% static "images/trafficjam.jpg" %}" alt="Traffic Jam" width="274" height="180"> </td> </tr>
+<tr> 
+<td colspan="3" class="meeting title"> <b> Easing traffic problem on Mass. Avenue </b> </td> </tr>
 
-            <!-- Responsive Navbar Part 2: Place all navbar contents you want collapsed withing .navbar-collapse.collapse. -->
-          </div><!-- /.navbar-inner -->
-        </div><!-- /.navbar -->
+<tr> <td colspan="3"> by <span id="meetinghost"> John Smith </span> </td> </tr>
+<tr> <td colspan="3"> Status: "Meeting In Progress" </td> </tr>
+<tr> 
+<td colspan="3"> <img src="{% static "images/Locationicon.gif" %}" alt="location icon" width="15" height="23">  Boston, MA, USA </td> 
+</tr>
+<tr class="stats"> 
+<td> 52 <br /> Attending </td>
+<td> 26 <br /> Agenda Items </td>
+<td> 25 <br /> Motions </td>
+</tr>
+</table> <!-- end of table mini class -->
+</td> <!-- end of feature1 -->
 
-      </div> <!-- /.container -->
-    </div><!-- /.navbar-wrapper -->
+<td class="feature2">
+<table class="mini">
+<tr>
+<td colspan="3">
+<img src="{% static "images/kidondirtystreet.jpg" %}" alt="Traffic Jam" width="242" height="181"> </td> </tr>
+<tr> 
+<td colspan="3" class="meeting title"> <b> Easing traffic problem on Mass. Avenue </b> </td> </tr>
 
+<tr> <td colspan="3"> by <span id="meetinghost"> John Smith </span> </td> </tr>
+<tr> <td colspan="3"> Status: "Meeting In Progress" </td> </tr>
+<tr> 
+<td colspan="3"> <img src="{% static "images/Locationicon.gif" %}" alt="location icon" width="15" height="23">  Boston, MA, USA </td> 
+</tr>
+<tr class="stats"> 
+<td> 52 <br /> Attending </td>
+<td> 26 <br /> Agenda Items </td>
+<td> 25 <br /> Motions </td>
+</tr>
+</table> <!-- end of table mini class -->
+</td> <!-- end of feature 2 -->
 
+<td class="feature3">
+<table class="mini">
+<tr>
+<td colspan="3">
+<img src="{% static "images/emptyland.jpg" %}" alt="Traffic Jam" width="275" height="186"> </td> </tr>
+<tr> 
+<td colspan="3" class="meeting title"> <b> Easing traffic problem on Mass. Avenue </b> </td> </tr>
 
-    <div id="myCarousel" class="carousel slide">
-      <div class="carousel-inner">
-        <div class="item active">
-          <img src="{% static "darker.jpg" %}" alt="">
-          <div class="container">
-            <div class="carousel-caption">
-              <h1>Vital Meeting.</h1>
-              <p class="lead">Connect with others. Solve problems.</p>
-              <a class="btn btn-large btn-primary" href="../create/">Make It Happen</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+<tr> <td colspan="3"> by <span id="meetinghost"> John Smith </span> </td> </tr>
+<tr> <td colspan="3"> Status: "Meeting In Progress" </td> </tr>
+<tr> 
+<td colspan="3"> <img src="{% static "images/Locationicon.gif" %}" alt="location icon" width="15" height="23">  Boston, MA, USA </td> 
+</tr>
+<tr class="stats"> 
+<td> 52 <br /> Attending </td>
+<td> 26 <br /> Agenda Items </td>
+<td> 25 <br /> Motions </td>
+</tr>
+</table> <!-- end of table mini class -->
+</td> <!-- end of feature 3 -->
+</tr>
+</table> <!-- end of table -->
 
-      <!-- FOOTER -->
-  <div class="container" style="">
-    <div class="row" style="text-align: center; margin-top: 0px;">
-      <h2>Three Ways to Move Forward:</h2>
-    </div>
-    <div class="row" style="margin-top: 0px; text-align: center;">
-      <div class="span4">
-        <h3 style="">Agenda Items</h3>
-        <img src="{% static "portion.png" %}" style="width: 260px; height: 145px;"><br><br>
-        <p>Structure and focus your meetings. Move a motion, and leave comments on those of others. See what matters most. </p>
-        <p><a class="btn" href="#">See it in action &raquo;</a></p>
-      </div>
-      <div class="span4">
-        <h3>Interviews</h3>
-        <img src="{% static "qanda.png" %}" style="width: 260px; height: 145px;"><br><br>
-        <p>Reach the hard-to-reach. A structured Q&A format, with total control over which questions are sent to your guest.  </p>
-        <p><a class="btn" href="#">See it in action &raquo;</a></p>
-     </div>
-      <div class="span4">
-        <h3>Interactive Chats</h3>
-        <img src="{% static "livechat.png" %}" style="width: 230px; height: 145px;"><br><br>
-        <p>An interview, but totally interactive. All members can chat with your guest about the important issues.</p>
-        <p><a class="btn" href="#">See it in action &raquo;</a></p>
-      </div>
-    </div>
-    <div class="row" style="text-align: center; margin-top: 50px;">
+<div class="footer">
+<p>
+<ul>
+<li> <a href=""> help </a>  </li>
+<li> <a href=""> privacy </a>  </li>
+<li> <a href=""> terms </a>  </li>
+<li> <a href=""> contact </a>  </li>
+<li> <a href=""> copyright &copy; 2013 VitalMeeting, Inc.  </a> </li>
+</ul>
+</p>
+</div>
 
-   </div>
-    <footer style="margin-top: 150px;">
-      <p>&copy; 2013 Vital Meeting, Inc. &middot; <a data-toggle="modal" role="button" href="#myModal">Privacy</a> &middot; <a data-toggle="modal" role="button" href="#myModal">Terms</a></p>
-    </footer>
-  </div>
 
 </body>
-
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Under Construction</h3>
-  </div>
-  <div class="modal-body">
-    <p>Please check back later!</p>
-  </div>
-  <div class="modal-footer">
-    <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
-  </div>
-</div>
-
-<div id="learnMore" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h2 style="text-align: center;" id="myModalLabel">Make It Happen.</h2>
-  </div>
-  <div class="modal-body">
-    <div style="margin: auto; width: 400px; height: 300px;">
-      <div class="flexslider">
-          <ul class="slides">
-            <li>
-              <img src="{% static "meeting_identify.jpg" %}" style="width: 400px; height: 300px;">
-            </li>
-            <li>
-              <img src="{% static "meeting_invite.jpg" %}" style="width: 400px; height: 300px;">
-            </li>
-            <li>
-              <img src="{% static "meeting_concoct.jpg" %}" style="width: 400px; height: 300px;">
-            </li>
-            <li>
-              <img src="{% static "meeting_achieve.jpg" %}" style="width: 400px; height: 300px;">
-            </li>
-          </ul>
-      </div>
-    </div>
-    <br><br><br>
-    <p>Is there something you wish would be done but no one seems to take on the problem?</p>
-    <p>Is there a project you'd like to accomplish and want support for?</p>
-    <p>Do you wish you could speak directly with the people in authority?</p><br>
-
-    <p>Stop wishing and take action:</p><br>
-
-    <p>1. Create an Interview and raise your issue with the person responsible.</p>
-    <p>2. Create an Online Project and Invite People to Brainstorm.</p>
-    <p>3. Create an Interactive Chat and Invite People for An Online Chat Session.</p><br>
-
-    <p>Vital Meeting - Make It Happen.</p>
-
-  </div>
-  <div class="modal-footer">
-    <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
-  </div>
-</div>
-
-<div id="contactInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Contact Information</h3>
-  </div>
-  <div class="modal-body">
-    <p>info@vitalmeeting.com - don't hesitate to shoot us an email!</p>
-  </div>
-  <div class="modal-footer">
-    <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
-  </div>
-</div>
-
-<script src="{% static "flexslider/jquery.flexslider-min.js" %}"></script>
-<script>
-
-$('#learnMore').on('shown', function() {
-  $('.flexslider').flexslider({ animation: "slide"});
-});
-
-</script>
-
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-42713435-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
-
 </html>

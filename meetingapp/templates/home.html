@@ -1,114 +1,174 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<head>
+<title> Vital Meeting - UserPage </title>
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static "vitalmeeting.css" %}" />
+</head>
+<body>
 
-{% block content %}
+<div id="box1">
+<table>
+<tr class="header">
+<td class="column1"> <a href="index.html"> <img src="{% static "images/logo.gif" %}" width="258" height="46" alt="Vital Meeting"> </a> </td>
+<td class="column3"> <a href=""> <span> See </span> </a> people <br /> making things happen </td>
+<td class="column4"> <a href="../contacts/"> <span> My Contacts </span> </a> </td>
+<td class="column4"> <a href="../home/"> <span> My Meetings </span> </a> </td>
+<td class="column5"> <a href=""> help </a> </td>
+<td class="column6"> <a href=""> {% if account.prof_pic != 'None' %}<img src="{{account.prof_pic.url}}" style="width: 50px; height: 50px;"> {% endif %}</a> </td>
+<td class="column7"> {{user.first_name}} {{user.last_name}}<br /> <a href="../logout/"> logout </a> </td>
+</tr>
+</table>
+</div> <!-- end of box1 -->
 
-{% load static %}
+<div id="meetingnav">
+<ul class="nav">
+<li> <a href="" id="mymeetings">My Meetings</a> </li>
+<li> <a href="../create/">Create A Meeting</a> </li>
+<li> <a href="../addorganizer/">Create An Organization</a> </li>
+<li> <a href="" id="myorgs">My Organizations</a> </li>
+</ul>
 
+<div id="meetingpad">
+<div id="meetingsidebar">
 
-<link href="{% static "formbase.css" %}" rel="stylesheet" type="text/css">
+<ul class="meetingsidebar" id="meetingsidebar_disp">
+<li> <a href="#" id="min"> Meetings I'm In ({{meetingsin|length}}) </a> </li>
+<li> <a href="#" id="mcr"> Meetings I Created ({{meetingscreated|length}}) </a> </li>
+<li> <a href="#" id="mpa"> Past Meetings ({{meetingspast|length}}) </a> </li>
+</ul>
+<ul class="meetingsidebar" id="orgsidebar_disp">
 
+</ul>
 
-<div class="center_block container" style="min-width: 550px;">
-	<div class="title">
-		<h2 style="text-align: center;">My Meetings</h2>
-	</div>
-		<div class="tabbable">
-			<ul class="nav nav-tabs" style="margin-left: 5px;">
-				<li class="active"><a href="#tab1" data-toggle="tab">meetings I'm in</a></li>
-				<li><a href="#tab2" data-toggle="tab">meetings I created</a></li>
-				<li><a href="#tab3" data-toggle="tab">past meetings</a></li>
-				<li><a href="#tab4" data-toggle="tab">organizations</a></li>
-			</ul>
-			<div class="tab-content">
-				<div class="tab-pane active" id="tab1">
-					<div class="cboxContact" style="height: 350px;">
-						{% for m in meetingsin %}
-						<div class="meetingEntry">
-								<a href="../meeting/{{ m.meeting_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{m.title}}</a>
-								{% if m.desc %}<br><text>{{ m.desc}}</text>{% endif %}<br>
-								<text style="color: #999; font-size: 12px;">created by 
-								{% for host in m.hosts.all %}
-								{% if host.user.first_name == user.first_name and host.user.last_name == user.last_name %}
-								  you
-								{% else %}
-								  {{host.user.first_name}}
-								 {{host.user.last_name}} 
-								{% endif %}
-								{% endfor %}
-								</text>
-								{% if m.uses_dt %}<text style="float:right; color: #999; font-size: 12px;"><text style="color:black;">{{m.starttime}}</text>, {{m.startdate}} <span style="padding-left: 10px; padding-right: 13px;">--</span><text style="color:black;">{{m.endtime}}</text>, {{m.enddate}}</text>{% endif %}
-						</div>
-						{% endfor %}
-					</div>
-				</div>
-				<div class="tab-pane" id="tab2">
-					<div class="cboxContact" style="height: 350px">
-						{% for m in meetingscreated %}
-						<div class="meetingEntry">
-								<a href="../meeting/{{ m.meeting_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{m.title}}</a>
-								{% if m.desc %}<br><text>{{ m.desc}}</text>{% endif %}<br>
-								<text style="color: #999; font-size: 12px;">created by you</text>
-								{% if m.uses_dt %}<text style="float:right; color: #999; font-size: 12px;"><text style="color:black;">{{m.starttime}}</text>, {{m.startdate}} <span style="padding-left: 10px; padding-right: 13px;">--</span><text style="color:black;">{{m.endtime}}</text>, {{m.enddate}}</text>{% endif %}
-						</div>
-						{% endfor %}
-					</div>
-				</div>
-				<div class="tab-pane" id="tab3">
-					<div class="cboxContact" style="height: 350px">
-						{% for m in meetingspast %}
-						<div class="meetingEntry">
-								<a href="../meeting/{{ m.meeting_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{m.title}}</a>
-								{% if m.desc %}<text> - {{ m.desc}}</text>{% endif %}<br>
-								<text style="color: #999; font-size: 12px;">created by 
-								{% for host in m.hosts.all %}
-								{% if host.user.first_name == user.first_name and host.user.last_name == user.last_name %}
-								  you
-								{% else %}
-								  {{host.user.first_name}}
-								 {{host.user.last_name}} 
-								{% endif %}
-								{% endfor %}
-								</text>
-								{% if m.uses_dt %}<text style="float:right; color: #999; font-size: 12px;"><text style="color:black;">{{m.starttime}}</text>, {{m.startdate}} <span style="padding-left: 10px; padding-right: 13px;">--</span><text style="color:black;">{{m.endtime}}</text>, {{m.enddate}}</text>{% endif %}
-						</div>
-						{% endfor %}
-					</div>
-				</div>
-				<div class="tab-pane" id="tab4">
-					<div class="cboxContact" style="height: 350px">
-						{% for org in organizations %}
-						<div class="meetingEntry">
-								<a href="../orgs/{{ org.page_id }}" style="font-size: 17.5px; font-weight: bold; line-height: 20px; margin-top: 0px !important; margin-bottom: 5px !important;"> {{org.name}}</a><text> - {{ org.desc}}</text><br>
-								<text style="color: #999; font-size: 12px;">contact: {{org.contact}}</text>
-						</div>
-						{% endfor %}
-					</div>
-				</div>
-			</div>
-		</div>
-    <div class="options" style="padding: 10px; text-align: center;">
-    	<a class="btn btn-primary" href="../create/">Create a Meeting</a>
-    	<a class="btn btn-primary" style="margin-left: 10px;" href="../addorganizer/">Create an Organization</a>
-    </div>
+</div> <!-- end of meeting sidebar -->
+
+<div id="meetings_in" style="height: 400px; overflow: scroll;">
+<table class="inbox">
+<tr class="headline">
+<th></th>
+<th> Starting </th>
+<th> Ends </th>
+<th> TimeZone </th>
+</tr>
+{% for meeting in meetingsin %}
+<tr>
+<td> <a href="../meeting/{{meeting.meeting_id}}"> {{meeting.title}}</a> </td>
+<td> {% if meeting.uses_dt %}{{meeting.starttime}} {{meeting.startdate}} {% else %} n/a {% endif %} </td>
+<td> {% if meeting.uses_dt %}{{meeting.endtime}} {{meeting.enddate}} {% else %} n/a {% endif %}</td>
+<td> {{meeting.timezone}} </td>
+</tr>
+{% endfor %}
+</table>
 </div>
 
+<div id="meetings_created" style="height: 400px; overflow: scroll;">
+<table class="inbox">
+<tr class="headline">
+<th></th>
+<th> Starting </th>
+<th> Ends </th>
+<th> TimeZone </th>
+</tr>
+{% for meeting in meetingscreated %}
+<tr>
+<td> <a href="../meeting/{{meeting.meeting_id}}"> {{meeting.title}}</a> </td>
+<td> {% if meeting.uses_dt %}{{meeting.starttime}} {{meeting.startdate}} {% else %} n/a {% endif %} </td>
+<td> {% if meeting.uses_dt %}{{meeting.endtime}} {{meeting.enddate}} {% else %} n/a {% endif %}</td>
+<td> {{meeting.timezone}} </td>
+</tr>
+{% endfor %}
+</table>
+</div>
 
+<div id="meetings_past" style="height: 400px; overflow: scroll;">
+<table class="inbox">
+<tr class="headline">
+<th></th>
+<th> Starting </th>
+<th> Ends </th>
+<th> TimeZone </th>
+</tr>
+{% for meeting in meetingspast %}
+<tr>
+<td> <a href="../meeting/{{meeting.meeting_id}}"> {{meeting.title}}</a> </td>
+<td> {% if meeting.uses_dt %}{{meeting.starttime}} {{meeting.startdate}} {% else %} n/a {% endif %} </td>
+<td> {% if meeting.uses_dt %}{{meeting.endtime}} {{meeting.enddate}} {% else %} n/a {% endif %}</td>
+<td> {{meeting.timezone}} </td>
+</tr>
+{% endfor %}
+</div>
+</table>
+</div> <!-- End of Meeting List -->
+
+<div id="orglist" style="height: 400px; overflow: scroll;">
+<table class="inbox">
+<tr class="headline">
+<th></th>
+</tr>
+<div id="meetings_in">
+{% for org in organizations %}
+<tr>
+<td> <a href="../organization/{{org.page_id}}"> {{org.name}}</a> </td>
+</tr>
+{% endfor %}
+</div>
+</table>
+</div>
+
+</div> 
+
+</body>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>
-$(document).ready(function() {
 
-	$('#tab1').click(function (e) {
-		//e.preventDefault();
-		$(this).tab('show');
+$(document).ready(function() {
+	$('#orgsidebar_disp').hide();
+	$('#orglist').hide();
+	$('#meetings_past').hide();
+	$('#meetings_created').hide();
+
+	$('#mymeetings').click(function(e) {
+		e.preventDefault();
+		$('#orgsidebar_disp').hide();
+		$('#orglist').hide();
+		$('#meetingsidebar_disp').show();
+		$('#meetings_in').show();
 	});
-	$('#tab2').click(function (e) {
-		//e.preventDefault();
-		$(this).tab('show');
+	$('#myorgs').click(function(e) {
+		e.preventDefault();
+		$('#orgsidebar_disp').show();
+		$('#orglist').show();
+
+		$('#meetingsidebar_disp').hide();
+		$('#meetings_in').hide();
+		$('#meetings_created').hide();
+		$('#meetings_past').hide();
 	});
-	$('#tab3').click(function (e) {
-		//e.preventDefault();
-		$(this).tab('show');
+
+	$('#min').click(function(e) {
+		e.preventDefault();
+		$('#meetings_in').show();
+		$('#meetings_created').hide();
+		$('#meetings_past').hide();
+	});
+	$('#mcr').click(function(e) {
+		e.preventDefault();
+		$('#meetings_in').hide();
+		$('#meetings_created').show();
+		$('#meetings_past').hide();
+	});
+	$('#mpa').click(function(e) {
+		e.preventDefault();
+		$('#meetings_in').hide();
+		$('#meetings_created').hide();
+		$('#meetings_past').show();
 	});
 });
-</script>
 
-{% endblock %}
+</script>
+</html>
+
+
+
+

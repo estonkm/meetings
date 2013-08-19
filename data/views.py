@@ -21,6 +21,7 @@ from PIL import Image, ImageOps
 from pytz import timezone
 import pytz
 from django.utils.timezone import activate
+import hashlib
 #import requests
 
 SENDER = 'Vital Meeting <info@vitalmeeting.com>'
@@ -129,22 +130,22 @@ def index(request):
 	context.update(csrf(request))
 	context['user'] = request.user
 	
-	if request.method == 'POST':
-		user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
-		if user is None:
+	# if request.method == 'POST':
+	# 	user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
+	# 	if user is None:
 
-			# set form errors
-			context['errors'] = True
-			return render_to_response('login.html', context)
-		else:
-			a = Account.objects.filter(user=user)
-			if a:
-				if not a[0].is_verified:
-					context['not_verified'] = True
-					return render_to_response('login.html', context)
-			auth_login(request, user)
-			# sets session; redirect to home page for user
-			return HttpResponseRedirect('../home/')
+	# 		# set form errors
+	# 		context['errors'] = True
+	# 		return render_to_response('login.html', context)
+	# 	else:
+	# 		a = Account.objects.filter(user=user)
+	# 		if a:
+	# 			if not a[0].is_verified:
+	# 				context['not_verified'] = True
+	# 				return render_to_response('login.html', context)
+	# 		auth_login(request, user)
+	# 		# sets session; redirect to home page for user
+	# 		return HttpResponseRedirect('../home/')
 
 	return render_to_response('index.html', context)
 
@@ -587,8 +588,9 @@ def signup(request):
 		if request.POST.get('submit_request'):
 			if form.is_valid():
 				cd = form.cleaned_data
+				namehash = hashlib.sha1(cd['email']).hexdigest()[:30]
 
-				if User.objects.filter(username=cd['email']) or User.objects.filter(email=cd['email']):
+				if User.objects.filter(username=namehash) or User.objects.filter(email=cd['email']):
 					context['email_taken'] = True
 				elif len(cd['password']) < 8:
 					context['too_short'] = True
@@ -606,7 +608,7 @@ def signup(request):
 					for i in range(21):
 						pid += chr(int(random.random()*25)+97)
 
-					u = User.objects.create_user(cd['email'], first_name=cd['first_name'],
+					u = User.objects.create_user(namehash, first_name=cd['first_name'],
 						last_name=cd['last_name'], email=cd['email'], password=cd['password'])
 					a = Account(user=u, join_date=ZONE.localize(datetime.now()), is_verified=False, verification_key=vkey, page_id=pid) 
 					a.save()
@@ -627,7 +629,6 @@ def signup(request):
 							c.save()
 							break
 
-					# TODO - use verification and don't log on just yet
 					if VALIDATION:
 						recipient = [u.email]
 						message = 'Please go to http://vitalmeeting.com/verify/'+vkey+' to verify your account. Thanks!\n\n\n\nVitalMeeting.com\nStructured Online Meetings'
@@ -636,7 +637,7 @@ def signup(request):
 					else:
 						a.is_verified = True
 						a.save()
-						user = authenticate(username=cd['email'], password=cd['password'])
+						user = authenticate(username=namehash, password=cd['password'])
 						auth_login(request, user)
 
 					#user = authenticate(username=cd['email'], password=cd['password'])
@@ -701,7 +702,8 @@ def login(request):
 
 	if request.method == 'POST':
 		if request.POST.get('submit_request'):
-			user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
+			namehash = hashlib.sha1(request.POST.get('username')).hexdigest()[:30]
+			user = authenticate(username=namehash, password=request.POST.get('password'))
 			if user is None:
 				# set form errors
 				context['errors'] = True
@@ -1100,7 +1102,8 @@ def meeting(request):
 	# POST requests common to all meeting types
 	if request.method=='POST':
 		if 'login' in request.POST:
-			user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
+			namehash = namehash = hashlib.sha1(request.POST.get('username')).hexdigest()[:30]
+			user = authenticate(username=namehash, password=request.POST.get('password'))
 			if user is None:
 				# set form errors
 				context['login_errors'] = True
