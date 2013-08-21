@@ -9,10 +9,10 @@
 <div id="box1">
 <table>
 <tr class="header">
-<td class="column1"> <a href="index.html"> <img src="{% static "images/logo.gif" %}" width="258" height="46" alt="Vital Meeting"> </a> </td>
+<td class="column1"> <a href="/"> <img src="{% static "images/logo.gif" %}" width="258" height="46" alt="Vital Meeting"> </a> </td>
 <td class="column3"> <a href=""> <span> See </span> </a> people <br /> making things happen </td>
-<td class="column4"> <a href="../contacts/"> <span> My Contacts </span> </a> </td>
-<td class="column4"> <a href="../home/"> <span> My Meetings </span> </a> </td>
+<td class="column4"> <a href="/contacts/"> <span> My Contacts </span> </a> </td>
+<td class="column4"> <a href="/home/"> <span> My Meetings </span> </a> </td>
 <td class="column5"> <a href=""> help </a> </td>
 <td class="column6"> <a href=""> {% if account.prof_pic != 'None' %}<img src="{{account.prof_pic.url}}" style="width: 50px; height: 50px;"> {% endif %}</a> </td>
 <td class="column7"> {{user.first_name}} {{user.last_name}}<br /> <a href="../logout/"> logout </a> </td>

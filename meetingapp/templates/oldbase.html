@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Vital Meeting &middot; Structured Online Meetings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    {% load staticfiles %}
+
+    <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "bootstrap/css/bootstrap-responsive.css" %}" rel="stylesheet">
+    <link href="{% static "base.css" %}" rel="stylesheet" type="text/css">
+    <link href="{% static "jquery/base/jquery-ui.css" %}" rel=`"stylesheet" type="text/css">
+    <link href="{% static "jquery/base/jquery.ui.datepicker.css" %}" rel="stylesheet" type="text/css">
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "datepicker/js/bootstrap-datepicker.js" %}"></script>
+    
+    <link href="{% static "datepicker/css/datepicker.css" %}" rel="stylesheet" type="text/css">
+
+    <link href="{% static "flexslider/flexslider.css" %}" rel="stylesheet">
+
+    <!--<script src="{% static "jquery/ui/jquery.ui.core.js" %}"></script>
+    <script src="{% static "jquery/ui/jquery.ui.widget.js" %}"></script>
+
+    <script src="{% static "jquery/ui/jquery.ui.datepicker.js" %}"></script>-->
+
+
+</head>
+
+<script type='text/javascript'>
+var _glc =_glc || []; _glc.push('all_ag9zfmNsaWNrZGVza2NoYXRyDgsSBXVzZXJzGJn89g4M');
+var glcpath = (('https:' == document.location.protocol) ? 'https://my.clickdesk.com/clickdesk-ui/browser/' : 
+'http://my.clickdesk.com/clickdesk-ui/browser/');
+var glcp = (('https:' == document.location.protocol) ? 'https://' : 'http://');
+var glcspt = document.createElement('script'); glcspt.type = 'text/javascript'; 
+glcspt.async = true; glcspt.src = glcpath + 'livechat-new.js';
+var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glcspt, s);
+</script>
+
+
+<body>
+	<div class="navbar navbar-fixed-top">
+
+    <div class="container">
+  <div class="navbar-inner">
+				<a class="brand" href="..">Vital Meeting</a>
+				<div class="nav-collapse collapse">
+					<ul class="nav">
+						<li class="">
+							<a data-toggle="modal" role="button" href="#learnMore">Learn More</a>
+						</li>
+						<li class="">
+							<a data-toggle="modal" role="button" href="#contactInfo">Contact</a>
+						</li>
+						<li class="">
+							<a href="/create/">Create a Meeting</a>
+						</li>
+					</ul>
+        </div>
+        <ul class="nav pull-right">
+          {% if user.is_authenticated %}
+          <li class="">
+            <a href="../home/">My Meetings</a>
+          </li>
+          <li class="">
+            <a href="../profile/">Profile</a>
+          </li>
+          <li class="">
+            <a href="../contacts/">Contacts</a>
+          <li>
+          <li class="">
+            <a href="../logout/">Logout</a>
+          </li>
+          {% else %}
+          <li class="">
+            <a href="../login/">Login</a>
+          </li>
+          <li class="">
+            <a href="../signup/">Sign Up</a>
+          </li>
+          {% endif %}
+        </ul>
+        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+			</div>
+		</div>
+	</div>
+    {% block content %}
+        Content
+    {% endblock %}
+    <div class="container">
+	    <footer style="margin-top: 50px;">
+	        <p class="pull-right"><a href="#">Back to top</a></p>
+	        <p>&copy; 2013 VitalMeeting, Inc. &middot; <a data-toggle="modal" role="button" href="#myModal">Privacy</a> &middot; <a data-toggle="modal" role="button" href="#myModal">Terms</a></p>
+	    </footer>
+	</div>
+
+</body>
+
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Under Construction</h3>
+  </div>
+  <div class="modal-body">
+    <p>Please check back later!</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
+  </div>
+</div>
+
+<div id="contactInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Contact Information</h3>
+  </div>
+  <div class="modal-body">
+    <p>info@vitalmeeting.com - don't hesitate to shoot us an email!</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
+  </div>
+</div>
+
+<div id="learnMore" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Make It Happen.</h3>
+  </div>
+  <div class="modal-body">
+    <div style="margin: auto; width: 400px; height: 300px;">
+      <div class="flexslider">
+          <ul class="slides">
+            <li>
+              <img src="{% static "meeting_identify.jpg" %}" style="width: 400px; height: 300px;">
+            </li>
+            <li>
+              <img src="{% static "meeting_invite.jpg" %}" style="width: 400px; height: 300px;">
+            </li>
+            <li>
+              <img src="{% static "meeting_concoct.jpg" %}" style="width: 400px; height: 300px;">
+            </li>
+            <li>
+              <img src="{% static "meeting_achieve.jpg" %}" style="width: 400px; height: 300px;">
+            </li>
+          </ul>
+      </div>
+    </div>
+    <br><br><br>
+    <p>Is there something you wish would be done but no one seems to take on the problem?</p>
+    <p>Is there a project you'd like to accomplish and want support for?</p>
+    <p>Do you wish you could speak directly with the people in authority?</p><br>
+
+    <p>Stop wishing and take action:</p><br>
+
+    <p>1. Create an Interview and raise your issue with the person responsible.</p>
+    <p>2. Create an Online Project and Invite People to Brainstorm.</p>
+    <p>3. Create an Interactive Chat and Invite People for An Online Chat Session.</p><br>
+
+    <p>Vital Meeting - Make It Happen.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
+  </div>
+</div>
+
+<script src="{% static "flexslider/jquery.flexslider-min.js" %}"></script>
+
+<script>
+$('#learnMore').on('shown', function() {
+  $('.flexslider').flexslider({ animation: "slide"});
+});
+</script>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-42713435-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+</html>

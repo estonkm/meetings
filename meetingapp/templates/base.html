@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Vital Meeting &middot; Structured Online Meetings</title>
+	<title>Vital Meeting &middot; Make Things Happen</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -23,6 +23,8 @@
 
     <link href="{% static "flexslider/flexslider.css" %}" rel="stylesheet">
 
+    <link rel="stylesheet" type="text/css" href="{% static "vitalmeeting.css" %}" />
+
     <!--<script src="{% static "jquery/ui/jquery.ui.core.js" %}"></script>
     <script src="{% static "jquery/ui/jquery.ui.widget.js" %}"></script>
 
@@ -30,6 +32,58 @@
 
 
 </head>
+
+<body style="padding: 0px;">
+<div class="header" style="margin-bottom: 40px;">
+
+  <div id="box1">
+    {% if not user.is_authenticated %}
+      <table>
+      <tr class="header">
+      <td class="column1"> <a href="/"> <img src="{% static "images/logo.gif" %}" width="258" height="46" alt="Vital Meeting"> </a> </td>
+      <td class="column2"> <a id="column2" href=""> What is Vital <br /> Meeting? </a> </td>
+      <td class="column3"> <a href=""> <span> See </span> </a> people <br /> making it happen </td>
+      <td class="column4"> <a href="/create/"> <span> Start </span> </a> <br /> your meeting </td>
+      <td class="column5"> <a href=""> help </a> </td>
+      <td class="column6"> <a href="/signup/"> signup </a> </td>
+      <td class="column7"> <a href="/login/"> login </a> </td>
+      </tr>
+      </table>
+    {% else %}
+    <table>
+    <tr class="header">
+    <td class="column1"> <a href="/"> <img src="{% static "images/logo.gif" %}" width="258" height="46" alt="Vital Meeting"> </a> </td>
+    <td class="column3"> <a href=""> <span> See </span> </a> people <br /> making things happen </td>
+    <td class="column4"> <a href="/contacts/"> <span> My Contacts </span> </a> </td>
+    <td class="column4"> <a href="/home/"> <span> My Meetings </span> </a> </td>
+    <td class="column5"> <a href=""> help </a> </td>
+    <td class="column6"> <a href=""> {% if account.prof_pic != 'None' %}<img src="{{account.prof_pic.url}}" style="width: 50px; height: 50px;"> {% endif %}</a> </td>
+    <td class="column7"> {{user.first_name}} {{user.last_name}}<br /> <a href="../logout/"> logout </a> </td>
+    </tr>
+    </table>
+    {% endif %}
+  </div> <!-- end of box1 -->
+
+</div>
+<div class="container">
+  {% block content %}
+      Content
+  {% endblock %}
+</div>
+
+<!-- <div class="footer" style="margin-top: 50px;">
+<p>
+<ul>
+<li> <a href=""> help </a>  </li>
+<li> <a href=""> privacy </a>  </li>
+<li> <a href=""> terms </a>  </li>
+<li> <a href=""> contact </a>  </li>
+<li> <a href=""> copyright &copy; 2013 VitalMeeting, Inc.  </a> </li>
+</ul>
+</p>
+</div> -->
+
+</body>
 
 <script type='text/javascript'>
 var _glc =_glc || []; _glc.push('all_ag9zfmNsaWNrZGVza2NoYXRyDgsSBXVzZXJzGJn89g4M');
@@ -41,144 +95,6 @@ glcspt.async = true; glcspt.src = glcpath + 'livechat-new.js';
 var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glcspt, s);
 </script>
 
-
-<body>
-	<div class="navbar navbar-fixed-top">
-
-    <div class="container">
-  <div class="navbar-inner">
-				<a class="brand" href="..">Vital Meeting</a>
-				<div class="nav-collapse collapse">
-					<ul class="nav">
-						<li class="">
-							<a data-toggle="modal" role="button" href="#learnMore">Learn More</a>
-						</li>
-						<li class="">
-							<a data-toggle="modal" role="button" href="#contactInfo">Contact</a>
-						</li>
-						<li class="">
-							<a href="/create/">Create a Meeting</a>
-						</li>
-					</ul>
-        </div>
-        <ul class="nav pull-right">
-          {% if user.is_authenticated %}
-          <li class="">
-            <a href="../home/">My Meetings</a>
-          </li>
-          <li class="">
-            <a href="../profile/">Profile</a>
-          </li>
-          <li class="">
-            <a href="../contacts/">Contacts</a>
-          <li>
-          <li class="">
-            <a href="../logout/">Logout</a>
-          </li>
-          {% else %}
-          <li class="">
-            <a href="../login/">Login</a>
-          </li>
-          <li class="">
-            <a href="../signup/">Sign Up</a>
-          </li>
-          {% endif %}
-        </ul>
-        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-			</div>
-		</div>
-	</div>
-    {% block content %}
-        Content
-    {% endblock %}
-    <div class="container">
-	    <footer style="margin-top: 50px;">
-	        <p class="pull-right"><a href="#">Back to top</a></p>
-	        <p>&copy; 2013 VitalMeeting, Inc. &middot; <a data-toggle="modal" role="button" href="#myModal">Privacy</a> &middot; <a data-toggle="modal" role="button" href="#myModal">Terms</a></p>
-	    </footer>
-	</div>
-
-</body>
-
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Under Construction</h3>
-  </div>
-  <div class="modal-body">
-    <p>Please check back later!</p>
-  </div>
-  <div class="modal-footer">
-    <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
-  </div>
-</div>
-
-<div id="contactInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Contact Information</h3>
-  </div>
-  <div class="modal-body">
-    <p>info@vitalmeeting.com - don't hesitate to shoot us an email!</p>
-  </div>
-  <div class="modal-footer">
-    <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
-  </div>
-</div>
-
-<div id="learnMore" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Make It Happen.</h3>
-  </div>
-  <div class="modal-body">
-    <div style="margin: auto; width: 400px; height: 300px;">
-      <div class="flexslider">
-          <ul class="slides">
-            <li>
-              <img src="{% static "meeting_identify.jpg" %}" style="width: 400px; height: 300px;">
-            </li>
-            <li>
-              <img src="{% static "meeting_invite.jpg" %}" style="width: 400px; height: 300px;">
-            </li>
-            <li>
-              <img src="{% static "meeting_concoct.jpg" %}" style="width: 400px; height: 300px;">
-            </li>
-            <li>
-              <img src="{% static "meeting_achieve.jpg" %}" style="width: 400px; height: 300px;">
-            </li>
-          </ul>
-      </div>
-    </div>
-    <br><br><br>
-    <p>Is there something you wish would be done but no one seems to take on the problem?</p>
-    <p>Is there a project you'd like to accomplish and want support for?</p>
-    <p>Do you wish you could speak directly with the people in authority?</p><br>
-
-    <p>Stop wishing and take action:</p><br>
-
-    <p>1. Create an Interview and raise your issue with the person responsible.</p>
-    <p>2. Create an Online Project and Invite People to Brainstorm.</p>
-    <p>3. Create an Interactive Chat and Invite People for An Online Chat Session.</p><br>
-
-    <p>Vital Meeting - Make It Happen.</p>
-  </div>
-  <div class="modal-footer">
-    <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
-  </div>
-</div>
-
-<script src="{% static "flexslider/jquery.flexslider-min.js" %}"></script>
-
-<script>
-$('#learnMore').on('shown', function() {
-  $('.flexslider').flexslider({ animation: "slide"});
-});
-</script>
 
 <script type="text/javascript">
 
