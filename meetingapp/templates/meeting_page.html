@@ -16,6 +16,11 @@
                     <button type="submit" class="btn btn-primary" id="join_meeting" name="join_meeting">Join Meeting</button>
                 </form>
                 {% endif %}
+                <div>
+                    {% if m.image %}
+                    <img src="{{m.image.url}}" />
+                    {% endif %}
+                </div>
                 <div class="desc">
                     {{m.desc}}
                 </div>

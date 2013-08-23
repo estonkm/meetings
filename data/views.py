@@ -357,7 +357,7 @@ def create(request):
 		a = request.session['account']
 
 	if request.method == 'POST':
-		form = MeetingForm(request.POST)
+		form = MeetingForm(request.POST, request.FILES)
 		if request.POST.get('submit_request'):
 			if form.is_valid():
 				cd = form.cleaned_data
@@ -452,10 +452,10 @@ def create(request):
 					request.session['meeting_created'] = meeting_no
 					request.session.modified=True
 
-					if m.image:
+					if cd['image'] is not None:
 						path = os.path.join(dsettings.MEDIA_ROOT, m.image.url)
 						tn= Image.open(path)
-						tn.thumbnail((200, 200), Image.ANTIALIAS)
+						tn.thumbnail((600, 400), Image.ANTIALIAS)
 						tn.save(path)
 
 					if m.m_type == 'Interview':

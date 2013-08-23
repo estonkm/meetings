@@ -12,7 +12,7 @@
 		<img src="{% static "flow1.jpg" %}">
 	</div>
 	<div class="form_block">
-		<form class="form-horizontal" id="createform" style="margin-top: 25px;" method="post">
+		<form class="form-horizontal" enctype="multipart/form-data" id="createform" style="margin-top: 25px;" method="post">
 			{% csrf_token %}
 			<input type="hidden" name="submit_request" value="submit_request">
 			<div class="control-group">
