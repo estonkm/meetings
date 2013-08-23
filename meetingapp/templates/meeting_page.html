@@ -98,7 +98,7 @@
             {% for ai in agenda_items %}
             <div class="row ai_row">
                 <div class="row ai_title">
-                    <text class="agenda" style="padding-right: 5px;"><span id="ai_num">{{forloop.counter}}</span>. <span id="ai_name">{{ai.name}}</span></text>
+                    <text class="agenda" style="padding-right: 5px;"><div style="display: inline;" id="ai_num">{{forloop.counter}}</div>. <div style="display: inline;" id="ai_name">{{ai.name}}</div></text>
                     {% if user == host.user %}
                     <button class="btn btn-mini" name="editai" style="margin-top: -5px !important;" id="{{ai.id}}"><i class="icon-pencil"></i> edit</button>
                     {% endif %}
@@ -116,7 +116,7 @@
                                 {% else %}
                                     {% if canmod or motion.user.user == user %}
                                         <form method="post" style="margin: 0px !important; padding: 0px !important;">{% csrf_token %}
-                                        <text><span id="mo_name">{{motion.name}}</span></text>
+                                        <text><div style="display: inline;" id="mo_name">{{motion.name}}</div></text>
                                             <button class="btn btn-mini btn-danger" type="submit" style="float:right;" name="remove_motion" value="{{motion.id}}">Remove</button>
                                             {% if motion.user.user == user %}
                                             <button class="btn btn-mini" name="editmotion" id="{{motion.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
@@ -128,16 +128,16 @@
                                 {% endif %}
                             </div>
                             <div class="row motionbody">
-                                <text><span id="mo_desc">{{motion.desc}}</span></text>
+                                <text><div style="display: inline;" id="mo_desc">{{motion.desc}}</div></text>
                             </div>
                             <div class="row motioninfo">
                                 <text style="color: #999; font-size: 12px; float:left;">posted by {{motion.user.user.first_name}} {{motion.user.user.last_name}} on {{motion.timestamp}}</text>
                                 <div style="float:right">
                                     <i class="icon-thumbs-up checkjoined" style="cursor:hand; cursor:pointer;" id="like_{{ motion.id }}" value="{{motion.likes}}"></i>
-                                    <text style="padding-right: 5px; color: #000066;"> <span id="span_like_{{ motion.id}}">{{motion.likes}}</span></text>
+                                    <text style="padding-right: 5px; color: #000066;"> <div style="display:inline;" id="span_like_{{ motion.id}}">{{motion.likes}}</div></text>
 
                                     <i class="icon-thumbs-down checkjoined" style="cursor:hand; cursor:pointer;" id="dislike_{{ motion.id}}" value="{{motion.dislikes}}"></i>
-                                    <text style="padding-right: 5px; color: #990033;"><span id="span_dislike_{{ motion.id}}">{{motion.dislikes}}</span></text>
+                                    <text style="padding-right: 5px; color: #990033;"><div style="display: inline;" id="span_dislike_{{ motion.id}}">{{motion.dislikes}}</div></text>
 
                                     <button class="btn hoverblack alter" data-toggle="collapse" data-target="#motion_{{motion.id}}">show comments ({{motion.comments.all.count}})</button>
 
@@ -198,16 +198,16 @@
                                     {% endif %}
                                 </div>
                                 <div class="row motionbody">
-                                    <text><span id="mo_desc">{{motion.desc}}</span></text>
+                                    <text><div style="display: inline;" id="mo_desc">{{motion.desc}}</div></text>
                                 </div>
                                 <div class="row motioninfo">
                                     <text style="color: #999; font-size: 12px; float:left;">posted by {{motion.user.user.first_name}} {{motion.user.user.last_name}} on {{motion.timestamp}}</text>
                                     <div style="float:right">
                                         <i class="icon-thumbs-up checkjoined" style="cursor:hand; cursor:pointer;" id="like_{{ motion.id }}" value="{{motion.likes}}"></i>
-                                            <text style="padding-right: 5px; color: #000066;"> <span id="span_like_{{ motion.id}}">{{motion.likes}}</span></text>
+                                            <text style="padding-right: 5px; color: #000066;"> <div style="display: inline;" id="span_like_{{ motion.id}}">{{motion.likes}}</div></text>
 
                                             <i class="icon-thumbs-down checkjoined" style="cursor:hand; cursor:pointer;" id="dislike_{{ motion.id}}" value="{{motion.dislikes}}"></i>
-                                            <text style="padding-right: 5px; color: #990033;"><span id="span_dislike_{{ motion.id}}">{{motion.dislikes}}</span></text>
+                                            <text style="padding-right: 5px; color: #990033;"><div style="display: inline;" id="span_dislike_{{ motion.id}}">{{motion.dislikes}}</div></text>
 
                                             <button class="btn hoverblack alter" data-toggle="collapse" data-target="#motion_{{motion.id}}">show comments ({{motion.comments.all.count}})</a>
 

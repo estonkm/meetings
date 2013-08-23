@@ -1,36 +1,11 @@
-HIGHEST PRIORITY:
--"request entity too large" error if someone gives a picture too big (~ a few MB)
+Functionality To-Dos
 
-MORE IMPORTANT:
--ensure user can't interfere with create->attach org->invite contacts
--no fields are strictly checked yet - like char lengths in forms vs. models vs. what people see.
--no "forgot your password?" function
--no way to edit an organization (should be on-page, if you are the creator)
--no way to change organization for a meeting
--make sure errors are reported (no errors in prof page submit, for example)
--adding agenda items is still weird; there's no limit except for a limit of adding 10 every time you visit the page.
-	mechanism also makes page jerk funny
--no way to edit contacts (maybe pop-up modal?)
--make a way for user to disable email notifications
-
-LESS IMPORTANT:
--let people/companies rewrite the urls to better suit them, as long as it isn't in the system, so it isn't just random chars
--users can add contacts/organizations (or request to) from their pages
--if inviting people to a meeting by email, no option to add them as contacts
--make the user verification page look better
--"remember me" is still there and still does nothing
--mods have no option to provide reasons why they want to remove info
--"learn more" "contact" "privacy" - all these things are just stubs.
--"return to top" on home page is kinda pointless
--"search existing contacts" is not implemented
--didn't implement birthdate yet even though it's in the models
--implement a sitewide "error" page (so no 404s)
--use anonymous pictures for organizations and users (to make it look better)
--replace the awkward "None"s in the profile fields with placeholders to show information format
--show information in profile better (less of an awkward table)
--there's no "request to add an organization" or "request to add as contact" system in place
--also, "members" of organizations might be shown on the home page. 
--show link to organization's page on meeting
--contact info does not display address nor second phone number
--awkward "title" for contacts
--use google api or something for importing contacts
+1. No "forgot your password?" functionality exists
+2. "Already have an account?" on login page
+3. Limit # contacts, meetings, etc. so no one can overwhelm the server
+4. Handle better users leaving halfway through meeting creation--"alert! your meeting will be unsaved!" type of thing. And then delete it if they do leave.
+5. For friend invites, allow multiple options of inviting--probably rewrite "invite" function to redirect users there temporarily
+6. Killswitch for meetings--host should be able to "close off" at any time
+7. Enable a search through contacts
+8. IE9 compatibility
+9. Make sure all screens still look good when user tries weird resizing

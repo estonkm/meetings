@@ -107,7 +107,7 @@
 					<p class="welcome">Welcome{% if joined %}, <b>{{user.first_name}} {{user.last_name}}</b>{% endif %}
 						{% if closed %}. Chat is currently closed.{% endif %}</p>
 					{% if not closed %}
-						<a data-toggle="modal" class="checkjoined" role="button" id="see_online_mems" href="#mems_online" style="float:right;">Members online: <span id="n_o">{{num_online}}</span></a>
+						<a data-toggle="modal" class="checkjoined" role="button" id="see_online_mems" href="#mems_online" style="float:right;">Members online: <div style="display: inline;" id="n_o">{{num_online}}</div></a>
 						{% if canmod %}<a data-toggle="modal" role="button" id="see_bans" href="#bans" style="float:right; margin-right: 15px;">Ban/Un-ban Members</a>{% endif %}
 					{% endif %}
 					<div style="clear:both"></div>

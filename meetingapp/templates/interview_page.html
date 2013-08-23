@@ -127,7 +127,7 @@
                 <div class="row" style="margin-bottom: 20px !important">
                     <div class="indented">
                         {% if q.answer %}
-                            <text><span id="old_ans">{{q.answer}}</span></text>
+                            <text><div style="display: inline;" id="old_ans">{{q.answer}}</div></text>
                             <!-- <text style="color: #999; font-size: 12px; float:left;">answered by {{invitee.user.first_name}} {{invitee.user.last_name}} on {{q.timestamp}}</text> -->
                             {% if is_invitee %}
                                 <button class="btn btn-mini" name="editanswer" id="{{q.id}}" style="float:right; margin-right: 5px !important;"><i class="icon-pencil"></i> edit</button>
